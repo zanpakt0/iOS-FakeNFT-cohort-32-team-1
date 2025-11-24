@@ -205,4 +205,9 @@ extension StatisticsViewController: UITableViewDataSource, UITableViewDelegate {
         return 88
     }
     
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if self.viewModel.cellViewModels.count - 1 == indexPath.row {
+            self.viewModel.fetchUsers(page: self.viewModel.pageNumber)
+        }
+    }
 }
