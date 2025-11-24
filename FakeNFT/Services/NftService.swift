@@ -4,6 +4,7 @@ typealias NftCompletion = (Result<Nft, Error>) -> Void
 
 protocol NftService {
     func loadNft(id: String, completion: @escaping NftCompletion)
+    func getUsers(page: Int, size: Int, completion: @escaping (Result<[User], Error>) -> Void) -> NetworkTask?
 }
 
 final class NftServiceImpl: NftService {
@@ -31,6 +32,14 @@ final class NftServiceImpl: NftService {
             case .failure(let error):
                 completion(.failure(error))
             }
+        }
+    }
+    
+    @discardableResult
+    func getUsers(page: Int, size: Int, completion: @escaping (Result<[User], any Error>) -> Void) -> NetworkTask? {
+        let request = GetUsersRequest(page: page, size: size)
+        return networkClient.send(request: request, type: [User].self) { result in
+            completion(result)
         }
     }
 }
