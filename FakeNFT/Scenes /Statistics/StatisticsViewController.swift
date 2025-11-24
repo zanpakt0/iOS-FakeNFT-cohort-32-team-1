@@ -76,7 +76,20 @@ final class StatisticsViewController: UIViewController, LoadingView {
     }
     
     @objc private func filterButtonClicked() {
+        let textOfByNameButton = NSLocalizedString("Statistics.actionSheet.byNameAction.text", comment: "")
+        let textOfByRatingButton = NSLocalizedString("Statistics.actionSheet.byRatingAction.text", comment: "")
         
+        let byNameAction = UIAlertAction(title: textOfByNameButton, style: .default) {[weak self] _ in
+            
+            self?.tableViewWithUsers.reloadData()
+        }
+        
+        let byRatingAction = UIAlertAction(title: textOfByRatingButton, style: .default) {[weak self] _ in
+            
+            self?.tableViewWithUsers.reloadData()
+        }
+        
+        self.showFilterActionSheet(firstAction: byNameAction, secondAction: byRatingAction, thirdAction: nil)
     }
     
     private func addSubviews() {
