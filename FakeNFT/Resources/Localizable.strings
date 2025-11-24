@@ -9,3 +9,6 @@
 //Filter actionSheet
 "Filter.actionSheet.title" = "Сортировка";
 "Filter.actionSheet.closeButton.text" = "Закрыть";
+
+// Statistics page
+"Tab.statistics" = "Статистика";

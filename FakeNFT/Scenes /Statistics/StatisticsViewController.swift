@@ -12,6 +12,23 @@ final class StatisticsViewController: UIViewController {
     private let viewModel: StatisticsViewModel
     private var cancellables = Set<AnyCancellable>()
     
+    private lazy var filterButton: UIButton = {
+        let filterButton = UIButton(type: .system)
+        let imageForButton = UIImage(resource: .sort)
+        filterButton.setImage(imageForButton, for: .normal)
+        filterButton.addTarget(self, action: #selector(filterButtonClicked), for: .touchUpInside)
+        filterButton.tintColor = .segmentActive
+        filterButton.imageView?.contentMode = .scaleAspectFit
+        filterButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            filterButton.heightAnchor.constraint(equalToConstant: 42),
+            filterButton.widthAnchor.constraint(equalToConstant: 42)
+        ])
+        
+        return filterButton
+    }()
+    
     init(viewModel: StatisticsViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -25,7 +42,13 @@ final class StatisticsViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .forViewBackgound
         
+        setupNavBar()
+        
         bindViewModel()
+    }
+    
+    @objc private func filterButtonClicked() {
+        
     }
     
     private func bindViewModel() {
@@ -46,5 +69,9 @@ final class StatisticsViewController: UIViewController {
                 }
             }
             .store(in: &cancellables)
+    }
+    
+    private func setupNavBar() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: filterButton)
     }
 }

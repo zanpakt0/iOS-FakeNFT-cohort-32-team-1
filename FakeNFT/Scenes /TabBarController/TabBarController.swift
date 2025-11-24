@@ -1,25 +1,57 @@
 import UIKit
 
 final class TabBarController: UITabBarController {
-
+    
     var servicesAssembly: ServicesAssembly!
-
+    
     private let catalogTabBarItem = UITabBarItem(
         title: NSLocalizedString("Tab.catalog", comment: ""),
         image: UIImage(systemName: "square.stack.3d.up.fill"),
         tag: 0
     )
-
+    
+    private let statisticsTabBarItem = UITabBarItem(
+        title: NSLocalizedString("Tab.statistics", comment: ""),
+        image: UIImage(systemName: "flag.2.crossed.fill"),
+        tag: 3
+    )
+    
+    private lazy var statisticsNav: UINavigationController = {
+        let viewModel = StatisticsViewModel(servicesAssembly: servicesAssembly)
+        let statisticsVc = StatisticsViewController(viewModel: viewModel)
+        statisticsVc.tabBarItem = statisticsTabBarItem
+        
+        return UINavigationController(rootViewController: statisticsVc)
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        setupTabBarAppearance()
+        setupTabBarItems()
 
+        view.backgroundColor = .systemBackground
+    }
+    
+    private func setupTabBarItems() {
         let catalogController = TestCatalogViewController(
             servicesAssembly: servicesAssembly
         )
         catalogController.tabBarItem = catalogTabBarItem
 
-        viewControllers = [catalogController]
-
-        view.backgroundColor = .systemBackground
+        viewControllers = [catalogController, statisticsNav]
+    }
+    
+    private func setupTabBarAppearance() {
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .systemBackground
+        
+        tabBar.standardAppearance = appearance
+        if #available(iOS 15.0, *) {
+            tabBar.scrollEdgeAppearance = appearance
+        } else {
+            print("Error")
+        }
     }
 }
