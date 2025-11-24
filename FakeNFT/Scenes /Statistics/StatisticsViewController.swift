@@ -8,10 +8,24 @@
 import UIKit
 import Combine
 
-final class StatisticsViewController: UIViewController {
+enum UIStateForLoader {
+    case showLoaderHideTable
+    case showTableHideLoader
+    case showBoth
+    case hideBoth
+}
+
+final class StatisticsViewController: UIViewController, LoadingView {
     private let viewModel: StatisticsViewModel
     private var cancellables = Set<AnyCancellable>()
     
+    lazy var activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .large)
+        indicator.hidesWhenStopped = true
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        
+        return indicator
+    }()
     private lazy var filterButton: UIButton = {
         let filterButton = UIButton(type: .system)
         let imageForButton = UIImage(resource: .sort)
@@ -54,12 +68,51 @@ final class StatisticsViewController: UIViewController {
         view.backgroundColor = .forViewBackgound
         
         setupNavBar()
+        addSubviews()
+        setupConstraints()
         
         bindViewModel()
+        viewModel.fetchUsers(page: viewModel.pageNumber)
     }
     
     @objc private func filterButtonClicked() {
         
+    }
+    
+    private func addSubviews() {
+        view.addSubview(activityIndicator)
+        view.addSubview(tableViewWithUsers)
+    }
+    
+    private func setupConstraints() {
+        NSLayoutConstraint.activate([
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            
+            tableViewWithUsers.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            tableViewWithUsers.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            tableViewWithUsers.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            tableViewWithUsers.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -8)
+        ])
+    }
+    
+    private func showNeedViewsInScreen(needToShowLoadingIndicator: UIStateForLoader) {
+        switch needToShowLoadingIndicator {
+        case .showLoaderHideTable:
+            self.showLoading()
+            self.tableViewWithUsers.isHidden = true
+        case .showTableHideLoader:
+            self.hideLoading()
+            self.tableViewWithUsers.isHidden = false
+        case .showBoth:
+            self.showLoading()
+            self.tableViewWithUsers.isHidden = false
+        case .hideBoth:
+            self.hideLoading()
+            self.tableViewWithUsers.isHidden = true
+        default:
+            break
+        }
     }
     
     private func bindViewModel() {
@@ -71,10 +124,25 @@ final class StatisticsViewController: UIViewController {
                 
                 switch state {
                 case .idle:
+                    showNeedViewsInScreen(needToShowLoadingIndicator: .hideBoth)
                     break
-                case .loading: break
-                case .loaded(_): break
-                case .error(_): break
+                case .loading:
+                    switch self.viewModel.cellViewModels.count {
+                    case 0:
+                        showNeedViewsInScreen(needToShowLoadingIndicator: .showLoaderHideTable)
+                    default:
+                        showNeedViewsInScreen(needToShowLoadingIndicator: .showBoth)
+                    }
+                case .loaded(_):
+                    showNeedViewsInScreen(needToShowLoadingIndicator: .showTableHideLoader)
+                    self.tableViewWithUsers.reloadData()
+                case .error(_):
+                    switch self.viewModel.cellViewModels.count {
+                    case 0:
+                        showNeedViewsInScreen(needToShowLoadingIndicator: .hideBoth)
+                    default:
+                        showNeedViewsInScreen(needToShowLoadingIndicator: .showTableHideLoader)
+                    }
                 default:
                     break
                 }
