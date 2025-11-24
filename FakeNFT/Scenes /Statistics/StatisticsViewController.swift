@@ -28,6 +28,17 @@ final class StatisticsViewController: UIViewController {
         
         return filterButton
     }()
+    private lazy var tableViewWithUsers: UITableView = {
+        let tableViewWithUsers = UITableView()
+        tableViewWithUsers.backgroundColor = .forViewBackgound
+        tableViewWithUsers.dataSource = self
+        tableViewWithUsers.delegate = self
+        tableViewWithUsers.register(StatisticsTableViewCell.self, forCellReuseIdentifier: StatisticsTableViewCell.reuseIdentifier)
+        tableViewWithUsers.separatorStyle = .none
+        tableViewWithUsers.translatesAutoresizingMaskIntoConstraints = false
+        
+        return tableViewWithUsers
+    }()
     
     init(viewModel: StatisticsViewModel) {
         self.viewModel = viewModel
@@ -74,4 +85,26 @@ final class StatisticsViewController: UIViewController {
     private func setupNavBar() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: filterButton)
     }
+}
+
+extension StatisticsViewController: UITableViewDataSource, UITableViewDelegate {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        self.viewModel.cellViewModels.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: StatisticsTableViewCell.reuseIdentifier, for: indexPath) as? StatisticsTableViewCell else {
+            return UITableViewCell()
+        }
+        
+        let userInfo = self.viewModel.cellViewModels[indexPath.row]
+        cell.configure(numberingOfCell: indexPath.row + 1, with: userInfo)
+        
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 88
+    }
+    
 }

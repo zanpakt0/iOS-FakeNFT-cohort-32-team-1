@@ -76,6 +76,31 @@ final class StatisticsTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func configure(numberingOfCell: Int, with usersInfo: UsersListCellViewModel) {
+        self.numberingLabel.text = "\(numberingOfCell)"
+        let processor = RoundCornerImageProcessor(cornerRadius: 14)
+        let defaultImage = UIImage(systemName: "person.crop.circle.fill")?
+            .withTintColor(UIColor.forDefaultAvatarBackgound, renderingMode: .alwaysOriginal)
+        guard let url = usersInfo.avatarURL else  {
+            return self.userAvatarImageView.image = defaultImage
+        }
+        
+        self.userAvatarImageView.kf.setImage(with: url,
+                                             placeholder: nil,
+                                             options: [.processor(processor)]) { result in
+            switch result {
+            case .success:
+                // image loaded correctly
+                break
+            case .failure:
+                self.userAvatarImageView.image = defaultImage
+            }
+        }
+        
+        self.userNameLabel.text = usersInfo.name
+        self.countOfNftsLabel.text = "\(usersInfo.nfts.count)"
+    }
+    
     private func addSubviews() {
         contentView.addSubview(containerView)
         
