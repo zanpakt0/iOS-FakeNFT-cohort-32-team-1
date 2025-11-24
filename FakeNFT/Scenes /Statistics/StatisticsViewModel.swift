@@ -14,6 +14,16 @@ enum StatisticsState {
     case error(Error)
 }
 
+enum FilterType: String {
+    case byName = "ByName"
+    case byRating = "ByRating"
+}
+
+enum ConstantsForStatistics {
+    static let pageSize: Int = 10
+    static let keyForTrackerType: String = "trackerTypeInStatistics"
+}
+
 final class StatisticsViewModel {
     
     @Published private(set) var state: StatisticsState = .idle
@@ -30,7 +40,7 @@ final class StatisticsViewModel {
         self.servicesAssembly = servicesAssembly
     }
     
-    func fetchUsers(page: Int, size: Int = 10) {
+    func fetchUsers(page: Int, size: Int = ConstantsForStatistics.pageSize) {
         print("Дошло")
         
         guard !isLoadingPage else { return }
@@ -50,6 +60,7 @@ final class StatisticsViewModel {
                     print("Успех")
                     let cellViewModels = users.map { UsersListCellViewModel(user: $0)}
                     self.addToListExcludingDuplicates(cellViewModels)
+                    self.sortByNeedFilterType()
                     
                     if users.isEmpty {
                         self.hasMorePages = false
@@ -66,6 +77,35 @@ final class StatisticsViewModel {
             }
             
         }
+    }
+    
+    func sortByNeedFilterType() {
+        let filterType = self.getFilterTypeFromStorage()
+        switch filterType {
+        case FilterType.byName.rawValue:
+            self.sortCellViewModelByName()
+        default:
+            self.sortCellViewModelByRating()
+        }
+    }
+    
+    func setFilterTypeToStorage(_ filterType: String) {
+        UserDefaults.standard.set(filterType, forKey: ConstantsForStatistics.keyForTrackerType)
+    }
+    
+    private func sortCellViewModelByName() {
+        self.cellViewModels.sort { $0.name < $1.name }
+    }
+    
+    private func sortCellViewModelByRating() {
+        self.cellViewModels.sort { $0.nfts.count > $1.nfts.count }
+    }
+    
+    private func getFilterTypeFromStorage() -> String {
+        guard let rawValue = UserDefaults.standard.string(forKey: ConstantsForStatistics.keyForTrackerType) else {
+            return FilterType.byRating.rawValue
+        }
+        return rawValue
     }
     
     private func addToListExcludingDuplicates(_ newUsers: [UsersListCellViewModel]) {
