@@ -46,6 +46,8 @@
 		558E39E72C68CE0A00FB86AC /* NftService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 558E39E62C68CE0900FB86AC /* NftService.swift */; };
 		927058CF2ED48C1500AF2DB9 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 927058CE2ED48C1300AF2DB9 /* User.swift */; };
 		927058D12ED48C2500AF2DB9 /* UserListCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 927058D02ED48C1B00AF2DB9 /* UserListCellViewModel.swift */; };
+		927058D32ED48EB600AF2DB9 /* StatisticsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 927058D22ED48EAB00AF2DB9 /* StatisticsViewModel.swift */; };
+		927058D52ED48EC200AF2DB9 /* StatisticsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 927058D42ED48EBA00AF2DB9 /* StatisticsViewController.swift */; };
 		E19CD5AB2A98B56600CA39A5 /* NftImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19CD5AA2A98B56600CA39A5 /* NftImageCollectionViewCell.swift */; };
 		E1A1B9DA2AA01CE400C3AFBC /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1A1B9D92AA01CE400C3AFBC /* TabBarController.swift */; };
 		E1CD40DC2A96BECC00BE7FE8 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = E1CD40DB2A96BECC00BE7FE8 /* Localizable.strings */; };
@@ -110,6 +112,8 @@
 		558E39E62C68CE0900FB86AC /* NftService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NftService.swift; sourceTree = "<group>"; };
 		927058CE2ED48C1300AF2DB9 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		927058D02ED48C1B00AF2DB9 /* UserListCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListCellViewModel.swift; sourceTree = "<group>"; };
+		927058D22ED48EAB00AF2DB9 /* StatisticsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsViewModel.swift; sourceTree = "<group>"; };
+		927058D42ED48EBA00AF2DB9 /* StatisticsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsViewController.swift; sourceTree = "<group>"; };
 		E19CD5AA2A98B56600CA39A5 /* NftImageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NftImageCollectionViewCell.swift; sourceTree = "<group>"; };
 		E1A1B9D92AA01CE400C3AFBC /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		E1CD40D82A96BE7D00BE7FE8 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Main.strings; sourceTree = "<group>"; };
@@ -352,6 +356,8 @@
 		927058CC2ED48BFC00AF2DB9 /* Statistics */ = {
 			isa = PBXGroup;
 			children = (
+				927058D42ED48EBA00AF2DB9 /* StatisticsViewController.swift */,
+				927058D22ED48EAB00AF2DB9 /* StatisticsViewModel.swift */,
 				927058CD2ED48C0700AF2DB9 /* NeedStructures */,
 			);
 			path = Statistics;
@@ -538,6 +544,7 @@
 				3FC8C38B29D242E90081F015 /* ProductDetailsTableViewCell.swift in Sources */,
 				3F478ECF29DB474E00F6D39E /* Colors.swift in Sources */,
 				0C79EE662A76DDFF00EE90EA /* NftDetailViewController.swift in Sources */,
+				927058D32ED48EB600AF2DB9 /* StatisticsViewModel.swift in Sources */,
 				E1A1B9DA2AA01CE400C3AFBC /* TabBarController.swift in Sources */,
 				3F478ED129DB476500F6D39E /* Fonts.swift in Sources */,
 				0C79EE6A2A76DE1000EE90EA /* NftDetailAssembly.swift in Sources */,
@@ -549,6 +556,7 @@
 				0CFCB7402A78002A0009A829 /* ExamplePutService.swift in Sources */,
 				3F6806D529CBBEC700B4F915 /* NetworkTask.swift in Sources */,
 				0CF2C2DB2A783C1B00FDC837 /* LoadingView.swift in Sources */,
+				927058D52ED48EC200AF2DB9 /* StatisticsViewController.swift in Sources */,
 				0990C3B12ED37D07008072D2 /* WebViewViewController.swift in Sources */,
 				927058D12ED48C2500AF2DB9 /* UserListCellViewModel.swift in Sources */,
 				558E39E72C68CE0A00FB86AC /* NftService.swift in Sources */,
