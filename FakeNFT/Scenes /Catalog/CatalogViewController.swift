@@ -1,7 +1,8 @@
 import UIKit
 
 final class CatalogViewController: UIViewController {
-    
+    let testCatalogData = mockCatalogData
+
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -9,6 +10,7 @@ final class CatalogViewController: UIViewController {
         tableView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         tableView.layer.masksToBounds = true
         tableView.backgroundColor = .background
+        tableView.separatorStyle = .none
         return tableView
     }()
     
@@ -43,6 +45,11 @@ final class CatalogViewController: UIViewController {
     func setupTableView() {
         view.addSubview(tableView)
         
+        tableView.dataSource = self
+        tableView.delegate = self
+        
+        tableView.register(CatalogCell.self)
+        
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: sortButton.bottomAnchor, constant: 20),
             tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
@@ -54,4 +61,18 @@ final class CatalogViewController: UIViewController {
     @objc func sortButtonTapped() {
         print("Sort Button Tapped")
     }
+}
+
+extension CatalogViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        testCatalogData.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell: CatalogCell = tableView.dequeueReusableCell()
+        let item = testCatalogData[indexPath.row]
+        cell.configure(image: item.image, text: item.title, numberOfNfts: item.count)
+        return cell
+    }
+    
 }
