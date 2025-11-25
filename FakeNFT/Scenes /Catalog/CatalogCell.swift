@@ -2,6 +2,7 @@ import UIKit
 
 final class CatalogCell: UITableViewCell, ReuseIdentifying {
     
+    //MARK: - UI
     private lazy var catalogImage: UIImageView = {
         let image = UIImageView()
         image.layer.cornerRadius = 12
@@ -21,6 +22,7 @@ final class CatalogCell: UITableViewCell, ReuseIdentifying {
         return label
     }()
     
+    //MARK: - Init
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.backgroundColor = .background
@@ -32,6 +34,7 @@ final class CatalogCell: UITableViewCell, ReuseIdentifying {
         fatalError("init(coder:) has not been implemented")
     }
     
+    //MARK: - Setup UI
     private func setupImage() {
         contentView.addSubview(catalogImage)
         
@@ -54,6 +57,7 @@ final class CatalogCell: UITableViewCell, ReuseIdentifying {
         ])
     }
     
+    //MARK: - Methods
     override func prepareForReuse() {
         super.prepareForReuse()
         catalogImage.image = nil

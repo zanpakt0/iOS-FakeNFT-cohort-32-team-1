@@ -1,8 +1,13 @@
 import UIKit
+import Combine
 
 final class CatalogViewController: UIViewController {
-    let testCatalogData = mockCatalogData
+    //MARK: - Constants    
+    private let viewModel = CatalogViewModel(catalogProvider: CatalogProvider())
+    
+    private var subscribes = Set<AnyCancellable>()
 
+    //MARK: - UI
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -24,13 +29,16 @@ final class CatalogViewController: UIViewController {
         return button
     }()
     
+    //MARK: - Lyfecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .background
         setupSortButton()
         setupTableView()
+        bindViewModel()
     }
     
+    //MARK: - Setup UI
     func setupSortButton() {
         view.addSubview(sortButton)
         
@@ -58,21 +66,34 @@ final class CatalogViewController: UIViewController {
         ])
     }
     
+    //MARK: - Actions
     @objc func sortButtonTapped() {
         print("Sort Button Tapped")
     }
+    
+    //MARK: - Bind
+    func bindViewModel() {
+        viewModel.$catalog
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: { [weak self] _ in
+                self?.tableView.reloadData()
+            })
+            .store(in: &subscribes)
+    }
 }
 
-extension CatalogViewController: UITableViewDelegate, UITableViewDataSource {
+extension CatalogViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        testCatalogData.count
+        viewModel.catalog.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: CatalogCell = tableView.dequeueReusableCell()
-        let item = testCatalogData[indexPath.row]
+        let item = viewModel.catalog[indexPath.row]
         cell.configure(image: item.image, text: item.title, numberOfNfts: item.count)
         return cell
     }
     
 }
+
+extension CatalogViewController: UITableViewDelegate { }
