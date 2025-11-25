@@ -14,11 +14,19 @@ final class CatalogViewModel {
     private let catalogProvider: CatalogProviderProtocol
     
     //MARK: - Init
-    init(catalogProvider: CatalogProvider) {
+    init(СatalogProvider: CatalogProvider) {
         self.catalog = []
-        self.catalogProvider = catalogProvider
-        catalogProvider.loadCatalog { catalogItems in
+        self.catalogProvider = СatalogProvider
+        СatalogProvider.loadCatalog { catalogItems in
             self.catalog = catalogItems
         }
+    }
+    
+    func sortByName() {
+        print("sortByName tapped")
+    }
+    
+    func sortByCountOfNfts() {
+        print("sortByCountOfNfts tapped")
     }
 }

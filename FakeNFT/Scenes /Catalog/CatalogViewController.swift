@@ -1,12 +1,14 @@
 import UIKit
 import Combine
 
-final class CatalogViewController: UIViewController {
-    //MARK: - Constants    
-    private let viewModel = CatalogViewModel(catalogProvider: CatalogProvider())
-    
+final class CatalogViewController: UIViewController, ErrorView {
+    //MARK: - Constants
+    private let viewModel = CatalogViewModel(СatalogProvider: CatalogProvider())
     private var subscribes = Set<AnyCancellable>()
-
+    
+    private let sortByNameTitle: String = NSLocalizedString("catalog.sortByNameTitle", comment: "Sort by name")
+    private let sortByCountTitle: String = NSLocalizedString("catalog.sortByCountTitle", comment: "Sort by count of nfts")
+    
     //MARK: - UI
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -68,7 +70,13 @@ final class CatalogViewController: UIViewController {
     
     //MARK: - Actions
     @objc func sortButtonTapped() {
-        print("Sort Button Tapped")
+        let sortByNameTitleAction = UIAlertAction(title: sortByNameTitle, style: .default) { [weak self] _ in
+            self?.viewModel.sortByName()
+        }
+        let sortByCountAction = UIAlertAction(title: sortByCountTitle, style: .default) { [weak self] _ in
+            self?.viewModel.sortByCountOfNfts()
+        }
+        self.showFilterActionSheet(firstAction: sortByNameTitleAction, secondAction: sortByCountAction, thirdAction: nil)
     }
     
     //MARK: - Bind
