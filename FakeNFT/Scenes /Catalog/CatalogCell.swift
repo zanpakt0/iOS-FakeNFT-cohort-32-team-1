@@ -36,7 +36,7 @@ final class CatalogCell: UITableViewCell, ReuseIdentifying {
         contentView.addSubview(catalogImage)
         
         NSLayoutConstraint.activate([
-            catalogImage.topAnchor.constraint(equalTo: contentView.topAnchor),
+            catalogImage.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),
             catalogImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             catalogImage.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             catalogImage.heightAnchor.constraint(equalToConstant: 140)
@@ -50,7 +50,7 @@ final class CatalogCell: UITableViewCell, ReuseIdentifying {
             catalogLabel.topAnchor.constraint(equalTo: catalogImage.bottomAnchor, constant: 4),
             catalogLabel.leadingAnchor.constraint(equalTo: catalogImage.leadingAnchor),
             catalogLabel.trailingAnchor.constraint(equalTo: catalogImage.trailingAnchor),
-            catalogLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -21)
+            catalogLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -1)
         ])
     }
     
