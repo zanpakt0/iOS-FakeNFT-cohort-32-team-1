@@ -23,10 +23,10 @@ final class CatalogViewModel {
     }
     
     func sortByName() {
-        print("sortByName tapped")
+        catalog = catalog.sorted(by: { $0.title < $1.title })
     }
     
     func sortByCountOfNfts() {
-        print("sortByCountOfNfts tapped")
+        catalog = catalog.sorted(by: { $0.count > $1.count })
     }
 }
