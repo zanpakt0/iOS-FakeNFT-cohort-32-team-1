@@ -6,7 +6,7 @@ protocol CatalogProviderProtocol {
 
 final class CatalogProvider: CatalogProviderProtocol {
     func loadCatalog(completion: @escaping ([CatalogItem]) -> Void) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
             completion(CatalogItem.mockCatalog)
         }
     }

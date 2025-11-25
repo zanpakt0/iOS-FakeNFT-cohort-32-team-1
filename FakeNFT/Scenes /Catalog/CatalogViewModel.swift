@@ -10,6 +10,7 @@ struct CatalogItem {
 final class CatalogViewModel {
     //MARK: - Constants
     @Published var catalog: [CatalogItem]
+    @Published var isLoading: Bool = false
     
     private let catalogProvider: CatalogProviderProtocol
     
@@ -17,8 +18,10 @@ final class CatalogViewModel {
     init(СatalogProvider: CatalogProvider) {
         self.catalog = []
         self.catalogProvider = СatalogProvider
+        self.isLoading = true
         СatalogProvider.loadCatalog { catalogItems in
             self.catalog = catalogItems
+            self.isLoading = false
         }
     }
     

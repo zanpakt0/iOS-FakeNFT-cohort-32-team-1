@@ -31,17 +31,24 @@ final class CatalogViewController: UIViewController, ErrorView {
         return button
     }()
     
+    private lazy var loadingIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView()
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        return indicator
+    }()
+    
     //MARK: - Lyfecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .background
         setupSortButton()
         setupTableView()
+        setupLoadingIndicator()
         bindViewModel()
     }
     
     //MARK: - Setup UI
-    func setupSortButton() {
+    private func setupSortButton() {
         view.addSubview(sortButton)
         
         NSLayoutConstraint.activate([
@@ -52,7 +59,7 @@ final class CatalogViewController: UIViewController, ErrorView {
         ])
     }
     
-    func setupTableView() {
+    private func setupTableView() {
         view.addSubview(tableView)
         
         tableView.dataSource = self
@@ -66,6 +73,11 @@ final class CatalogViewController: UIViewController, ErrorView {
             tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
+    }
+    
+    private func setupLoadingIndicator() {
+        view.addSubview(loadingIndicator)
+        loadingIndicator.constraintCenters(to: view)
     }
     
     //MARK: - Actions
@@ -86,6 +98,21 @@ final class CatalogViewController: UIViewController, ErrorView {
             .sink(receiveValue: { [weak self] _ in
                 self?.tableView.reloadData()
             })
+            .store(in: &subscribes)
+        
+        viewModel.$isLoading
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isLoading in
+                guard let self = self else { return }
+                
+                if isLoading {
+                    self.loadingIndicator.startAnimating()
+                    self.tableView.isHidden = true
+                } else {
+                    self.loadingIndicator.stopAnimating()
+                    self.tableView.isHidden = false
+                }
+            }
             .store(in: &subscribes)
     }
 }
