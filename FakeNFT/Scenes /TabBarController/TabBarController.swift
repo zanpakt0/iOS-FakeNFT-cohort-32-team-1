@@ -2,20 +2,20 @@ import UIKit
 
 final class TabBarController: UITabBarController {
     
+    // MARK: - Public Properties
     var servicesAssembly: ServicesAssembly!
     
+    // MARK: - Private Properties
     private let catalogTabBarItem = UITabBarItem(
         title: NSLocalizedString("Tab.catalog", comment: ""),
         image: UIImage(systemName: "square.stack.3d.up.fill"),
         tag: 0
     )
-    
     private let statisticsTabBarItem = UITabBarItem(
         title: NSLocalizedString("Tab.statistics", comment: ""),
         image: UIImage(systemName: "flag.2.crossed.fill"),
         tag: 3
     )
-    
     private lazy var statisticsNav: UINavigationController = {
         let viewModel = StatisticsViewModel(servicesAssembly: servicesAssembly)
         let statisticsVc = StatisticsViewController(viewModel: viewModel)
@@ -24,6 +24,7 @@ final class TabBarController: UITabBarController {
         return UINavigationController(rootViewController: statisticsVc)
     }()
     
+    // MARK: - View Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -33,6 +34,7 @@ final class TabBarController: UITabBarController {
         view.backgroundColor = .systemBackground
     }
     
+    // MARK: - Private Methods
     private func setupTabBarItems() {
         let catalogController = TestCatalogViewController(
             servicesAssembly: servicesAssembly

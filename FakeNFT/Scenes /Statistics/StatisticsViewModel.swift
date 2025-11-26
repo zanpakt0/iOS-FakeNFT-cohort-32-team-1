@@ -7,6 +7,7 @@
 
 import Foundation
 
+// MARK: - Need enums
 enum StatisticsState {
     case idle
     case loading
@@ -26,20 +27,23 @@ enum ConstantsForStatistics {
 
 final class StatisticsViewModel {
     
-    @Published private(set) var state: StatisticsState = .idle
-    private let servicesAssembly: ServicesAssembly
-    private var currentTask: NetworkTask?
-    
+    // MARK: - Public Properties
     var cellViewModels: [UsersListCellViewModel] = []
     var pageNumber = 0
     
+    // MARK: - Private Properties
+    @Published private(set) var state: StatisticsState = .idle
+    private let servicesAssembly: ServicesAssembly
+    private var currentTask: NetworkTask?
     private var isLoadingPage = false
     private var hasMorePages = true
     
+    // MARK: - Initializers
     init(servicesAssembly: ServicesAssembly) {
         self.servicesAssembly = servicesAssembly
     }
     
+    // MARK: - Public Methods
     func fetchUsers(page: Int, size: Int = ConstantsForStatistics.pageSize) {
         print("Дошло")
         
@@ -93,6 +97,7 @@ final class StatisticsViewModel {
         UserDefaults.standard.set(filterType, forKey: ConstantsForStatistics.keyForTrackerType)
     }
     
+    // MARK: - Private Methods
     private func sortCellViewModelByName() {
         self.cellViewModels.sort { $0.name < $1.name }
     }

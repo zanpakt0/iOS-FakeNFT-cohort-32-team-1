@@ -8,10 +8,35 @@
 import UIKit
 import Kingfisher
 
+enum StatisticsTableViewCellLayout {
+    static let containerBottom: CGFloat = -8
+
+    static let numberingLabelTop: CGFloat = 30
+    static let numberingLabelBottom: CGFloat = -30
+    static let numberingLabelTrailing: CGFloat = -8
+
+    static let avatarLeading: CGFloat = 16
+    static let avatarVerticalPadding: CGFloat = 26
+    static let avatarWidth: CGFloat = 28
+
+    static let userNameTrailing: CGFloat = 8
+    static let userNameWidth: CGFloat = 186
+    
+    static let nftCountTrailing: CGFloat = -16
+    static let nftCountWidth: CGFloat = 38
+    
+    static let usersInfoViewWidth: CGFloat = 343
+    static let heightOfViewsInUsersInfoView: CGFloat = 28
+    static let topAnchorOfViewsInUsersInfoView: CGFloat = 26
+    static let bottomAnchorOfViewsInUsersInfoView: CGFloat = -26
+}
+
 final class StatisticsTableViewCell: UITableViewCell {
     
+    // MARK: - Static properties
     static let reuseIdentifier = "StatisticsTableViewCell"
     
+    // MARK: - Views (elements)
     private let containerView: UIView = {
         let containerview = UIView()
         containerview.layer.cornerRadius = 12
@@ -64,6 +89,7 @@ final class StatisticsTableViewCell: UITableViewCell {
         return countOfNftsLabel
     }()
     
+    // MARK: - Initializers
     override init(style: StatisticsTableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .default, reuseIdentifier: reuseIdentifier)
         contentView.backgroundColor = .forViewBackgound
@@ -76,6 +102,7 @@ final class StatisticsTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Public Methods
     func configure(numberingOfCell: Int, with usersInfo: UsersListCellViewModel) {
         self.numberingLabel.text = "\(numberingOfCell)"
         let processor = RoundCornerImageProcessor(cornerRadius: 14)
@@ -101,6 +128,7 @@ final class StatisticsTableViewCell: UITableViewCell {
         self.countOfNftsLabel.text = "\(usersInfo.nfts.count)"
     }
     
+    // MARK: - Private Methods
     private func addSubviews() {
         contentView.addSubview(containerView)
         
@@ -116,39 +144,37 @@ final class StatisticsTableViewCell: UITableViewCell {
     private func setupConstraints() {
         NSLayoutConstraint.activate([
             containerView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
+            containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: StatisticsTableViewCellLayout.containerBottom),
             containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             
             usersInfoView.topAnchor.constraint(equalTo: containerView.topAnchor),
             usersInfoView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
             usersInfoView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
-            usersInfoView.widthAnchor.constraint(equalToConstant: 343),
+            usersInfoView.widthAnchor.constraint(equalToConstant: StatisticsTableViewCellLayout.usersInfoViewWidth),
             
-            numberingLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 30),
+            numberingLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: StatisticsTableViewCellLayout.numberingLabelTop),
             numberingLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-            numberingLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -30),
-            numberingLabel.widthAnchor.constraint(equalToConstant: 27),
-            numberingLabel.heightAnchor.constraint(equalToConstant: 20),
+            numberingLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: StatisticsTableViewCellLayout.numberingLabelBottom),
+            numberingLabel.trailingAnchor.constraint(equalTo: usersInfoView.leadingAnchor, constant: StatisticsTableViewCellLayout.numberingLabelTrailing),
             
-            userAvatarImageView.heightAnchor.constraint(equalToConstant: 28),
-            userAvatarImageView.widthAnchor.constraint(equalToConstant: 28),
-            userAvatarImageView.leadingAnchor.constraint(equalTo: usersInfoView.leadingAnchor, constant: 16),
-            userAvatarImageView.topAnchor.constraint(equalTo: usersInfoView.topAnchor, constant: 26),
-            userAvatarImageView.bottomAnchor.constraint(equalTo: usersInfoView.bottomAnchor, constant: -26),
+            userAvatarImageView.heightAnchor.constraint(equalToConstant: StatisticsTableViewCellLayout.heightOfViewsInUsersInfoView),
+            userAvatarImageView.widthAnchor.constraint(equalToConstant: StatisticsTableViewCellLayout.avatarWidth),
+            userAvatarImageView.leadingAnchor.constraint(equalTo: usersInfoView.leadingAnchor, constant: StatisticsTableViewCellLayout.avatarLeading),
+            userAvatarImageView.topAnchor.constraint(equalTo: usersInfoView.topAnchor, constant: StatisticsTableViewCellLayout.topAnchorOfViewsInUsersInfoView),
+            userAvatarImageView.bottomAnchor.constraint(equalTo: usersInfoView.bottomAnchor, constant: StatisticsTableViewCellLayout.bottomAnchorOfViewsInUsersInfoView),
             
-            userNameLabel.leadingAnchor.constraint(equalTo: userAvatarImageView.trailingAnchor, constant: 8),
-            userNameLabel.heightAnchor.constraint(equalToConstant: 28),
-            userNameLabel.widthAnchor.constraint(equalToConstant: 186),
-            userNameLabel.topAnchor.constraint(equalTo: usersInfoView.topAnchor, constant: 26),
-            userNameLabel.bottomAnchor.constraint(equalTo: usersInfoView.bottomAnchor, constant: -26),
+            userNameLabel.leadingAnchor.constraint(equalTo: userAvatarImageView.trailingAnchor, constant: StatisticsTableViewCellLayout.userNameTrailing),
+            userNameLabel.heightAnchor.constraint(equalToConstant: StatisticsTableViewCellLayout.heightOfViewsInUsersInfoView),
+            userNameLabel.widthAnchor.constraint(equalToConstant: StatisticsTableViewCellLayout.userNameWidth),
+            userNameLabel.topAnchor.constraint(equalTo: usersInfoView.topAnchor, constant: StatisticsTableViewCellLayout.topAnchorOfViewsInUsersInfoView),
+            userNameLabel.bottomAnchor.constraint(equalTo: usersInfoView.bottomAnchor, constant: StatisticsTableViewCellLayout.bottomAnchorOfViewsInUsersInfoView),
             
-            countOfNftsLabel.heightAnchor.constraint(equalToConstant: 28),
-            countOfNftsLabel.widthAnchor.constraint(equalToConstant: 38),
-            countOfNftsLabel.topAnchor.constraint(equalTo: usersInfoView.topAnchor, constant: 26),
-            countOfNftsLabel.bottomAnchor.constraint(equalTo: usersInfoView.bottomAnchor, constant: -26),
-            countOfNftsLabel.trailingAnchor.constraint(equalTo: usersInfoView.trailingAnchor, constant: -16)
+            countOfNftsLabel.heightAnchor.constraint(equalToConstant: StatisticsTableViewCellLayout.heightOfViewsInUsersInfoView),
+            countOfNftsLabel.widthAnchor.constraint(equalToConstant: StatisticsTableViewCellLayout.nftCountWidth),
+            countOfNftsLabel.topAnchor.constraint(equalTo: usersInfoView.topAnchor, constant: StatisticsTableViewCellLayout.topAnchorOfViewsInUsersInfoView),
+            countOfNftsLabel.bottomAnchor.constraint(equalTo: usersInfoView.bottomAnchor, constant: StatisticsTableViewCellLayout.bottomAnchorOfViewsInUsersInfoView),
+            countOfNftsLabel.trailingAnchor.constraint(equalTo: usersInfoView.trailingAnchor, constant: StatisticsTableViewCellLayout.nftCountTrailing)
         ])
     }
-    
 }

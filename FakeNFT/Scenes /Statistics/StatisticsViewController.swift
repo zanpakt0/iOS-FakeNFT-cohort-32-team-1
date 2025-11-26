@@ -8,6 +8,7 @@
 import UIKit
 import Combine
 
+// MARK: - Need enums
 enum UIStateForLoader {
     case showLoaderHideTable
     case showTableHideLoader
@@ -15,10 +16,20 @@ enum UIStateForLoader {
     case hideBoth
 }
 
+enum StatisticsViewControllerLayout {
+    static let tableTop: CGFloat = 20
+    static let tableLeading: CGFloat = 16
+    static let tableTrailing: CGFloat = -16
+    static let tableBottom: CGFloat = -8
+}
+
 final class StatisticsViewController: UIViewController, LoadingView {
+    
+    // MARK: - Private Properties
     private let viewModel: StatisticsViewModel
     private var cancellables = Set<AnyCancellable>()
     
+    // MARK: - Views (elements)
     lazy var activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .large)
         indicator.hidesWhenStopped = true
@@ -54,6 +65,7 @@ final class StatisticsViewController: UIViewController, LoadingView {
         return tableViewWithUsers
     }()
     
+    // MARK: - Initializers
     init(viewModel: StatisticsViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -63,6 +75,7 @@ final class StatisticsViewController: UIViewController, LoadingView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - View Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .forViewBackgound
@@ -75,6 +88,7 @@ final class StatisticsViewController: UIViewController, LoadingView {
         viewModel.fetchUsers(page: viewModel.pageNumber)
     }
     
+    // MARK: - Private Methods
     @objc private func filterButtonClicked() {
         let textOfByNameButton = NSLocalizedString("Statistics.actionSheet.byNameAction.text", comment: "")
         let textOfByRatingButton = NSLocalizedString("Statistics.actionSheet.byRatingAction.text", comment: "")
@@ -91,7 +105,7 @@ final class StatisticsViewController: UIViewController, LoadingView {
             self?.tableViewWithUsers.reloadData()
         }
         
-        self.showFilterActionSheet(firstAction: byNameAction, secondAction: byRatingAction, thirdAction: nil)
+        showFilterActionSheet(firstAction: byNameAction, secondAction: byRatingAction, thirdAction: nil)
     }
     
     private func addSubviews() {
@@ -104,10 +118,10 @@ final class StatisticsViewController: UIViewController, LoadingView {
             activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             
-            tableViewWithUsers.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            tableViewWithUsers.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            tableViewWithUsers.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            tableViewWithUsers.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -8)
+            tableViewWithUsers.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: StatisticsViewControllerLayout.tableTop),
+            tableViewWithUsers.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: StatisticsViewControllerLayout.tableLeading),
+            tableViewWithUsers.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: StatisticsViewControllerLayout.tableTrailing),
+            tableViewWithUsers.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: StatisticsViewControllerLayout.tableBottom)
         ])
     }
     
@@ -172,13 +186,17 @@ final class StatisticsViewController: UIViewController, LoadingView {
     }
 }
 
+// MARK: - ErrorView
 extension StatisticsViewController: ErrorView {
     func showError() {
         let retryActionText = NSLocalizedString("Statistics.errorAlert.retryAction.text", comment: "")
         let errorModel = ErrorModel(
             message: "",
             actionText: retryActionText,
-            action: {self.viewModel.fetchUsers(page: self.viewModel.pageNumber)}
+            action: {[weak self] in
+                guard let self else { return }
+                self.viewModel.fetchUsers(page: self.viewModel.pageNumber)
+            }
         )
         
         let title = NSLocalizedString("Statistics.errorAlert.title", comment: "")
@@ -200,6 +218,7 @@ extension StatisticsViewController: ErrorView {
     }
 }
 
+// MARK: - UITableViewDataSource, UITableViewDelegate
 extension StatisticsViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         self.viewModel.cellViewModels.count

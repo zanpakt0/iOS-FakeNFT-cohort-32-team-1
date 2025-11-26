@@ -7,6 +7,7 @@
 
 import Foundation
 
+// MARK: - Structure of user's info (Need for tableView in statistics page)
 final class UsersListCellViewModel: Equatable {
     let name: String
     let avatarURL: URL?
@@ -25,9 +26,9 @@ final class UsersListCellViewModel: Equatable {
     }
     
     static func == (lhs: UsersListCellViewModel, rhs: UsersListCellViewModel) -> Bool {
-        return lhs.name == rhs.name &&
-               lhs.description == rhs.description &&
-               lhs.rating == rhs.rating &&
-               Set(lhs.nfts) == Set(rhs.nfts)
+        lhs.name == rhs.name &&
+        lhs.description == rhs.description &&
+        lhs.rating == rhs.rating &&
+        Set(lhs.nfts) == Set(rhs.nfts)
     }
 }
