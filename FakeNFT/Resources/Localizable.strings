@@ -9,3 +9,11 @@
 //Filter actionSheet
 "Filter.actionSheet.title" = "Сортировка";
 "Filter.actionSheet.closeButton.text" = "Закрыть";
+
+// Statistics page
+"Tab.statistics" = "Статистика";
+"Statistics.errorAlert.title" = "Не удалось получить данные";
+"Statistics.errorAlert.retryAction.text" = "Повторить";
+"Statistics.errorAlert.cancelAction.text" = "Отмена";
+"Statistics.actionSheet.byNameAction.text" = "По имени";
+"Statistics.actionSheet.byRatingAction.text" = "По рейтингу";
