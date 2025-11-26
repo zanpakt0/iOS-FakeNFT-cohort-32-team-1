@@ -103,7 +103,7 @@ final class StatisticsTableViewCell: UITableViewCell {
     }
     
     // MARK: - Public Methods
-    func configure(numberingOfCell: Int, with usersInfo: UsersListCellViewModel) {
+    func configure(numberingOfCell: Int, with usersInfo: UserCellViewData) {
         self.numberingLabel.text = "\(numberingOfCell)"
         let processor = RoundCornerImageProcessor(cornerRadius: 14)
         let defaultImage = UIImage(systemName: "person.crop.circle.fill")?

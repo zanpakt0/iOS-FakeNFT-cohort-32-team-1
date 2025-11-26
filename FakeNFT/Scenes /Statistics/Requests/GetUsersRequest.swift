@@ -12,7 +12,13 @@ struct GetUsersRequest: NetworkRequest {
     
     // MARK: - Endpoint
     var endpoint: URL? {
-        URL(string: "https://d5dn3j2ouj72b0ejucbl.apigw.yandexcloud.net/api/v1/users?page=\(page)&size=\(size)")
+        var components = URLComponents(string: RequestConstants.baseURL)
+        components?.path = "/api/v1/users"
+        components?.queryItems = [
+            URLQueryItem(name: "page", value: "\(page)"),
+            URLQueryItem(name: "size", value: "\(size)")
+        ]
+        return components?.url
     }
     
     // MARK: - Http mehod and body

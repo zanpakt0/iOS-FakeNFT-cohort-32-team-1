@@ -11,7 +11,7 @@ import Foundation
 enum StatisticsState {
     case idle
     case loading
-    case loaded([UsersListCellViewModel])
+    case loaded([UserCellViewData])
     case error(Error)
 }
 
@@ -28,7 +28,7 @@ enum ConstantsForStatistics {
 final class StatisticsViewModel {
     
     // MARK: - Public Properties
-    var cellViewModels: [UsersListCellViewModel] = []
+    var cellViewModels: [UserCellViewData] = []
     var pageNumber = 0
     
     // MARK: - Private Properties
@@ -62,7 +62,7 @@ final class StatisticsViewModel {
                 switch result {
                 case .success(let users):
                     print("Успех")
-                    let cellViewModels = users.map { UsersListCellViewModel(user: $0)}
+                    let cellViewModels = users.map { UserCellViewData(user: $0)}
                     self.addToListExcludingDuplicates(cellViewModels)
                     self.sortByNeedFilterType()
                     
@@ -113,7 +113,7 @@ final class StatisticsViewModel {
         return rawValue
     }
     
-    private func addToListExcludingDuplicates(_ newUsers: [UsersListCellViewModel]) {
+    private func addToListExcludingDuplicates(_ newUsers: [UserCellViewData]) {
         let uniqueUsers = newUsers.filter { newUser in
             !cellViewModels.contains(newUser)
         }
