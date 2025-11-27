@@ -26,6 +26,8 @@ final class UserCardViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .forViewBackgound
         
+        navigationController?.navigationBar.tintColor = .closeButton
+        
         bindViewModel()
     }
     

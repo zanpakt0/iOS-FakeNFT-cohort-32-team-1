@@ -235,6 +235,23 @@ extension StatisticsViewController: UITableViewDataSource, UITableViewDelegate {
         return cell
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let userCardViewModel = UserCardViewModel(serviceAssembly: self.viewModel.servicesAssembly)
+        let userCardViewController = UserCardViewController(viewModel: userCardViewModel)
+        
+        let transition = CATransition()
+        transition.duration = 0.03
+        transition.type = .push
+        transition.subtype = .fromTop
+        navigationController?.view.layer.add(transition, forKey: kCATransition)
+        
+        navigationItem.backButtonTitle = ""
+        userCardViewController.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(userCardViewController, animated: false)
+        
+        userCardViewModel.fetchUserById(self.viewModel.usersList[indexPath.row].id)
+    }
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 88
     }
