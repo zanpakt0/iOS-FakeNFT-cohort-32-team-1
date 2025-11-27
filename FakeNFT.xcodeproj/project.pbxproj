@@ -45,6 +45,7 @@
 		3FC8C39329D246BA0081F015 /* DateFormatters+Presets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC8C39229D246BA0081F015 /* DateFormatters+Presets.swift */; };
 		558E39E72C68CE0A00FB86AC /* NftService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 558E39E62C68CE0900FB86AC /* NftService.swift */; };
 		924AF0812ED6D8ED007E5F0A /* UserCardViewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 924AF0802ED6D8E3007E5F0A /* UserCardViewData.swift */; };
+		924AF08D2ED73013007E5F0A /* GetUserCardRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 924AF08C2ED73009007E5F0A /* GetUserCardRequest.swift */; };
 		927058CF2ED48C1500AF2DB9 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 927058CE2ED48C1300AF2DB9 /* User.swift */; };
 		927058D12ED48C2500AF2DB9 /* UserCellViewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 927058D02ED48C1B00AF2DB9 /* UserCellViewData.swift */; };
 		927058D82ED4A38C00AF2DB9 /* GetUsersRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 927058D72ED4A38500AF2DB9 /* GetUsersRequest.swift */; };
@@ -111,6 +112,7 @@
 		3FC8C39229D246BA0081F015 /* DateFormatters+Presets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateFormatters+Presets.swift"; sourceTree = "<group>"; };
 		558E39E62C68CE0900FB86AC /* NftService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NftService.swift; sourceTree = "<group>"; };
 		924AF0802ED6D8E3007E5F0A /* UserCardViewData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCardViewData.swift; sourceTree = "<group>"; };
+		924AF08C2ED73009007E5F0A /* GetUserCardRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetUserCardRequest.swift; sourceTree = "<group>"; };
 		927058CE2ED48C1300AF2DB9 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		927058D02ED48C1B00AF2DB9 /* UserCellViewData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCellViewData.swift; sourceTree = "<group>"; };
 		927058D72ED4A38500AF2DB9 /* GetUsersRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetUsersRequest.swift; sourceTree = "<group>"; };
@@ -133,6 +135,7 @@
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		924AF0782ED6D1FA007E5F0A /* UserList */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = UserList; sourceTree = "<group>"; };
+		924AF08E2ED73029007E5F0A /* UserCard */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = UserCard; sourceTree = "<group>"; };
 		927058DC2ED4C2D500AF2DB9 /* Docs */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (927058DF2ED4C30A00AF2DB9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Docs; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -372,6 +375,7 @@
 		927058CC2ED48BFC00AF2DB9 /* Statistics */ = {
 			isa = PBXGroup;
 			children = (
+				924AF08E2ED73029007E5F0A /* UserCard */,
 				924AF0782ED6D1FA007E5F0A /* UserList */,
 				927058D62ED4A37800AF2DB9 /* Requests */,
 				927058CD2ED48C0700AF2DB9 /* NeedStructures */,
@@ -392,6 +396,7 @@
 		927058D62ED4A37800AF2DB9 /* Requests */ = {
 			isa = PBXGroup;
 			children = (
+				924AF08C2ED73009007E5F0A /* GetUserCardRequest.swift */,
 				927058D72ED4A38500AF2DB9 /* GetUsersRequest.swift */,
 			);
 			path = Requests;
@@ -442,6 +447,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				924AF0782ED6D1FA007E5F0A /* UserList */,
+				924AF08E2ED73029007E5F0A /* UserCard */,
 			);
 			name = FakeNFT;
 			packageProductDependencies = (
@@ -574,6 +580,7 @@
 				0C79EE662A76DDFF00EE90EA /* NftDetailViewController.swift in Sources */,
 				E1A1B9DA2AA01CE400C3AFBC /* TabBarController.swift in Sources */,
 				3F478ED129DB476500F6D39E /* Fonts.swift in Sources */,
+				924AF08D2ED73013007E5F0A /* GetUserCardRequest.swift in Sources */,
 				0C79EE6A2A76DE1000EE90EA /* NftDetailAssembly.swift in Sources */,
 				924AF0812ED6D8ED007E5F0A /* UserCardViewData.swift in Sources */,
 				3FC8C39329D246BA0081F015 /* DateFormatters+Presets.swift in Sources */,

@@ -28,12 +28,12 @@ enum ConstantsForStatistics {
 final class StatisticsViewModel {
     
     // MARK: - Public Properties
-    var cellViewModels: [UserCellViewData] = []
+    var usersList: [UserCellViewData] = []
     var pageNumber = 0
+    let servicesAssembly: ServicesAssembly
     
     // MARK: - Private Properties
     @Published private(set) var state: StatisticsState = .idle
-    private let servicesAssembly: ServicesAssembly
     private var currentTask: NetworkTask?
     private var isLoadingPage = false
     private var hasMorePages = true
@@ -62,8 +62,8 @@ final class StatisticsViewModel {
                 switch result {
                 case .success(let users):
                     print("Успех")
-                    let cellViewModels = users.map { UserCellViewData(user: $0)}
-                    self.addToListExcludingDuplicates(cellViewModels)
+                    let usersList = users.map { UserCellViewData(user: $0)}
+                    self.addToListExcludingDuplicates(usersList)
                     self.sortByNeedFilterType()
                     
                     if users.isEmpty {
@@ -72,8 +72,8 @@ final class StatisticsViewModel {
                         self.pageNumber += 1
                     }
                     
-                    self.state = .loaded(self.cellViewModels)
-                    print(self.cellViewModels)
+                    self.state = .loaded(self.usersList)
+                    print(self.usersList)
                 case .failure(let error):
                     print("Ошибка")
                     self.state = .error(error)
@@ -99,11 +99,11 @@ final class StatisticsViewModel {
     
     // MARK: - Private Methods
     private func sortCellViewModelByName() {
-        self.cellViewModels.sort { $0.name < $1.name }
+        self.usersList.sort { $0.name < $1.name }
     }
     
     private func sortCellViewModelByRating() {
-        self.cellViewModels.sort { $0.nfts.count > $1.nfts.count }
+        self.usersList.sort { $0.nfts.count > $1.nfts.count }
     }
     
     private func getFilterTypeFromStorage() -> String {
@@ -115,8 +115,8 @@ final class StatisticsViewModel {
     
     private func addToListExcludingDuplicates(_ newUsers: [UserCellViewData]) {
         let uniqueUsers = newUsers.filter { newUser in
-            !cellViewModels.contains(newUser)
+            !usersList.contains(newUser)
         }
-        self.cellViewModels.append(contentsOf: uniqueUsers)
+        self.usersList.append(contentsOf: uniqueUsers)
     }
 }

@@ -156,7 +156,7 @@ final class StatisticsViewController: UIViewController, LoadingView {
                     showNeedViewsInScreen(needToShowLoadingIndicator: .hideBoth)
                     break
                 case .loading:
-                    switch self.viewModel.cellViewModels.count {
+                    switch self.viewModel.usersList.count {
                     case 0:
                         showNeedViewsInScreen(needToShowLoadingIndicator: .showLoaderHideTable)
                     default:
@@ -166,7 +166,7 @@ final class StatisticsViewController: UIViewController, LoadingView {
                     showNeedViewsInScreen(needToShowLoadingIndicator: .showTableHideLoader)
                     self.tableViewWithUsers.reloadData()
                 case .error(_):
-                    switch self.viewModel.cellViewModels.count {
+                    switch self.viewModel.usersList.count {
                     case 0:
                         showNeedViewsInScreen(needToShowLoadingIndicator: .hideBoth)
                         self.showError()
@@ -221,7 +221,7 @@ extension StatisticsViewController: ErrorView {
 // MARK: - UITableViewDataSource, UITableViewDelegate
 extension StatisticsViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        self.viewModel.cellViewModels.count
+        self.viewModel.usersList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -229,7 +229,7 @@ extension StatisticsViewController: UITableViewDataSource, UITableViewDelegate {
             return UITableViewCell()
         }
         
-        let userInfo = self.viewModel.cellViewModels[indexPath.row]
+        let userInfo = self.viewModel.usersList[indexPath.row]
         cell.configure(numberingOfCell: indexPath.row + 1, with: userInfo)
         
         return cell
@@ -240,7 +240,7 @@ extension StatisticsViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if self.viewModel.cellViewModels.count - 1 == indexPath.row {
+        if self.viewModel.usersList.count - 1 == indexPath.row {
             self.viewModel.fetchUsers(page: self.viewModel.pageNumber)
         }
     }
