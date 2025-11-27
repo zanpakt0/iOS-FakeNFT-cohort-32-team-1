@@ -49,7 +49,7 @@ final class UserCardViewModel {
                     self.userInfo = userInfo
                     
                     self.state = .loaded(userInfo)
-                    print(userInfo)
+                    print("User name: \(userInfo.name)")
                 case .failure(let error):
                     print("Ошибка")
                     self.state = .error(error)
