@@ -7,6 +7,7 @@
 
 import UIKit
 import Combine
+import Kingfisher
 
 final class UserCardViewController: UIViewController {
     
@@ -160,6 +161,31 @@ final class UserCardViewController: UIViewController {
             nftCollectionButton.topAnchor.constraint(equalTo: goToUserWebsiteButton.bottomAnchor, constant: 57),
             nftCollectionButton.heightAnchor.constraint(equalToConstant: 22)
         ])
+    }
+    
+    private func insertUserDataIntoFields(userData: UserCardViewData) {
+        let processor = RoundCornerImageProcessor(cornerRadius: 35)
+        let defaultImage = UIImage(systemName: "person.crop.circle.fill")?
+            .withTintColor(UIColor.forDefaultAvatarBackgound, renderingMode: .alwaysOriginal)
+        guard let url = userData.avatarURL else  {
+            return self.userAvatarImageView.image = defaultImage
+        }
+        
+        self.userAvatarImageView.kf.setImage(with: url,
+                                             placeholder: nil,
+                                             options: [.processor(processor)]) { result in
+            switch result {
+            case .success:
+                // image loaded correctly
+                break
+            case .failure:
+                self.userAvatarImageView.image = defaultImage
+            }
+        }
+        
+        userNameLabel.text = userData.name
+        userDescriptionLabel.text = userData.decription
+        countOfNftsLabel.text = "\(userData.nfts.count)"
     }
     
     private func bindViewModel() {
