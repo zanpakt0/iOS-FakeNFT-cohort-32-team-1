@@ -4,21 +4,30 @@ final class TabBarController: UITabBarController {
 
     var servicesAssembly: ServicesAssembly!
 
-    private let catalogTabBarItem = UITabBarItem(
+    private let testCatalogTabBarItem = UITabBarItem(
         title: NSLocalizedString("Tab.catalog", comment: ""),
         image: UIImage(systemName: "square.stack.3d.up.fill"),
+        tag: 0
+    )
+    
+    private let catalogTabBarItem = UITabBarItem(
+        title: NSLocalizedString("Tab.catalog", comment: ""),
+        image: UIImage(resource: .catalogIcon),
         tag: 0
     )
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let catalogController = TestCatalogViewController(
+        let testCatalogController = TestCatalogViewController(
             servicesAssembly: servicesAssembly
         )
-        catalogController.tabBarItem = catalogTabBarItem
+        testCatalogController.tabBarItem = testCatalogTabBarItem
+        
+        let catalogViewController = CatalogViewController()
+        catalogViewController.tabBarItem = catalogTabBarItem
 
-        viewControllers = [catalogController]
+        viewControllers = [testCatalogController, catalogViewController]
 
         view.backgroundColor = .systemBackground
     }
