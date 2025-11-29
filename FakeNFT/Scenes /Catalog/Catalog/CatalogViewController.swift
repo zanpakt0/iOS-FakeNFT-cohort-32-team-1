@@ -9,7 +9,7 @@ final class CatalogViewController: UIViewController, ErrorView {
     private let sortByNameTitle: String = NSLocalizedString("catalog.sortByNameTitle", comment: "Sort by name")
     private let sortByCountTitle: String = NSLocalizedString("catalog.sortByCountTitle", comment: "Sort by count of nfts")
     
-    //MARK: - UI
+    //MARK: - UI Elements
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -138,4 +138,11 @@ extension CatalogViewController: UITableViewDataSource {
     
 }
 
-extension CatalogViewController: UITableViewDelegate { }
+extension CatalogViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let NFTvc = NFTCollectionViewController()
+        NFTvc.modalTransitionStyle = .crossDissolve
+        NFTvc.modalPresentationStyle = .fullScreen
+        present(NFTvc, animated: true)
+    }
+}
