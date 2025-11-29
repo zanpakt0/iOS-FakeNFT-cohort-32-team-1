@@ -23,7 +23,7 @@ final class CatalogViewController: UIViewController, ErrorView {
     
     private lazy var sortButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(resource: .sortButton), for: .normal)
+        button.setImage(UIImage(resource: .sortCatalogButton), for: .normal)
         button.tintColor = .segmentActive
         button.imageView?.contentMode = .scaleAspectFit
         button.addTarget(self, action: #selector(sortButtonTapped), for: .touchUpInside)
