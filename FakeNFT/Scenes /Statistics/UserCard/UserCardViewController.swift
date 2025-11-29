@@ -208,3 +208,36 @@ final class UserCardViewController: UIViewController {
             .store(in: &cancellables)
     }
 }
+
+// MARK: - ErrorView
+extension UserCardViewController: ErrorView {
+    func showError() {
+        let retryActionText = NSLocalizedString("Statistics.errorAlert.retryAction.text", comment: "")
+        let errorModel = ErrorModel(
+            message: "",
+            actionText: retryActionText,
+            action: {[weak self] in
+                guard let self = self,
+                      let userId = self.viewModel.userId else { return }
+                self.viewModel.fetchUserById(userId)
+            }
+        )
+        
+        let title = NSLocalizedString("Statistics.errorAlert.title", comment: "")
+        let alert = UIAlertController(
+            title: title,
+            message: nil,
+            preferredStyle: .alert
+        )
+        let retryAction = UIAlertAction(title: errorModel.actionText, style: .default) {_ in
+            errorModel.action()
+        }
+        alert.addAction(retryAction)
+        
+        let cancelActionText = NSLocalizedString("Statistics.errorAlert.cancelAction.text", comment: "")
+        let cancelAction = UIAlertAction(title: cancelActionText, style: .cancel)
+        alert.addAction(cancelAction)
+        
+        present(alert, animated: true)
+    }
+}

@@ -10,8 +10,8 @@ import Combine
 
 // MARK: - Need enums
 enum UIStateForLoader {
-    case showLoaderHideTable
-    case showTableHideLoader
+    case showLoaderHideViews
+    case showViewsHideLoader
     case showBoth
     case hideBoth
 }
@@ -127,10 +127,10 @@ final class StatisticsViewController: UIViewController, LoadingView {
     
     private func showNeedViewsInScreen(needToShowLoadingIndicator: UIStateForLoader) {
         switch needToShowLoadingIndicator {
-        case .showLoaderHideTable:
+        case .showLoaderHideViews:
             self.showLoading()
             self.tableViewWithUsers.isHidden = true
-        case .showTableHideLoader:
+        case .showViewsHideLoader:
             self.hideLoading()
             self.tableViewWithUsers.isHidden = false
         case .showBoth:
@@ -158,12 +158,12 @@ final class StatisticsViewController: UIViewController, LoadingView {
                 case .loading:
                     switch self.viewModel.usersList.count {
                     case 0:
-                        showNeedViewsInScreen(needToShowLoadingIndicator: .showLoaderHideTable)
+                        showNeedViewsInScreen(needToShowLoadingIndicator: .showLoaderHideViews)
                     default:
                         showNeedViewsInScreen(needToShowLoadingIndicator: .showBoth)
                     }
                 case .loaded(_):
-                    showNeedViewsInScreen(needToShowLoadingIndicator: .showTableHideLoader)
+                    showNeedViewsInScreen(needToShowLoadingIndicator: .showViewsHideLoader)
                     self.tableViewWithUsers.reloadData()
                 case .error(_):
                     switch self.viewModel.usersList.count {
@@ -171,7 +171,7 @@ final class StatisticsViewController: UIViewController, LoadingView {
                         showNeedViewsInScreen(needToShowLoadingIndicator: .hideBoth)
                         self.showError()
                     default:
-                        showNeedViewsInScreen(needToShowLoadingIndicator: .showTableHideLoader)
+                        showNeedViewsInScreen(needToShowLoadingIndicator: .showViewsHideLoader)
                         self.showError()
                     }
                 default:
@@ -194,7 +194,7 @@ extension StatisticsViewController: ErrorView {
             message: "",
             actionText: retryActionText,
             action: {[weak self] in
-                guard let self else { return }
+                guard let self = self else { return }
                 self.viewModel.fetchUsers(page: self.viewModel.pageNumber)
             }
         )

@@ -17,6 +17,7 @@ enum UserCardState {
 final class UserCardViewModel {
     
     var userInfo: UserCardViewData?
+    var userId: String?
     
     @Published private(set) var state: UserCardState = .idle
     private let serviceAssembly: ServicesAssembly
@@ -33,6 +34,7 @@ final class UserCardViewModel {
         guard !isLoading else { return }
         
         isLoading = true
+        self.userId = id
         state = .loading
         
         currentTask = serviceAssembly.nftService.getUserCard(id: id) {[weak self] result in
