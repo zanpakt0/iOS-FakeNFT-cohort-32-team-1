@@ -3,7 +3,7 @@ import Combine
 
 final class CatalogViewController: UIViewController, ErrorView {
     //MARK: - Constants
-    private let viewModel = CatalogViewModel(СatalogProvider: CatalogProvider())
+    private let viewModel = CatalogViewModel(catalogProvider: CatalogProvider())
     private var subscribes = Set<AnyCancellable>()
     
     private let sortByNameTitle: String = NSLocalizedString("catalog.sortByNameTitle", comment: "Sort by name")
@@ -37,17 +37,23 @@ final class CatalogViewController: UIViewController, ErrorView {
         return indicator
     }()
     
+    private let refreshControl = UIRefreshControl()
+
     //MARK: - Lyfecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .background
-        setupSortButton()
-        setupTableView()
-        setupLoadingIndicator()
+        setupUI()
         bindViewModel()
     }
     
     //MARK: - Setup UI
+    private func setupUI() {
+        view.backgroundColor = .background
+        setupSortButton()
+        setupTableView()
+        setupLoadingIndicator()
+    }
+    
     private func setupSortButton() {
         view.addSubview(sortButton)
         
@@ -66,6 +72,9 @@ final class CatalogViewController: UIViewController, ErrorView {
         tableView.delegate = self
         
         tableView.register(CatalogCell.self)
+        
+        tableView.refreshControl = refreshControl
+        refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
         
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: sortButton.bottomAnchor),
@@ -91,27 +100,25 @@ final class CatalogViewController: UIViewController, ErrorView {
         self.showFilterActionSheet(firstAction: sortByNameTitleAction, secondAction: sortByCountAction, thirdAction: nil)
     }
     
+    @objc private func refreshData() {
+        viewModel.reload()
+    }
+
     //MARK: - Bind
     func bindViewModel() {
         viewModel.$catalog
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: { [weak self] _ in
                 self?.tableView.reloadData()
+                self?.refreshControl.endRefreshing()
             })
             .store(in: &subscribes)
         
         viewModel.$isLoading
             .receive(on: DispatchQueue.main)
             .sink { [weak self] isLoading in
-                guard let self = self else { return }
-                
-                if isLoading {
-                    self.loadingIndicator.startAnimating()
-                    self.tableView.isHidden = true
-                } else {
-                    self.loadingIndicator.stopAnimating()
-                    self.tableView.isHidden = false
-                }
+                guard let self else { return }
+                isLoading ? self.loadingIndicator.startAnimating() : self.loadingIndicator.stopAnimating()
             }
             .store(in: &subscribes)
     }

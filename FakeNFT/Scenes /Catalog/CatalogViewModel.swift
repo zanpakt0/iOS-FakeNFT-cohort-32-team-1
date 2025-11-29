@@ -10,16 +10,17 @@ struct CatalogItem {
 final class CatalogViewModel {
     //MARK: - Constants
     @Published var catalog: [CatalogItem]
-    @Published var isLoading: Bool = false
+    @Published var isLoading = false
     
     private let catalogProvider: CatalogProviderProtocol
     
     //MARK: - Init
-    init(СatalogProvider: CatalogProvider) {
+    init(catalogProvider: CatalogProvider) {
         self.catalog = []
-        self.catalogProvider = СatalogProvider
+        self.catalogProvider = catalogProvider
         self.isLoading = true
-        СatalogProvider.loadCatalog { catalogItems in
+        catalogProvider.loadCatalog { [weak self] catalogItems in
+            guard let self else { return }
             self.catalog = catalogItems
             self.isLoading = false
         }
@@ -31,5 +32,12 @@ final class CatalogViewModel {
     
     func sortByCountOfNfts() {
         catalog = catalog.sorted(by: { $0.count > $1.count })
+    }
+    
+    func reload() {
+        catalogProvider.loadCatalog { [weak self] catalogItems in
+            guard let self else { return }
+            self.catalog = catalogItems
+        }
     }
 }
