@@ -9,11 +9,18 @@ import UIKit
 import Combine
 import Kingfisher
 
-final class UserCardViewController: UIViewController {
+final class UserCardViewController: UIViewController, LoadingView {
     
     private let viewModel: UserCardViewModel
     private var cancellables = Set<AnyCancellable>()
     
+    lazy var activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .large)
+        indicator.hidesWhenStopped = true
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        
+        return indicator
+    }()
     private lazy var viewWithAllElements: UIView = {
         let viewWithAllElements = UIView()
         viewWithAllElements.backgroundColor = .forViewBackgound
@@ -44,17 +51,18 @@ final class UserCardViewController: UIViewController {
         userDescriptionLabel.font = UIFont.caption2
         userDescriptionLabel.textColor = .segmentActive
         userDescriptionLabel.backgroundColor = .forViewBackgound
+        userDescriptionLabel.numberOfLines = 4
         userDescriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         
         return userDescriptionLabel
     }()
     private lazy var goToUserWebsiteButton: UIButton = {
         let goToUserWebsiteButton = UIButton(type: .custom)
-        let titleOfGoToUSerWebsiteButton = NSLocalizedString("UserCard.goToUserWebsiteButton.title", comment: "")
+        let titleOfGoToUserWebsiteButton = NSLocalizedString("UserCard.goToUserWebsiteButton.title", comment: "")
         
-        goToUserWebsiteButton.setTitle(titleOfGoToUSerWebsiteButton, for: .normal)
+        goToUserWebsiteButton.setTitle(titleOfGoToUserWebsiteButton, for: .normal)
         goToUserWebsiteButton.titleLabel?.font = UIFont.caption1
-        goToUserWebsiteButton.titleLabel?.textColor = .segmentActive
+        goToUserWebsiteButton.setTitleColor(.segmentActive, for: .normal)
         goToUserWebsiteButton.contentHorizontalAlignment = .center
         goToUserWebsiteButton.contentVerticalAlignment = .center
         
@@ -62,16 +70,17 @@ final class UserCardViewController: UIViewController {
         goToUserWebsiteButton.layer.borderColor = UIColor.segmentActive.cgColor
         
         goToUserWebsiteButton.layer.cornerRadius = 16
+        goToUserWebsiteButton.translatesAutoresizingMaskIntoConstraints = false
         
         return goToUserWebsiteButton
     }()
     private lazy var countOfNftsLabel: UILabel = UILabel()
     private lazy var nftCollectionButton: UIButton = {
         let nftCollectionButton = UIButton(type: .system)
-        let titleOfGoToUSerWebsiteButton = NSLocalizedString("UserCard.goToUserWebsiteButton.title", comment: "")
+        let titleOfNftCollection = NSLocalizedString("UserCard.nftCollectionButton.title", comment: "")
         
         let leftLabel = UILabel()
-        leftLabel.text = titleOfGoToUSerWebsiteButton
+        leftLabel.text = titleOfNftCollection
         leftLabel.font = UIFont.bodyBold
         leftLabel.textColor = .segmentActive
         
@@ -94,7 +103,10 @@ final class UserCardViewController: UIViewController {
         arrowImage.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
+            stack.leadingAnchor.constraint(equalTo: nftCollectionButton.leadingAnchor, constant: 16),
             stack.centerYAnchor.constraint(equalTo: nftCollectionButton.centerYAnchor),
+            
+            arrowImage.trailingAnchor.constraint(equalTo: nftCollectionButton.trailingAnchor, constant: -16),
             arrowImage.centerYAnchor.constraint(equalTo: nftCollectionButton.centerYAnchor)
         ])
         
@@ -122,16 +134,26 @@ final class UserCardViewController: UIViewController {
         bindViewModel()
     }
     
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        goToUserWebsiteButton.layer.borderColor = UIColor.segmentActive.cgColor
+        goToUserWebsiteButton.setTitleColor(.segmentActive, for: .normal)
+    }
+    
     private func addSubviews() {
+        view.addSubview(activityIndicator)
         view.addSubview(viewWithAllElements)
         
-        [userAvatarImageView, userNameLabel, goToUserWebsiteButton, nftCollectionButton].forEach {
+        [userAvatarImageView, userNameLabel, userDescriptionLabel, goToUserWebsiteButton, nftCollectionButton].forEach {
             viewWithAllElements.addSubview($0)
         }
     }
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            
             viewWithAllElements.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             viewWithAllElements.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             viewWithAllElements.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -144,7 +166,7 @@ final class UserCardViewController: UIViewController {
             
             userNameLabel.leadingAnchor.constraint(equalTo: userAvatarImageView.trailingAnchor, constant: 16),
             userNameLabel.trailingAnchor.constraint(equalTo: viewWithAllElements.trailingAnchor, constant: -16),
-            userNameLabel.centerXAnchor.constraint(equalTo: userAvatarImageView.centerXAnchor),
+            userNameLabel.centerYAnchor.constraint(equalTo: userAvatarImageView.centerYAnchor),
             
             userDescriptionLabel.leadingAnchor.constraint(equalTo: viewWithAllElements.leadingAnchor, constant: 16),
             userDescriptionLabel.trailingAnchor.constraint(equalTo: viewWithAllElements.trailingAnchor, constant: -16),
@@ -156,11 +178,28 @@ final class UserCardViewController: UIViewController {
             goToUserWebsiteButton.topAnchor.constraint(equalTo: userDescriptionLabel.bottomAnchor, constant: 28),
             goToUserWebsiteButton.heightAnchor.constraint(equalToConstant: 40),
             
-            nftCollectionButton.leadingAnchor.constraint(equalTo: viewWithAllElements.leadingAnchor, constant: 16),
-            nftCollectionButton.trailingAnchor.constraint(equalTo: viewWithAllElements.trailingAnchor, constant: -16),
-            nftCollectionButton.topAnchor.constraint(equalTo: goToUserWebsiteButton.bottomAnchor, constant: 57),
-            nftCollectionButton.heightAnchor.constraint(equalToConstant: 22)
+            nftCollectionButton.leadingAnchor.constraint(equalTo: viewWithAllElements.leadingAnchor),
+            nftCollectionButton.trailingAnchor.constraint(equalTo: viewWithAllElements.trailingAnchor),
+            nftCollectionButton.topAnchor.constraint(equalTo: goToUserWebsiteButton.bottomAnchor, constant: 40),
+            nftCollectionButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 54)
         ])
+    }
+    
+    private func showNeedViewsInScreen(needToShowLoadingIndicator: UIStateForLoader) {
+        switch needToShowLoadingIndicator {
+        case .showLoaderHideViews:
+            showLoading()
+            viewWithAllElements.isHidden = true
+        case .showViewsHideLoader:
+            hideLoading()
+            viewWithAllElements.isHidden = false
+        case .showBoth:
+            showLoading()
+            viewWithAllElements.isHidden = false
+        case .hideBoth:
+            hideLoading()
+            viewWithAllElements.isHidden = true
+        }
     }
     
     private func insertUserDataIntoFields(userData: UserCardViewData) {
@@ -185,7 +224,7 @@ final class UserCardViewController: UIViewController {
         
         userNameLabel.text = userData.name
         userDescriptionLabel.text = userData.decription
-        countOfNftsLabel.text = "\(userData.nfts.count)"
+        countOfNftsLabel.text = "(\(userData.nfts.count))"
     }
     
     private func bindViewModel() {
@@ -196,13 +235,15 @@ final class UserCardViewController: UIViewController {
                 
                 switch state {
                 case .idle:
-                    break
+                    showNeedViewsInScreen(needToShowLoadingIndicator: .hideBoth)
                 case .loading:
-                    break
+                    showNeedViewsInScreen(needToShowLoadingIndicator: .showLoaderHideViews)
                 case .loaded(let user):
-                    break
+                    showNeedViewsInScreen(needToShowLoadingIndicator: .showViewsHideLoader)
+                    insertUserDataIntoFields(userData: user)
                 case .error(_):
-                    break
+                    showNeedViewsInScreen(needToShowLoadingIndicator: .hideBoth)
+                    self.showError()
                 }
             }
             .store(in: &cancellables)
