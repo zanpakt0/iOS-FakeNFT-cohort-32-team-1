@@ -9,7 +9,7 @@ import UIKit
 import Combine
 import Kingfisher
 
-final class UserCardViewController: UIViewController, LoadingView {
+final class UserCardViewController: UIViewController, LoadingView, ErrorView {
     
     private let viewModel: UserCardViewModel
     private var cancellables = Set<AnyCancellable>()
@@ -65,6 +65,8 @@ final class UserCardViewController: UIViewController, LoadingView {
         goToUserWebsiteButton.setTitleColor(.segmentActive, for: .normal)
         goToUserWebsiteButton.contentHorizontalAlignment = .center
         goToUserWebsiteButton.contentVerticalAlignment = .center
+        
+        goToUserWebsiteButton.addTarget(self, action: #selector(goToUserWebsiteButtonClicked), for: .touchUpInside)
         
         goToUserWebsiteButton.layer.borderWidth = 1
         goToUserWebsiteButton.layer.borderColor = UIColor.segmentActive.cgColor
@@ -138,6 +140,22 @@ final class UserCardViewController: UIViewController, LoadingView {
         super.traitCollectionDidChange(previousTraitCollection)
         goToUserWebsiteButton.layer.borderColor = UIColor.segmentActive.cgColor
         goToUserWebsiteButton.setTitleColor(.segmentActive, for: .normal)
+    }
+    
+    @objc private func goToUserWebsiteButtonClicked() {
+        guard let webSiteURL = self.viewModel.userInfo?.website else { return }
+        let webView = WebViewViewController(urlString: webSiteURL.absoluteString)
+        
+        let transition = CATransition()
+        transition.duration = 0.03
+        transition.type = .push
+        transition.subtype = .fromTop
+        navigationController?.view.layer.add(transition, forKey: kCATransition)
+        
+        navigationItem.backButtonTitle = ""
+        webView.hidesBottomBarWhenPushed = true
+        navigationController?.navigationBar.tintColor = .closeButton
+        navigationController?.pushViewController(webView, animated: false)
     }
     
     private func addSubviews() {
@@ -243,16 +261,13 @@ final class UserCardViewController: UIViewController, LoadingView {
                     insertUserDataIntoFields(userData: user)
                 case .error(_):
                     showNeedViewsInScreen(needToShowLoadingIndicator: .hideBoth)
-                    self.showError()
+                    self.showErrorAlert()
                 }
             }
             .store(in: &cancellables)
     }
-}
-
-// MARK: - ErrorView
-extension UserCardViewController: ErrorView {
-    func showError() {
+    
+    private func showErrorAlert() {
         let retryActionText = NSLocalizedString("Statistics.errorAlert.retryAction.text", comment: "")
         let errorModel = ErrorModel(
             message: "",
@@ -265,20 +280,14 @@ extension UserCardViewController: ErrorView {
         )
         
         let title = NSLocalizedString("Statistics.errorAlert.title", comment: "")
-        let alert = UIAlertController(
-            title: title,
-            message: nil,
-            preferredStyle: .alert
-        )
+        
         let retryAction = UIAlertAction(title: errorModel.actionText, style: .default) {_ in
             errorModel.action()
         }
-        alert.addAction(retryAction)
         
         let cancelActionText = NSLocalizedString("Statistics.errorAlert.cancelAction.text", comment: "")
         let cancelAction = UIAlertAction(title: cancelActionText, style: .cancel)
-        alert.addAction(cancelAction)
         
-        present(alert, animated: true)
+        self.showErrorAlertWithTwoButtons(titleOfAlert: title, firstAction: cancelAction, secondAction: retryAction)
     }
 }

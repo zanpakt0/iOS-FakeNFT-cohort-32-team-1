@@ -23,7 +23,7 @@ enum StatisticsViewControllerLayout {
     static let tableBottom: CGFloat = -8
 }
 
-final class StatisticsViewController: UIViewController, LoadingView {
+final class StatisticsViewController: UIViewController, LoadingView, ErrorView {
     
     // MARK: - Private Properties
     private let viewModel: StatisticsViewModel
@@ -39,7 +39,7 @@ final class StatisticsViewController: UIViewController, LoadingView {
     }()
     private lazy var filterButton: UIButton = {
         let filterButton = UIButton(type: .system)
-        let imageForButton = UIImage(resource: .sort)
+        let imageForButton = UIImage(resource: .sortButton)
         filterButton.setImage(imageForButton, for: .normal)
         filterButton.addTarget(self, action: #selector(filterButtonClicked), for: .touchUpInside)
         filterButton.tintColor = .segmentActive
@@ -169,10 +169,10 @@ final class StatisticsViewController: UIViewController, LoadingView {
                     switch self.viewModel.usersList.count {
                     case 0:
                         showNeedViewsInScreen(needToShowLoadingIndicator: .hideBoth)
-                        self.showError()
+                        self.showErrorAlert()
                     default:
                         showNeedViewsInScreen(needToShowLoadingIndicator: .showViewsHideLoader)
-                        self.showError()
+                        self.showErrorAlert()
                     }
                 default:
                     break
@@ -184,11 +184,8 @@ final class StatisticsViewController: UIViewController, LoadingView {
     private func setupNavBar() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: filterButton)
     }
-}
-
-// MARK: - ErrorView
-extension StatisticsViewController: ErrorView {
-    func showError() {
+    
+    private func showErrorAlert() {
         let retryActionText = NSLocalizedString("Statistics.errorAlert.retryAction.text", comment: "")
         let errorModel = ErrorModel(
             message: "",
@@ -200,21 +197,15 @@ extension StatisticsViewController: ErrorView {
         )
         
         let title = NSLocalizedString("Statistics.errorAlert.title", comment: "")
-        let alert = UIAlertController(
-            title: title,
-            message: nil,
-            preferredStyle: .alert
-        )
+        
         let retryAction = UIAlertAction(title: errorModel.actionText, style: .default) {_ in
             errorModel.action()
         }
-        alert.addAction(retryAction)
         
         let cancelActionText = NSLocalizedString("Statistics.errorAlert.cancelAction.text", comment: "")
         let cancelAction = UIAlertAction(title: cancelActionText, style: .cancel)
-        alert.addAction(cancelAction)
         
-        present(alert, animated: true)
+        self.showErrorAlertWithTwoButtons(titleOfAlert: title, firstAction: cancelAction, secondAction: retryAction)
     }
 }
 
