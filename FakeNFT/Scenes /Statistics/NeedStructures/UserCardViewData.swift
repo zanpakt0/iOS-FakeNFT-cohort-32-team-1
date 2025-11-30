@@ -7,6 +7,7 @@
 
 import Foundation
 
+// MARK: - Structure of user's info (Need for user card page)
 final class UserCardViewData {
     let name: String
     let avatarURL: URL?

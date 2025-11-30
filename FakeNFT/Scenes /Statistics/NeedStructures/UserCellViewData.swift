@@ -7,7 +7,7 @@
 
 import Foundation
 
-// MARK: - Structure of user's info (Need for tableView in statistics page)
+// MARK: - Structure of users info (Need for tableView in statistics page)
 final class UserCellViewData: Equatable {
     let name: String
     let avatarURL: URL?

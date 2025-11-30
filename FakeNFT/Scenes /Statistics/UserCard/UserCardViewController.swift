@@ -9,11 +9,38 @@ import UIKit
 import Combine
 import Kingfisher
 
+// MARK: - Need enums
+enum UserCardLayout {
+    static let avatarSize: CGFloat = 70
+    static let avatarLeading: CGFloat = 16
+    static let avatarTop: CGFloat = 20
+
+    static let userNameLeading: CGFloat = 16
+    static let userNameTrailing: CGFloat = -16
+
+    static let descriptionLeading: CGFloat = 16
+    static let descriptionTrailing: CGFloat = -16
+    static let descriptionTop: CGFloat = 20
+    static let descriptionHeight: CGFloat = 72
+
+    static let websiteButtonLeading: CGFloat = 16
+    static let websiteButtonTrailing: CGFloat = -16
+    static let websiteButtonTop: CGFloat = 28
+    static let websiteButtonHeight: CGFloat = 40
+
+    static let nftButtonLeading: CGFloat = 0
+    static let nftButtonTrailing: CGFloat = 0
+    static let nftButtonTop: CGFloat = 40
+    static let nftButtonMinHeight: CGFloat = 54
+}
+
 final class UserCardViewController: UIViewController, LoadingView, ErrorView {
     
+    // MARK: - Private Properties
     private let viewModel: UserCardViewModel
     private var cancellables = Set<AnyCancellable>()
     
+    // MARK: - Views (elements)
     lazy var activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .large)
         indicator.hidesWhenStopped = true
@@ -112,11 +139,18 @@ final class UserCardViewController: UIViewController, LoadingView, ErrorView {
             arrowImage.centerYAnchor.constraint(equalTo: nftCollectionButton.centerYAnchor)
         ])
         
+        leftLabel.isUserInteractionEnabled = false
+        countOfNftsLabel.isUserInteractionEnabled = false
+        stack.isUserInteractionEnabled = false
+        arrowImage.isUserInteractionEnabled = false
+        
+        nftCollectionButton.addTarget(self, action: #selector(nftCollectionButtonClicked), for: .touchUpInside)
         nftCollectionButton.translatesAutoresizingMaskIntoConstraints = false
         
         return nftCollectionButton
     }()
     
+    // MARK: - Initializers
     init(viewModel: UserCardViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -126,6 +160,7 @@ final class UserCardViewController: UIViewController, LoadingView, ErrorView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - View Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .forViewBackgound
@@ -142,20 +177,35 @@ final class UserCardViewController: UIViewController, LoadingView, ErrorView {
         goToUserWebsiteButton.setTitleColor(.segmentActive, for: .normal)
     }
     
+    // MARK: - Private Methods
     @objc private func goToUserWebsiteButtonClicked() {
         guard let webSiteURL = self.viewModel.userInfo?.website else { return }
         let webView = WebViewViewController(urlString: webSiteURL.absoluteString)
         
         let transition = CATransition()
-        transition.duration = 0.03
+        transition.duration = 0.01
         transition.type = .push
         transition.subtype = .fromTop
         navigationController?.view.layer.add(transition, forKey: kCATransition)
         
         navigationItem.backButtonTitle = ""
         webView.hidesBottomBarWhenPushed = true
-        navigationController?.navigationBar.tintColor = .closeButton
         navigationController?.pushViewController(webView, animated: false)
+    }
+    
+    @objc private func nftCollectionButtonClicked() {
+        let userCollectionViewModel = UserCollectionViewModel(serviceAssembly: self.viewModel.serviceAssembly)
+        let userCollectionViewController = UserCollectionViewController(viewModel: userCollectionViewModel)
+        
+        let transition = CATransition()
+        transition.duration = 0.01
+        transition.type = .push
+        transition.subtype = .fromTop
+        navigationController?.view.layer.add(transition, forKey: kCATransition)
+        
+        navigationItem.backButtonTitle = ""
+        userCollectionViewController.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(userCollectionViewController, animated: false)
     }
     
     private func addSubviews() {
@@ -177,29 +227,29 @@ final class UserCardViewController: UIViewController, LoadingView, ErrorView {
             viewWithAllElements.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             viewWithAllElements.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             
-            userAvatarImageView.heightAnchor.constraint(equalToConstant: 70),
-            userAvatarImageView.widthAnchor.constraint(equalToConstant: 70),
-            userAvatarImageView.leadingAnchor.constraint(equalTo: viewWithAllElements.leadingAnchor, constant: 16),
-            userAvatarImageView.topAnchor.constraint(equalTo: viewWithAllElements.topAnchor, constant: 20),
+            userAvatarImageView.heightAnchor.constraint(equalToConstant: UserCardLayout.avatarSize),
+            userAvatarImageView.widthAnchor.constraint(equalToConstant: UserCardLayout.avatarSize),
+            userAvatarImageView.leadingAnchor.constraint(equalTo: viewWithAllElements.leadingAnchor, constant: UserCardLayout.avatarLeading),
+            userAvatarImageView.topAnchor.constraint(equalTo: viewWithAllElements.topAnchor, constant: UserCardLayout.avatarTop),
             
-            userNameLabel.leadingAnchor.constraint(equalTo: userAvatarImageView.trailingAnchor, constant: 16),
-            userNameLabel.trailingAnchor.constraint(equalTo: viewWithAllElements.trailingAnchor, constant: -16),
+            userNameLabel.leadingAnchor.constraint(equalTo: userAvatarImageView.trailingAnchor, constant: UserCardLayout.userNameLeading),
+            userNameLabel.trailingAnchor.constraint(equalTo: viewWithAllElements.trailingAnchor, constant: UserCardLayout.userNameTrailing),
             userNameLabel.centerYAnchor.constraint(equalTo: userAvatarImageView.centerYAnchor),
             
-            userDescriptionLabel.leadingAnchor.constraint(equalTo: viewWithAllElements.leadingAnchor, constant: 16),
-            userDescriptionLabel.trailingAnchor.constraint(equalTo: viewWithAllElements.trailingAnchor, constant: -16),
-            userDescriptionLabel.topAnchor.constraint(equalTo: userAvatarImageView.bottomAnchor, constant: 20),
-            userDescriptionLabel.heightAnchor.constraint(equalToConstant: 72),
+            userDescriptionLabel.leadingAnchor.constraint(equalTo: viewWithAllElements.leadingAnchor, constant: UserCardLayout.descriptionLeading),
+            userDescriptionLabel.trailingAnchor.constraint(equalTo: viewWithAllElements.trailingAnchor, constant: UserCardLayout.descriptionTrailing),
+            userDescriptionLabel.topAnchor.constraint(equalTo: userAvatarImageView.bottomAnchor, constant: UserCardLayout.descriptionTop),
+            userDescriptionLabel.heightAnchor.constraint(equalToConstant: UserCardLayout.descriptionHeight),
             
-            goToUserWebsiteButton.leadingAnchor.constraint(equalTo: viewWithAllElements.leadingAnchor, constant: 16),
-            goToUserWebsiteButton.trailingAnchor.constraint(equalTo: viewWithAllElements.trailingAnchor, constant: -16),
-            goToUserWebsiteButton.topAnchor.constraint(equalTo: userDescriptionLabel.bottomAnchor, constant: 28),
-            goToUserWebsiteButton.heightAnchor.constraint(equalToConstant: 40),
+            goToUserWebsiteButton.leadingAnchor.constraint(equalTo: viewWithAllElements.leadingAnchor, constant: UserCardLayout.websiteButtonLeading),
+            goToUserWebsiteButton.trailingAnchor.constraint(equalTo: viewWithAllElements.trailingAnchor, constant: UserCardLayout.websiteButtonTrailing),
+            goToUserWebsiteButton.topAnchor.constraint(equalTo: userDescriptionLabel.bottomAnchor, constant: UserCardLayout.websiteButtonTop),
+            goToUserWebsiteButton.heightAnchor.constraint(equalToConstant: UserCardLayout.websiteButtonHeight),
             
             nftCollectionButton.leadingAnchor.constraint(equalTo: viewWithAllElements.leadingAnchor),
             nftCollectionButton.trailingAnchor.constraint(equalTo: viewWithAllElements.trailingAnchor),
-            nftCollectionButton.topAnchor.constraint(equalTo: goToUserWebsiteButton.bottomAnchor, constant: 40),
-            nftCollectionButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 54)
+            nftCollectionButton.topAnchor.constraint(equalTo: goToUserWebsiteButton.bottomAnchor, constant: UserCardLayout.nftButtonTop),
+            nftCollectionButton.heightAnchor.constraint(greaterThanOrEqualToConstant: UserCardLayout.nftButtonMinHeight)
         ])
     }
     

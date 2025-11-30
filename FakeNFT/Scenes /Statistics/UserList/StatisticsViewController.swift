@@ -85,7 +85,15 @@ final class StatisticsViewController: UIViewController, LoadingView, ErrorView {
         setupConstraints()
         
         bindViewModel()
-        viewModel.fetchUsers(page: viewModel.pageNumber)
+        viewModel.fetchUsers()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        if self.viewModel.usersList.isEmpty {
+            viewModel.fetchUsers()
+        }
     }
     
     // MARK: - Private Methods
@@ -192,7 +200,7 @@ final class StatisticsViewController: UIViewController, LoadingView, ErrorView {
             actionText: retryActionText,
             action: {[weak self] in
                 guard let self = self else { return }
-                self.viewModel.fetchUsers(page: self.viewModel.pageNumber)
+                self.viewModel.fetchUsers()
             }
         )
         
@@ -231,7 +239,7 @@ extension StatisticsViewController: UITableViewDataSource, UITableViewDelegate {
         let userCardViewController = UserCardViewController(viewModel: userCardViewModel)
         
         let transition = CATransition()
-        transition.duration = 0.03
+        transition.duration = 0.01
         transition.type = .push
         transition.subtype = .fromTop
         navigationController?.view.layer.add(transition, forKey: kCATransition)
@@ -249,7 +257,7 @@ extension StatisticsViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if self.viewModel.usersList.count - 1 == indexPath.row {
-            self.viewModel.fetchUsers(page: self.viewModel.pageNumber)
+            self.viewModel.fetchUsers()
         }
     }
 }

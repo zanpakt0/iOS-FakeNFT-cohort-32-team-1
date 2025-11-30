@@ -21,3 +21,7 @@
 // User card page
 "UserCard.goToUserWebsiteButton.title" = "Перейти на сайт пользователя";
 "UserCard.nftCollectionButton.title" = "Коллекция NFT";
+
+
+// User collection page
+"UserCollection.tite" = "Коллекция NFT";

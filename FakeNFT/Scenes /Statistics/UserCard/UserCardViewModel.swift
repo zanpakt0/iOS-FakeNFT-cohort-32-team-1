@@ -7,6 +7,7 @@
 
 import Foundation
 
+// MARK: - Need enums
 enum UserCardState {
     case idle
     case loading
@@ -16,18 +17,22 @@ enum UserCardState {
 
 final class UserCardViewModel {
     
+    // MARK: - Public Properties
     var userInfo: UserCardViewData?
     var userId: String?
+    let serviceAssembly: ServicesAssembly
     
+    // MARK: - Private Properties
     @Published private(set) var state: UserCardState = .idle
-    private let serviceAssembly: ServicesAssembly
     private var currentTask: NetworkTask?
     private var isLoading = false
     
+    // MARK: - Initializers
     init(serviceAssembly: ServicesAssembly) {
         self.serviceAssembly = serviceAssembly
     }
     
+    // MARK: - Public Methods
     func fetchUserById(_ id: String) {
         print("Дошло")
         

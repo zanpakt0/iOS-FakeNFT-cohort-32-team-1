@@ -8,6 +8,7 @@
 import UIKit
 import Kingfisher
 
+// MARK: - Need enums
 enum StatisticsTableViewCellLayout {
     static let containerBottom: CGFloat = -8
 

@@ -44,7 +44,7 @@ final class StatisticsViewModel {
     }
     
     // MARK: - Public Methods
-    func fetchUsers(page: Int, size: Int = ConstantsForStatistics.pageSize) {
+    func fetchUsers(size: Int = ConstantsForStatistics.pageSize) {
         print("Дошло")
         
         guard !isLoadingPage else { return }
@@ -53,7 +53,7 @@ final class StatisticsViewModel {
         isLoadingPage = true
         state = .loading
         
-        currentTask = servicesAssembly.nftService.getUsers(page: page, size: size) { [weak self] result in
+        currentTask = servicesAssembly.nftService.getUsers(page: self.pageNumber, size: size) { [weak self] result in
             DispatchQueue.main.async {
                 guard let self = self else { return }
                 
