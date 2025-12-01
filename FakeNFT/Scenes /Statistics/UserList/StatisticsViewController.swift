@@ -1,10 +1,3 @@
-//
-//  StatisticsViewController.swift
-//  FakeNFT
-//
-//  Created by Muhammed Nurmukhanov on 22.11.2025.
-//
-
 import UIKit
 import Combine
 
@@ -21,6 +14,9 @@ enum StatisticsViewControllerLayout {
     static let tableLeading: CGFloat = 16
     static let tableTrailing: CGFloat = -16
     static let tableBottom: CGFloat = -8
+    static let tableHeight: CGFloat = 88
+    
+    static let filterButtonSizes: CGFloat = 42
 }
 
 final class StatisticsViewController: UIViewController, LoadingView, ErrorView {
@@ -47,8 +43,8 @@ final class StatisticsViewController: UIViewController, LoadingView, ErrorView {
         filterButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            filterButton.heightAnchor.constraint(equalToConstant: 42),
-            filterButton.widthAnchor.constraint(equalToConstant: 42)
+            filterButton.heightAnchor.constraint(equalToConstant: StatisticsViewControllerLayout.filterButtonSizes),
+            filterButton.widthAnchor.constraint(equalToConstant: StatisticsViewControllerLayout.filterButtonSizes)
         ])
         
         return filterButton
@@ -157,7 +153,7 @@ final class StatisticsViewController: UIViewController, LoadingView, ErrorView {
             .receive(on: RunLoop.main)
             .sink { [weak self] state in
                 
-                guard let self = self else { return }
+                guard let self else { return }
                 
                 switch state {
                 case .idle:
@@ -199,7 +195,7 @@ final class StatisticsViewController: UIViewController, LoadingView, ErrorView {
             message: "",
             actionText: retryActionText,
             action: {[weak self] in
-                guard let self = self else { return }
+                guard let self else { return }
                 self.viewModel.fetchUsers()
             }
         )
@@ -239,7 +235,7 @@ extension StatisticsViewController: UITableViewDataSource, UITableViewDelegate {
         let userCardViewController = UserCardViewController(viewModel: userCardViewModel)
         
         let transition = CATransition()
-        transition.duration = 0.01
+        transition.duration = ConstantsForStatistics.transitionDurationWhenOpenPage
         transition.type = .push
         transition.subtype = .fromTop
         navigationController?.view.layer.add(transition, forKey: kCATransition)
@@ -252,7 +248,7 @@ extension StatisticsViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 88
+        return StatisticsViewControllerLayout.tableHeight
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {

@@ -1,14 +1,7 @@
-//
-//  UserCardViewData.swift
-//  FakeNFT
-//
-//  Created by Muhammed Nurmukhanov on 26.11.2025.
-//
-
 import Foundation
 
 // MARK: - Structure of user's info (Need for user card page)
-final class UserCardViewData {
+struct UserCardViewData {
     let name: String
     let avatarURL: URL?
     let decription: String?

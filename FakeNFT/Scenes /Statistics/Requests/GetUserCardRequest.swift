@@ -1,10 +1,3 @@
-//
-//  GetUserCardRequest.swift
-//  FakeNFT
-//
-//  Created by Muhammed Nurmukhanov on 26.11.2025.
-//
-
 import Foundation
 
 // MARK: - Request for get user by id

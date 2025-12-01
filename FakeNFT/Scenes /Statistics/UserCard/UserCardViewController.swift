@@ -1,10 +1,3 @@
-//
-//  UserCardViewController.swift
-//  FakeNFT
-//
-//  Created by Muhammed Nurmukhanov on 26.11.2025.
-//
-
 import UIKit
 import Combine
 import Kingfisher
@@ -14,6 +7,7 @@ enum UserCardLayout {
     static let avatarSize: CGFloat = 70
     static let avatarLeading: CGFloat = 16
     static let avatarTop: CGFloat = 20
+    static let avatarCornerRadius: CGFloat = 35
 
     static let userNameLeading: CGFloat = 16
     static let userNameTrailing: CGFloat = -16
@@ -22,16 +16,20 @@ enum UserCardLayout {
     static let descriptionTrailing: CGFloat = -16
     static let descriptionTop: CGFloat = 20
     static let descriptionHeight: CGFloat = 72
+    static let descriptionNumberOfLines: Int = 4
 
     static let websiteButtonLeading: CGFloat = 16
     static let websiteButtonTrailing: CGFloat = -16
     static let websiteButtonTop: CGFloat = 28
     static let websiteButtonHeight: CGFloat = 40
-
-    static let nftButtonLeading: CGFloat = 0
-    static let nftButtonTrailing: CGFloat = 0
+    static let websiteBorderWidth: CGFloat = 1
+    static let websiteCornerRadius: CGFloat = 16
+    
     static let nftButtonTop: CGFloat = 40
     static let nftButtonMinHeight: CGFloat = 54
+    static let nftButtonSpaceInStack: CGFloat = 8
+    static let nftButtonStackLeading: CGFloat = 16
+    static let nftButtonArrowImageTrailing: CGFloat = -16
 }
 
 final class UserCardViewController: UIViewController, LoadingView, ErrorView {
@@ -59,7 +57,7 @@ final class UserCardViewController: UIViewController, LoadingView, ErrorView {
         let exampleImage = UIImage(systemName: "person.crop.circle.fill")
         let userAvatarImageView = UIImageView(image: exampleImage)
         userAvatarImageView.clipsToBounds = true
-        userAvatarImageView.layer.cornerRadius = 35
+        userAvatarImageView.layer.cornerRadius = UserCardLayout.avatarCornerRadius
         userAvatarImageView.translatesAutoresizingMaskIntoConstraints = false
         
         return userAvatarImageView
@@ -78,7 +76,7 @@ final class UserCardViewController: UIViewController, LoadingView, ErrorView {
         userDescriptionLabel.font = UIFont.caption2
         userDescriptionLabel.textColor = .segmentActive
         userDescriptionLabel.backgroundColor = .forViewBackgound
-        userDescriptionLabel.numberOfLines = 4
+        userDescriptionLabel.numberOfLines = UserCardLayout.descriptionNumberOfLines
         userDescriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         
         return userDescriptionLabel
@@ -95,10 +93,10 @@ final class UserCardViewController: UIViewController, LoadingView, ErrorView {
         
         goToUserWebsiteButton.addTarget(self, action: #selector(goToUserWebsiteButtonClicked), for: .touchUpInside)
         
-        goToUserWebsiteButton.layer.borderWidth = 1
+        goToUserWebsiteButton.layer.borderWidth = UserCardLayout.websiteBorderWidth
         goToUserWebsiteButton.layer.borderColor = UIColor.segmentActive.cgColor
         
-        goToUserWebsiteButton.layer.cornerRadius = 16
+        goToUserWebsiteButton.layer.cornerRadius = UserCardLayout.websiteCornerRadius
         goToUserWebsiteButton.translatesAutoresizingMaskIntoConstraints = false
         
         return goToUserWebsiteButton
@@ -119,7 +117,7 @@ final class UserCardViewController: UIViewController, LoadingView, ErrorView {
         
         let stack = UIStackView(arrangedSubviews: [leftLabel, countOfNftsLabel])
         stack.axis = .horizontal
-        stack.spacing = 8
+        stack.spacing = UserCardLayout.nftButtonSpaceInStack
         stack.alignment = .center
         
         nftCollectionButton.addSubview(stack)
@@ -132,10 +130,10 @@ final class UserCardViewController: UIViewController, LoadingView, ErrorView {
         arrowImage.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            stack.leadingAnchor.constraint(equalTo: nftCollectionButton.leadingAnchor, constant: 16),
+            stack.leadingAnchor.constraint(equalTo: nftCollectionButton.leadingAnchor, constant: UserCardLayout.nftButtonStackLeading),
             stack.centerYAnchor.constraint(equalTo: nftCollectionButton.centerYAnchor),
             
-            arrowImage.trailingAnchor.constraint(equalTo: nftCollectionButton.trailingAnchor, constant: -16),
+            arrowImage.trailingAnchor.constraint(equalTo: nftCollectionButton.trailingAnchor, constant: UserCardLayout.nftButtonArrowImageTrailing),
             arrowImage.centerYAnchor.constraint(equalTo: nftCollectionButton.centerYAnchor)
         ])
         
@@ -183,7 +181,7 @@ final class UserCardViewController: UIViewController, LoadingView, ErrorView {
         let webView = WebViewViewController(urlString: webSiteURL.absoluteString)
         
         let transition = CATransition()
-        transition.duration = 0.01
+        transition.duration = ConstantsForStatistics.transitionDurationWhenOpenPage
         transition.type = .push
         transition.subtype = .fromTop
         navigationController?.view.layer.add(transition, forKey: kCATransition)
@@ -198,7 +196,7 @@ final class UserCardViewController: UIViewController, LoadingView, ErrorView {
         let userCollectionViewController = UserCollectionViewController(viewModel: userCollectionViewModel)
         
         let transition = CATransition()
-        transition.duration = 0.01
+        transition.duration = ConstantsForStatistics.transitionDurationWhenOpenPage
         transition.type = .push
         transition.subtype = .fromTop
         navigationController?.view.layer.add(transition, forKey: kCATransition)
@@ -271,7 +269,7 @@ final class UserCardViewController: UIViewController, LoadingView, ErrorView {
     }
     
     private func insertUserDataIntoFields(userData: UserCardViewData) {
-        let processor = RoundCornerImageProcessor(cornerRadius: 35)
+        let processor = RoundCornerImageProcessor(cornerRadius: UserCardLayout.avatarCornerRadius)
         let defaultImage = UIImage(systemName: "person.crop.circle.fill")?
             .withTintColor(UIColor.forDefaultAvatarBackgound, renderingMode: .alwaysOriginal)
         guard let url = userData.avatarURL else  {
@@ -299,7 +297,7 @@ final class UserCardViewController: UIViewController, LoadingView, ErrorView {
         viewModel.$state
             .receive(on: RunLoop.main)
             .sink { [weak self] state in
-                guard let self = self else { return }
+                guard let self else { return }
                 
                 switch state {
                 case .idle:
@@ -323,7 +321,7 @@ final class UserCardViewController: UIViewController, LoadingView, ErrorView {
             message: "",
             actionText: retryActionText,
             action: {[weak self] in
-                guard let self = self,
+                guard let self,
                       let userId = self.viewModel.userId else { return }
                 self.viewModel.fetchUserById(userId)
             }

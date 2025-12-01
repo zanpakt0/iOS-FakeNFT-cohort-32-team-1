@@ -1,10 +1,3 @@
-//
-//  UsersRequest.swift
-//  FakeNFT
-//
-//  Created by Muhammed Nurmukhanov on 22.11.2025.
-//
-
 import Foundation
 
 // MARK: - Request for get users

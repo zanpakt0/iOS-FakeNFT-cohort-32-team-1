@@ -1,10 +1,3 @@
-//
-//  StatisticsViewModel.swift
-//  FakeNFT
-//
-//  Created by Muhammed Nurmukhanov on 22.11.2025.
-//
-
 import Foundation
 
 // MARK: - Need enums
@@ -22,7 +15,8 @@ enum FilterType: String {
 
 enum ConstantsForStatistics {
     static let pageSize: Int = 10
-    static let keyForTrackerType: String = "trackerTypeInStatistics"
+    static let keyForFilterTypeInStatistics: String = "filterTypeInStatistics"
+    static let transitionDurationWhenOpenPage: CFTimeInterval = 0.01
 }
 
 final class StatisticsViewModel {
@@ -55,7 +49,7 @@ final class StatisticsViewModel {
         
         currentTask = servicesAssembly.nftService.getUsers(page: self.pageNumber, size: size) { [weak self] result in
             DispatchQueue.main.async {
-                guard let self = self else { return }
+                guard let self else { return }
                 
                 self.isLoadingPage = false
                 
@@ -73,7 +67,7 @@ final class StatisticsViewModel {
                     }
                     
                     self.state = .loaded(self.usersList)
-                    print(self.usersList)
+                    print(self.usersList.count)
                 case .failure(let error):
                     print("Ошибка")
                     self.state = .error(error)
@@ -94,7 +88,7 @@ final class StatisticsViewModel {
     }
     
     func setFilterTypeToStorage(_ filterType: String) {
-        UserDefaults.standard.set(filterType, forKey: ConstantsForStatistics.keyForTrackerType)
+        UserDefaults.standard.set(filterType, forKey: ConstantsForStatistics.keyForFilterTypeInStatistics)
     }
     
     // MARK: - Private Methods
@@ -107,7 +101,7 @@ final class StatisticsViewModel {
     }
     
     private func getFilterTypeFromStorage() -> String {
-        guard let rawValue = UserDefaults.standard.string(forKey: ConstantsForStatistics.keyForTrackerType) else {
+        guard let rawValue = UserDefaults.standard.string(forKey: ConstantsForStatistics.keyForFilterTypeInStatistics) else {
             return FilterType.byRating.rawValue
         }
         return rawValue

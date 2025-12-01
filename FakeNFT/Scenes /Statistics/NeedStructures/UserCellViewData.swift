@@ -1,14 +1,7 @@
-//
-//  UserCellViewModel.swift
-//  FakeNFT
-//
-//  Created by Muhammed Nurmukhanov on 22.11.2025.
-//
-
 import Foundation
 
 // MARK: - Structure of users info (Need for tableView in statistics page)
-final class UserCellViewData: Equatable {
+struct UserCellViewData: Equatable {
     let name: String
     let avatarURL: URL?
     let description: String?

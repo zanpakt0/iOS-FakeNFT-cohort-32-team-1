@@ -1,10 +1,3 @@
-//
-//  UserCardViewModel.swift
-//  FakeNFT
-//
-//  Created by Muhammed Nurmukhanov on 26.11.2025.
-//
-
 import Foundation
 
 // MARK: - Need enums
@@ -44,7 +37,7 @@ final class UserCardViewModel {
         
         currentTask = serviceAssembly.nftService.getUserCard(id: id) {[weak self] result in
             DispatchQueue.main.async {
-                guard let self = self else { return }
+                guard let self else { return }
                 
                 self.isLoading = false
                 
