@@ -1,6 +1,74 @@
 import UIKit
 
 final class NFTCollectionViewController: UIViewController {
+    
+    private let mockNFTs: [NFT] = [
+        NFT(
+            name: "Willow",
+            images: [
+                URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Yellow/Willow/1.png")!,
+                URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Yellow/Willow/2.png")!,
+                URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Yellow/Willow/3.png")!
+            ],
+            rating: 5,
+            description: "mock",
+            price: 3.35,
+            author: URL(string: "https://hungry_darwin.fakenfts.org/")!,
+            id: UUID().uuidString
+        ),
+        NFT(
+            name: "Peachy",
+            images: [URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Yellow/Willow/1.png")!],
+            rating: 4,
+            description: "mock",
+            price: 2.1,
+            author: URL(string: "https://hungry_darwin.fakenfts.org/")!,
+            id: UUID().uuidString
+        ),
+        NFT(
+            name: "Cloud Cat",
+            images: [URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Yellow/Willow/2.png")!],
+            rating: 3,
+            description: "mock",
+            price: 1.7,
+            author: URL(string: "https://hungry_darwin.fakenfts.org/")!,
+            id: UUID().uuidString
+        ),
+        NFT(
+            name: "Willow",
+            images: [
+                URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Yellow/Willow/1.png")!,
+                URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Yellow/Willow/2.png")!,
+                URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Yellow/Willow/3.png")!
+            ],
+            rating: 5,
+            description: "mock",
+            price: 3.35,
+            author: URL(string: "https://hungry_darwin.fakenfts.org/")!,
+            id: UUID().uuidString
+        ),
+        NFT(
+            name: "Peachy",
+            images: [URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Yellow/Willow/1.png")!],
+            rating: 4,
+            description: "mock",
+            price: 2.1,
+            author: URL(string: "https://hungry_darwin.fakenfts.org/")!,
+            id: UUID().uuidString
+        ),
+        NFT(
+            name: "Cloud Cat",
+            images: [URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Yellow/Willow/2.png")!],
+            rating: 3,
+            description: "mock",
+            price: 1.7,
+            author: URL(string: "https://hungry_darwin.fakenfts.org/")!,
+            id: UUID().uuidString
+        )
+    ]
+    
+    private var collectionViewHeightConstraint: NSLayoutConstraint?
+    
     //MARK: - UI Elements
     private lazy var backButton: UIButton = {
         let button = UIButton()
@@ -80,14 +148,15 @@ final class NFTCollectionViewController: UIViewController {
     
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
-        layout.minimumLineSpacing = 10
-        layout.minimumInteritemSpacing = 8
+        layout.minimumInteritemSpacing = 10
+        layout.minimumLineSpacing = 8
         
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collection.translatesAutoresizingMaskIntoConstraints = false
         collection.backgroundColor = .clear
         collection.delegate = self
         collection.dataSource = self
+        collection.isScrollEnabled = false
         return collection
     }()
     
@@ -95,11 +164,12 @@ final class NFTCollectionViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .background
+        updateCollectionViewHeight()
         setupUI()
     }
     
     //MARK: - Setup Methods
-    private func setupUI(){
+    private func setupUI() {
         setupScrollView()
         setupUIInsideContent()
         setupBackButton()
@@ -176,6 +246,29 @@ final class NFTCollectionViewController: UIViewController {
         ])
     }
     
+    private func updateCollectionViewHeight() {
+        collectionView.reloadData()
+        
+        let itemsPerRow = 3
+        let itemHeight: CGFloat = 192
+        let verticalSpacing: CGFloat = 8
+
+        let itemsCount = mockNFTs.count
+        let rows = Int(ceil(Double(itemsCount) / Double(itemsPerRow)))
+        let totalHeight = CGFloat(rows) * itemHeight + CGFloat(max(0, rows - 1)) * verticalSpacing
+
+        if collectionViewHeightConstraint == nil {
+            collectionViewHeightConstraint = collectionView.heightAnchor.constraint(equalToConstant: totalHeight)
+            collectionViewHeightConstraint?.isActive = true
+        } else {
+            collectionViewHeightConstraint?.constant = totalHeight
+        }
+
+        // Обновим layout
+        collectionView.layoutIfNeeded()
+        contentView.layoutIfNeeded()
+    }
+    
     //MARK: - Actions
     @objc private func backButtonAction() {
         dismiss(animated: true)
@@ -184,12 +277,51 @@ final class NFTCollectionViewController: UIViewController {
 
 extension NFTCollectionViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        0
+        mockNFTs.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell: NFTCell = collectionView.dequeueReusableCell(indexPath: indexPath)
+        let nft = mockNFTs[indexPath.item]
+
+            cell.configure(
+                nft: nft,
+                image: UIImage(named: "Peach"),  // временно одна и та же картинка
+                inCart: false,
+                isLiked: false
+            )
         return cell
     }
     
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        return CGSize(width: 108, height: 192)
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        minimumInteritemSpacingForSectionAt section: Int
+    ) -> CGFloat {
+        return 10
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        minimumLineSpacingForSectionAt section: Int
+    ) -> CGFloat {
+        return 8
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        insetForSectionAt section: Int
+    ) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 0, left: 0, bottom: 16, right: 0)
+    }
 }
