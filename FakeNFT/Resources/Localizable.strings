@@ -11,3 +11,5 @@
 "Filter.actionSheet.closeButton.text" = "Закрыть";
 "catalog.sortByNameTitle" = "По названию";
 "catalog.sortByCountTitle" = "По количеству NFT";
+
+"nftCollection.authorLabel.text" = "Автор коллекции:";
