@@ -1,15 +1,10 @@
-//
-//  StatisticsTableViewCell.swift
-//  FakeNFT
-//
-//  Created by Muhammed Nurmukhanov on 23.11.2025.
-//
-
 import UIKit
 import Kingfisher
 
+// MARK: - Need enums
 enum StatisticsTableViewCellLayout {
     static let containerBottom: CGFloat = -8
+    static let containerCornerRadius: CGFloat = 12
 
     static let numberingLabelTop: CGFloat = 30
     static let numberingLabelBottom: CGFloat = -30
@@ -18,6 +13,7 @@ enum StatisticsTableViewCellLayout {
     static let avatarLeading: CGFloat = 16
     static let avatarVerticalPadding: CGFloat = 26
     static let avatarWidth: CGFloat = 28
+    static let avatarCornerRadius: CGFloat = 14
 
     static let userNameTrailing: CGFloat = 8
     static let userNameWidth: CGFloat = 186
@@ -26,6 +22,7 @@ enum StatisticsTableViewCellLayout {
     static let nftCountWidth: CGFloat = 38
     
     static let usersInfoViewWidth: CGFloat = 343
+    static let usersInfoViewCornerRadius: CGFloat = 12
     static let heightOfViewsInUsersInfoView: CGFloat = 28
     static let topAnchorOfViewsInUsersInfoView: CGFloat = 26
     static let bottomAnchorOfViewsInUsersInfoView: CGFloat = -26
@@ -39,7 +36,7 @@ final class StatisticsTableViewCell: UITableViewCell {
     // MARK: - Views (elements)
     private let containerView: UIView = {
         let containerview = UIView()
-        containerview.layer.cornerRadius = 12
+        containerview.layer.cornerRadius = StatisticsTableViewCellLayout.containerCornerRadius
         containerview.backgroundColor = .forViewBackgound
         containerview.translatesAutoresizingMaskIntoConstraints = false
         return containerview
@@ -56,7 +53,7 @@ final class StatisticsTableViewCell: UITableViewCell {
     private lazy var usersInfoView: UIView = {
         let usersInfoView = UIView()
         usersInfoView.backgroundColor = .segmentInactive
-        usersInfoView.layer.cornerRadius = 12
+        usersInfoView.layer.cornerRadius = StatisticsTableViewCellLayout.usersInfoViewCornerRadius
         usersInfoView.translatesAutoresizingMaskIntoConstraints = false
         
         return usersInfoView
@@ -65,7 +62,7 @@ final class StatisticsTableViewCell: UITableViewCell {
         let exampleImage = UIImage(systemName: "person.crop.circle.fill")
         let userAvatarImageView = UIImageView(image: exampleImage)
         userAvatarImageView.clipsToBounds = true
-        userAvatarImageView.layer.cornerRadius = 14
+        userAvatarImageView.layer.cornerRadius = StatisticsTableViewCellLayout.avatarCornerRadius
         userAvatarImageView.translatesAutoresizingMaskIntoConstraints = false
         
         return userAvatarImageView
@@ -103,9 +100,9 @@ final class StatisticsTableViewCell: UITableViewCell {
     }
     
     // MARK: - Public Methods
-    func configure(numberingOfCell: Int, with usersInfo: UsersListCellViewModel) {
+    func configure(numberingOfCell: Int, with usersInfo: UserCellViewData) {
         self.numberingLabel.text = "\(numberingOfCell)"
-        let processor = RoundCornerImageProcessor(cornerRadius: 14)
+        let processor = RoundCornerImageProcessor(cornerRadius: StatisticsTableViewCellLayout.avatarCornerRadius)
         let defaultImage = UIImage(systemName: "person.crop.circle.fill")?
             .withTintColor(UIColor.forDefaultAvatarBackgound, renderingMode: .alwaysOriginal)
         guard let url = usersInfo.avatarURL else  {

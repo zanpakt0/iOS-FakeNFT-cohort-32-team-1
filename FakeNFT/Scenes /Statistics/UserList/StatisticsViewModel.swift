@@ -1,17 +1,10 @@
-//
-//  StatisticsViewModel.swift
-//  FakeNFT
-//
-//  Created by Muhammed Nurmukhanov on 22.11.2025.
-//
-
 import Foundation
 
 // MARK: - Need enums
 enum StatisticsState {
     case idle
     case loading
-    case loaded([UsersListCellViewModel])
+    case loaded([UserCellViewData])
     case error(Error)
 }
 
@@ -22,18 +15,19 @@ enum FilterType: String {
 
 enum ConstantsForStatistics {
     static let pageSize: Int = 10
-    static let keyForTrackerType: String = "trackerTypeInStatistics"
+    static let keyForFilterTypeInStatistics: String = "filterTypeInStatistics"
+    static let transitionDurationWhenOpenPage: CFTimeInterval = 0.01
 }
 
 final class StatisticsViewModel {
     
     // MARK: - Public Properties
-    var cellViewModels: [UsersListCellViewModel] = []
+    var usersList: [UserCellViewData] = []
     var pageNumber = 0
+    let servicesAssembly: ServicesAssembly
     
     // MARK: - Private Properties
     @Published private(set) var state: StatisticsState = .idle
-    private let servicesAssembly: ServicesAssembly
     private var currentTask: NetworkTask?
     private var isLoadingPage = false
     private var hasMorePages = true
@@ -44,7 +38,7 @@ final class StatisticsViewModel {
     }
     
     // MARK: - Public Methods
-    func fetchUsers(page: Int, size: Int = ConstantsForStatistics.pageSize) {
+    func fetchUsers(size: Int = ConstantsForStatistics.pageSize) {
         print("Дошло")
         
         guard !isLoadingPage else { return }
@@ -53,17 +47,17 @@ final class StatisticsViewModel {
         isLoadingPage = true
         state = .loading
         
-        currentTask = servicesAssembly.nftService.getUsers(page: page, size: size) { [weak self] result in
+        currentTask = servicesAssembly.nftService.getUsers(page: self.pageNumber, size: size) { [weak self] result in
             DispatchQueue.main.async {
-                guard let self = self else { return }
+                guard let self else { return }
                 
                 self.isLoadingPage = false
                 
                 switch result {
                 case .success(let users):
                     print("Успех")
-                    let cellViewModels = users.map { UsersListCellViewModel(user: $0)}
-                    self.addToListExcludingDuplicates(cellViewModels)
+                    let usersList = users.map { UserCellViewData(user: $0)}
+                    self.addToListExcludingDuplicates(usersList)
                     self.sortByNeedFilterType()
                     
                     if users.isEmpty {
@@ -72,8 +66,8 @@ final class StatisticsViewModel {
                         self.pageNumber += 1
                     }
                     
-                    self.state = .loaded(self.cellViewModels)
-                    print(self.cellViewModels)
+                    self.state = .loaded(self.usersList)
+                    print(self.usersList.count)
                 case .failure(let error):
                     print("Ошибка")
                     self.state = .error(error)
@@ -94,29 +88,29 @@ final class StatisticsViewModel {
     }
     
     func setFilterTypeToStorage(_ filterType: String) {
-        UserDefaults.standard.set(filterType, forKey: ConstantsForStatistics.keyForTrackerType)
+        UserDefaults.standard.set(filterType, forKey: ConstantsForStatistics.keyForFilterTypeInStatistics)
     }
     
     // MARK: - Private Methods
     private func sortCellViewModelByName() {
-        self.cellViewModels.sort { $0.name < $1.name }
+        self.usersList.sort { $0.name < $1.name }
     }
     
     private func sortCellViewModelByRating() {
-        self.cellViewModels.sort { $0.nfts.count > $1.nfts.count }
+        self.usersList.sort { $0.nfts.count > $1.nfts.count }
     }
     
     private func getFilterTypeFromStorage() -> String {
-        guard let rawValue = UserDefaults.standard.string(forKey: ConstantsForStatistics.keyForTrackerType) else {
+        guard let rawValue = UserDefaults.standard.string(forKey: ConstantsForStatistics.keyForFilterTypeInStatistics) else {
             return FilterType.byRating.rawValue
         }
         return rawValue
     }
     
-    private func addToListExcludingDuplicates(_ newUsers: [UsersListCellViewModel]) {
+    private func addToListExcludingDuplicates(_ newUsers: [UserCellViewData]) {
         let uniqueUsers = newUsers.filter { newUser in
-            !cellViewModels.contains(newUser)
+            !usersList.contains(newUser)
         }
-        self.cellViewModels.append(contentsOf: uniqueUsers)
+        self.usersList.append(contentsOf: uniqueUsers)
     }
 }

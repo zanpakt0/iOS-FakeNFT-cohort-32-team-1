@@ -17,3 +17,11 @@
 "Statistics.errorAlert.cancelAction.text" = "Отмена";
 "Statistics.actionSheet.byNameAction.text" = "По имени";
 "Statistics.actionSheet.byRatingAction.text" = "По рейтингу";
+
+// User card page
+"UserCard.goToUserWebsiteButton.title" = "Перейти на сайт пользователя";
+"UserCard.nftCollectionButton.title" = "Коллекция NFT";
+
+
+// User collection page
+"UserCollection.tite" = "Коллекция NFT";

@@ -1,14 +1,7 @@
-//
-//  UserCellViewModel.swift
-//  FakeNFT
-//
-//  Created by Muhammed Nurmukhanov on 22.11.2025.
-//
-
 import Foundation
 
-// MARK: - Structure of user's info (Need for tableView in statistics page)
-final class UsersListCellViewModel: Equatable {
+// MARK: - Structure of users info (Need for tableView in statistics page)
+struct UserCellViewData: Equatable {
     let name: String
     let avatarURL: URL?
     let description: String?
@@ -18,14 +11,14 @@ final class UsersListCellViewModel: Equatable {
 
     init(user: User) {
         self.name = user.name
-        self.avatarURL = user.avatar.flatMap { URL(string: $0) }
+        self.avatarURL = URL(string: user.avatar)
         self.description = user.description
         self.nfts = user.nfts
         self.rating = user.rating
         self.id = user.id
     }
     
-    static func == (lhs: UsersListCellViewModel, rhs: UsersListCellViewModel) -> Bool {
+    static func == (lhs: UserCellViewData, rhs: UserCellViewData) -> Bool {
         lhs.name == rhs.name &&
         lhs.description == rhs.description &&
         lhs.rating == rhs.rating &&
