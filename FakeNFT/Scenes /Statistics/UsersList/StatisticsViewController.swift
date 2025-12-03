@@ -244,7 +244,7 @@ extension StatisticsViewController: UITableViewDataSource, UITableViewDelegate {
         userCardViewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(userCardViewController, animated: false)
         
-        userCardViewModel.fetchUserById(self.viewModel.usersList[indexPath.row].id)
+        userCardViewModel.fetchUserById(viewModel.usersList[indexPath.row].id)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

@@ -24,7 +24,33 @@ final class UserCollectionViewController: UIViewController {
         view.backgroundColor = .forViewBackgound
         navigationController?.navigationBar.tintColor = .closeButton
         
+        setupTitle()
+        bindViewModel()
+    }
+    
+    // MARK: - Private Methods
+    private func setupTitle() {
         let title = NSLocalizedString("UserCollection.tite", comment: "")
         navigationItem.title = title
+    }
+
+    private func bindViewModel() {
+        self.viewModel.$state
+            .receive(on: RunLoop.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                
+                switch state {
+                case .idle:
+                    break
+                case .loading:
+                    break
+                case .loaded(_):
+                    break
+                case .error(_):
+                    break
+                }
+            }
+            .store(in: &cancellables)
     }
 }
