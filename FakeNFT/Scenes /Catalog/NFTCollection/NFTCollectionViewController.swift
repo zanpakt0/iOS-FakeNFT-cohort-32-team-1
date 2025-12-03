@@ -8,6 +8,8 @@ final class NFTCollectionViewController: UIViewController {
     private let viewModel: NFTCollectionViewModel
     private var subscribes = Set<AnyCancellable>()
     
+    private let catalogItem: Catalog
+    
     private var favorites: [String] = []
     private var itemsInCart: [String] = []
     
@@ -110,6 +112,7 @@ final class NFTCollectionViewController: UIViewController {
 
     //MARK: - Init
     init(catalogItem: Catalog) {
+        self.catalogItem = catalogItem
         self.viewModel = NFTCollectionViewModel(
             provider: NftServiceImpl(
                 networkClient: DefaultNetworkClient(),
@@ -130,6 +133,7 @@ final class NFTCollectionViewController: UIViewController {
         view.backgroundColor = .background
         updateCollectionViewHeight()
         setupUI()
+        applyCatalogData()
         bindViewModel()
     }
     
@@ -239,6 +243,13 @@ final class NFTCollectionViewController: UIViewController {
         loadingIndicator.constraintCenters(to: view)
     }
     
+    private func applyCatalogData() {
+        coverImage.kf.setImage(with: catalogItem.cover)
+        titleLabel.text = catalogItem.name.capitalized
+        webLabel.text = catalogItem.author
+        descriptionLabel.text = catalogItem.description
+    }
+
     //MARK: - Actions
     @objc private func backButtonAction() {
         dismiss(animated: true)
