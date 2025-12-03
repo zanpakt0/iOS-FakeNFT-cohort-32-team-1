@@ -1,14 +1,14 @@
 import UIKit
 
-struct NFT: Codable {
-    let name: String
-    let images: [URL]
-    let rating: Int
-    let description: String
-    let price: Double
-    let author: URL
-    let id: String
-}
+//struct Nft: Codable {
+//    let name: String
+//    let images: [URL]
+//    let rating: Int
+//    let description: String
+//    let price: Double
+//    let author: URL
+//    let id: String
+//}
 
 struct Catalog: Codable {
     let name: String
@@ -19,8 +19,3 @@ struct Catalog: Codable {
     let id: String
 }
 
-struct CatalogItem {
-    let imageURL: URL
-    let title: String
-    let count: Int
-}

@@ -3,7 +3,11 @@ import Combine
 
 final class CatalogViewController: UIViewController, ErrorView {
     //MARK: - Constants
-    private let viewModel = CatalogViewModel(catalogProvider: CatalogProvider(networkClient: DefaultNetworkClient(), storage: CatalogStorageImpl()))
+    private let viewModel = CatalogViewModel(
+        catalogProvider: CatalogProvider(
+            networkClient: DefaultNetworkClient(),
+            storage: CatalogStorageImpl())
+    )
     private var subscribes = Set<AnyCancellable>()
     
     private let sortByNameTitle: String = NSLocalizedString("catalog.sortByNameTitle", comment: "Sort by name")
@@ -101,7 +105,7 @@ final class CatalogViewController: UIViewController, ErrorView {
     }
     
     @objc private func refreshData() {
-        viewModel.reload()
+        viewModel.loadData()
     }
 
     //MARK: - Bind
@@ -132,7 +136,7 @@ extension CatalogViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: CatalogCell = tableView.dequeueReusableCell()
         let item = viewModel.catalog[indexPath.row]
-        cell.configure(imageURL: item.imageURL, text: item.title, numberOfNfts: item.count)
+        cell.configure(imageURL: item.cover, text: item.name, numberOfNfts: item.nfts.count)
         return cell
     }
     
@@ -140,7 +144,8 @@ extension CatalogViewController: UITableViewDataSource {
 
 extension CatalogViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let NFTvc = NFTCollectionViewController(nftCollection: mockNFTs)
+        let item = viewModel.catalog[indexPath.row]
+        let NFTvc = NFTCollectionViewController(catalogItem: item)
         NFTvc.modalTransitionStyle = .crossDissolve
         NFTvc.modalPresentationStyle = .fullScreen
         present(NFTvc, animated: true)

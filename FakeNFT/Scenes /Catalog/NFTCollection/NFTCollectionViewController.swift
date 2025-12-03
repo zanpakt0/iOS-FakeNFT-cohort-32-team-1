@@ -1,10 +1,12 @@
 import UIKit
+import Combine
 
 final class NFTCollectionViewController: UIViewController {
     
     private var collectionViewHeightConstraint: NSLayoutConstraint?
     
-    private let NFT: [NFT]
+    private let viewModel: NFTCollectionViewModel
+    private var subscribes = Set<AnyCancellable>()
     
     private var favorites: [String] = []
     private var itemsInCart: [String] = []
@@ -100,18 +102,24 @@ final class NFTCollectionViewController: UIViewController {
         return collection
     }()
     
+    private lazy var loadingIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView()
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        return indicator
+    }()
+
     //MARK: - Init
-    init(nftCollection: [NFT]) {
-        self.NFT = nftCollection
-//        self.nftCollection = nftCollection
-//        self.titleLabel.text = nftCollection.name
-//        self.coverImage.image = nftCollection.cover
-//        self.authorLabel.text = nftCollection.author
-//        self.descriptionLabel.text = nftCollection.description
-//        self.NFT = nftCollection.nfts
+    init(catalogItem: Catalog) {
+        self.viewModel = NFTCollectionViewModel(
+            provider: NftServiceImpl(
+                networkClient: DefaultNetworkClient(),
+                storage: NftStorageImpl()
+            ),
+            nftIds: catalogItem.nfts
+        )
         super.init(nibName: nil, bundle: nil)
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -122,6 +130,7 @@ final class NFTCollectionViewController: UIViewController {
         view.backgroundColor = .background
         updateCollectionViewHeight()
         setupUI()
+        bindViewModel()
     }
     
     //MARK: - Setup Methods
@@ -225,9 +234,32 @@ final class NFTCollectionViewController: UIViewController {
         contentView.layoutIfNeeded()
     }
     
+    private func setupLoadingIndicator() {
+        view.addSubview(loadingIndicator)
+        loadingIndicator.constraintCenters(to: view)
+    }
+    
     //MARK: - Actions
     @objc private func backButtonAction() {
         dismiss(animated: true)
+    }
+    
+    //MARK: - Bind
+    func bindViewModel() {
+        viewModel.$nfts
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: { [weak self] _ in
+                self?.collectionView.reloadData()
+            })
+            .store(in: &subscribes)
+        
+        viewModel.$isLoading
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] isLoading in
+                guard let self else { return }
+                isLoading ? self.loadingIndicator.startAnimating() : self.loadingIndicator.stopAnimating()
+            }
+            .store(in: &subscribes)
     }
 }
 
@@ -236,7 +268,7 @@ extension NFTCollectionViewController: UICollectionViewDataSource, UICollectionV
         _ collectionView: UICollectionView,
         numberOfItemsInSection section: Int
     ) -> Int {
-        NFT.count
+        mockNFTs.count
     }
     
     func collectionView(
@@ -244,11 +276,11 @@ extension NFTCollectionViewController: UICollectionViewDataSource, UICollectionV
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
         let cell: NFTCell = collectionView.dequeueReusableCell(indexPath: indexPath)
-        let nft = NFT[indexPath.item]
+        let nft = mockNFTs[indexPath.item]
         cell.delegate = self
             cell.configure(
                 nft: nft,
-                image: UIImage(named: "Peach"),  // временно одна и та же картинка
+                imageURL: nft.images[0],
                 inCart: itemsInCart.contains(nft.id),
                 isLiked: favorites.contains(nft.id)
             )

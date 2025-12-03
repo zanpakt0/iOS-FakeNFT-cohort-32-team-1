@@ -127,15 +127,11 @@ final class NFTCell: UICollectionViewCell, ReuseIdentifying {
     }
     
     //MARK: - Methods
-    func configure(nft: NFT, image: UIImage?, inCart: Bool, isLiked: Bool) {
+    func configure(nft: Nft, imageURL: URL, inCart: Bool, isLiked: Bool) {
         self.nftId = nft.id
         
-        if let image = image {
-            nftImageView.image = image
-        } else {
-            nftImageView.image = UIImage(named: "Peach")
-        }
-        
+        nftImageView.kf.setImage(with: imageURL)
+
         let firstWord = nft.name.split(separator: " ").first.map(String.init) ?? nft.name
         nftLabel.text = firstWord
         
