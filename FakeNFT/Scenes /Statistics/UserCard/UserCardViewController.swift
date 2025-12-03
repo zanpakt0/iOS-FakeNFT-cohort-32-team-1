@@ -204,6 +204,9 @@ final class UserCardViewController: UIViewController, LoadingView, ErrorView {
         navigationItem.backButtonTitle = ""
         userCollectionViewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(userCollectionViewController, animated: false)
+        
+        guard let nfts = viewModel.userInfo?.nfts else { return }
+        userCollectionViewModel.fetchNfts(listOfNfts: nfts)
     }
     
     private func addSubviews() {
