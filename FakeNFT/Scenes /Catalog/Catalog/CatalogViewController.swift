@@ -3,7 +3,7 @@ import Combine
 
 final class CatalogViewController: UIViewController, ErrorView {
     //MARK: - Constants
-    private let viewModel = CatalogViewModel(catalogProvider: CatalogProvider())
+    private let viewModel = CatalogViewModel(catalogProvider: CatalogProvider(networkClient: DefaultNetworkClient(), storage: CatalogStorageImpl()))
     private var subscribes = Set<AnyCancellable>()
     
     private let sortByNameTitle: String = NSLocalizedString("catalog.sortByNameTitle", comment: "Sort by name")
@@ -132,7 +132,7 @@ extension CatalogViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: CatalogCell = tableView.dequeueReusableCell()
         let item = viewModel.catalog[indexPath.row]
-        cell.configure(image: item.image, text: item.title, numberOfNfts: item.count)
+        cell.configure(imageURL: item.imageURL, text: item.title, numberOfNfts: item.count)
         return cell
     }
     
@@ -140,7 +140,7 @@ extension CatalogViewController: UITableViewDataSource {
 
 extension CatalogViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let NFTvc = NFTCollectionViewController()
+        let NFTvc = NFTCollectionViewController(nftCollection: mockNFTs)
         NFTvc.modalTransitionStyle = .crossDissolve
         NFTvc.modalPresentationStyle = .fullScreen
         present(NFTvc, animated: true)

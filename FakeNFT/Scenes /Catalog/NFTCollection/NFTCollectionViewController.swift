@@ -2,72 +2,12 @@ import UIKit
 
 final class NFTCollectionViewController: UIViewController {
     
-    private let mockNFTs: [NFT] = [
-        NFT(
-            name: "Willow",
-            images: [
-                URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Yellow/Willow/1.png")!,
-                URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Yellow/Willow/2.png")!,
-                URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Yellow/Willow/3.png")!
-            ],
-            rating: 5,
-            description: "mock",
-            price: 3.35,
-            author: URL(string: "https://hungry_darwin.fakenfts.org/")!,
-            id: UUID().uuidString
-        ),
-        NFT(
-            name: "Peachy",
-            images: [URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Yellow/Willow/1.png")!],
-            rating: 4,
-            description: "mock",
-            price: 2.1,
-            author: URL(string: "https://hungry_darwin.fakenfts.org/")!,
-            id: UUID().uuidString
-        ),
-        NFT(
-            name: "Cloud Cat",
-            images: [URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Yellow/Willow/2.png")!],
-            rating: 3,
-            description: "mock",
-            price: 1.7,
-            author: URL(string: "https://hungry_darwin.fakenfts.org/")!,
-            id: UUID().uuidString
-        ),
-        NFT(
-            name: "Willow",
-            images: [
-                URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Yellow/Willow/1.png")!,
-                URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Yellow/Willow/2.png")!,
-                URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Yellow/Willow/3.png")!
-            ],
-            rating: 5,
-            description: "mock",
-            price: 3.35,
-            author: URL(string: "https://hungry_darwin.fakenfts.org/")!,
-            id: UUID().uuidString
-        ),
-        NFT(
-            name: "Peachy",
-            images: [URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Yellow/Willow/1.png")!],
-            rating: 4,
-            description: "mock",
-            price: 2.1,
-            author: URL(string: "https://hungry_darwin.fakenfts.org/")!,
-            id: UUID().uuidString
-        ),
-        NFT(
-            name: "Cloud Cat",
-            images: [URL(string: "https://code.s3.yandex.net/Mobile/iOS/NFT/Yellow/Willow/2.png")!],
-            rating: 3,
-            description: "mock",
-            price: 1.7,
-            author: URL(string: "https://hungry_darwin.fakenfts.org/")!,
-            id: UUID().uuidString
-        )
-    ]
-    
     private var collectionViewHeightConstraint: NSLayoutConstraint?
+    
+    private let NFT: [NFT]
+    
+    private var favorites: [String] = []
+    private var itemsInCart: [String] = []
     
     //MARK: - UI Elements
     private lazy var backButton: UIButton = {
@@ -159,6 +99,22 @@ final class NFTCollectionViewController: UIViewController {
         collection.isScrollEnabled = false
         return collection
     }()
+    
+    //MARK: - Init
+    init(nftCollection: [NFT]) {
+        self.NFT = nftCollection
+//        self.nftCollection = nftCollection
+//        self.titleLabel.text = nftCollection.name
+//        self.coverImage.image = nftCollection.cover
+//        self.authorLabel.text = nftCollection.author
+//        self.descriptionLabel.text = nftCollection.description
+//        self.NFT = nftCollection.nfts
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     //MARK: - Lifecycle
     override func viewDidLoad() {
@@ -276,19 +232,25 @@ final class NFTCollectionViewController: UIViewController {
 }
 
 extension NFTCollectionViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        mockNFTs.count
+    func collectionView(
+        _ collectionView: UICollectionView,
+        numberOfItemsInSection section: Int
+    ) -> Int {
+        NFT.count
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
         let cell: NFTCell = collectionView.dequeueReusableCell(indexPath: indexPath)
-        let nft = mockNFTs[indexPath.item]
-
+        let nft = NFT[indexPath.item]
+        cell.delegate = self
             cell.configure(
                 nft: nft,
                 image: UIImage(named: "Peach"),  // временно одна и та же картинка
-                inCart: false,
-                isLiked: false
+                inCart: itemsInCart.contains(nft.id),
+                isLiked: favorites.contains(nft.id)
             )
         return cell
     }
@@ -298,7 +260,7 @@ extension NFTCollectionViewController: UICollectionViewDataSource, UICollectionV
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        return CGSize(width: 108, height: 192)
+        CGSize(width: 108, height: 192)
     }
     
     func collectionView(
@@ -306,7 +268,7 @@ extension NFTCollectionViewController: UICollectionViewDataSource, UICollectionV
         layout collectionViewLayout: UICollectionViewLayout,
         minimumInteritemSpacingForSectionAt section: Int
     ) -> CGFloat {
-        return 10
+        10
     }
     
     func collectionView(
@@ -314,7 +276,7 @@ extension NFTCollectionViewController: UICollectionViewDataSource, UICollectionV
         layout collectionViewLayout: UICollectionViewLayout,
         minimumLineSpacingForSectionAt section: Int
     ) -> CGFloat {
-        return 8
+        8
     }
     
     func collectionView(
@@ -322,6 +284,32 @@ extension NFTCollectionViewController: UICollectionViewDataSource, UICollectionV
         layout collectionViewLayout: UICollectionViewLayout,
         insetForSectionAt section: Int
     ) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 0, left: 0, bottom: 16, right: 0)
+        UIEdgeInsets(top: 0, left: 0, bottom: 16, right: 0)
+    }
+}
+
+extension NFTCollectionViewController: NFTCellDelegate {
+    func addInCart(id: String, in cell: NFTCell) {
+        self.itemsInCart.append(id)
+        print(itemsInCart)
+    }
+    
+    func deleteFromCart(id: String, in cell: NFTCell) {
+        if let index = itemsInCart.firstIndex(of: id) {
+            self.itemsInCart.remove(at: index)
+        }
+        print(itemsInCart)
+    }
+    
+    func addLike(id: String, in cell: NFTCell) {
+        self.favorites.append(id)
+        print(favorites)
+    }
+    
+    func deleteLike(id: String, in cell: NFTCell) {
+        if let index = favorites.firstIndex(of: id) {
+            self.favorites.remove(at: index)
+        }
+        print(favorites)
     }
 }

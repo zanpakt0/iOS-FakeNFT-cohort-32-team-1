@@ -1,26 +1,34 @@
 import UIKit
 
+typealias CatalogCompletion = (Result<[Catalog], Error>) -> Void
+
 protocol CatalogProviderProtocol {
-    func loadCatalog(completion: @escaping ([CatalogItem]) -> Void)
+    func loadCatalog(completion: @escaping CatalogCompletion)
 }
 
 final class CatalogProvider: CatalogProviderProtocol {
-    func loadCatalog(completion: @escaping ([CatalogItem]) -> Void) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-            completion(CatalogItem.mockCatalog)
+    
+    private let networkClient: NetworkClient
+    private let storage: CatalogStorage
+    
+    init(networkClient: NetworkClient, storage: CatalogStorage) {
+        self.storage = storage
+        self.networkClient = networkClient
+    }
+    
+    func loadCatalog(completion: @escaping CatalogCompletion) {
+        let request = NFTCatalogRequest()
+        
+        networkClient.send(request: request, type: [Catalog].self) { [weak storage] result in
+            switch result {
+            case .success(let catalogList):
+                storage?.saveCatalog(catalogList)
+                completion(.success(catalogList))
+            case .failure(let error):
+                completion(.failure(error))
+            }
         }
     }
 }
 
-extension CatalogItem {
-    static var mockCatalog: [CatalogItem] {
-        [
-            CatalogItem(image: UIImage(systemName: "cube.box.fill")!, title: "Art Blocks", count: 12),
-            CatalogItem(image: UIImage(systemName: "gamecontroller.fill")!, title: "Gaming NFTs", count: 8),
-            CatalogItem(image: UIImage(systemName: "photo.on.rectangle")!, title: "Photography", count: 19),
-            CatalogItem(image: UIImage(systemName: "paintbrush.pointed.fill")!, title: "Digital Art", count: 30),
-            CatalogItem(image: UIImage(systemName: "music.note.list")!, title: "Music NFTs", count: 7),
-            CatalogItem(image: UIImage(systemName: "person.3.fill")!, title: "Community", count: 5)
-        ]
-    }
-}
+

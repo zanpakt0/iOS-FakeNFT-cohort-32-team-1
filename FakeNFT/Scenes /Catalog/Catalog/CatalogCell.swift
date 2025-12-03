@@ -1,4 +1,5 @@
 import UIKit
+import Kingfisher
 
 final class CatalogCell: UITableViewCell, ReuseIdentifying {
     
@@ -64,8 +65,8 @@ final class CatalogCell: UITableViewCell, ReuseIdentifying {
         catalogLabel.text = nil
     }
     
-    func configure(image: UIImage, text: String, numberOfNfts: Int) {
-        catalogImage.image = image
+    func configure(imageURL: URL, text: String, numberOfNfts: Int) {
+        catalogImage.kf.setImage(with: imageURL)
         catalogLabel.text = "\(text.capitalized) (\(numberOfNfts))"
     }
 }
