@@ -66,7 +66,7 @@ final class PaymentCell: UICollectionViewCell {
     override var isSelected: Bool {
         didSet {
             contentView.layer.borderWidth = isSelected ? 1 : 0
-            contentView.layer.borderColor = isSelected ?  UIColor.black.cgColor : UIColor.segmentPayCellBackground.cgColor
+            contentView.layer.borderColor = isSelected ?  UIColor.segmentButtonBackground.cgColor : UIColor.segmentPayCellBackground.cgColor
         }
     }
 }

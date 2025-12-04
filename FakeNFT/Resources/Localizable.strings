@@ -7,6 +7,7 @@
 "Error.title" = "Ошибка";
 "price" = "Цена";
 "Choose a payment method" = "Выберите способ оплаты";
+"Pay" = "Оплатить";
 
 //Filter actionSheet
 "Filter.actionSheet.title" = "Сортировка";

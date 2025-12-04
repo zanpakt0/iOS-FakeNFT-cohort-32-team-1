@@ -108,7 +108,7 @@ final class CartViewController: UIViewController, ErrorView {
     
     // MARK: - Setup Bottom
     private func setupBottom() {
-        bottomView.backgroundColor = .secondarySystemBackground
+        bottomView.backgroundColor = .segmentPayCellBackground
         view.addSubview(bottomView)
         bottomView.addSubview(countLabel)
         bottomView.addSubview(totalLabel)

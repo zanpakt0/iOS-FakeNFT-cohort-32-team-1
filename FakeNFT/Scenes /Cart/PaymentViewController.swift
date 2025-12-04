@@ -12,6 +12,9 @@ final class PaymentViewController: UIViewController {
     private let viewModel = PaymentViewModel()
     private let titleLabel = UILabel()
     private let collectionView: UICollectionView
+    private let bottomView = UIView()
+    private let payButton = UIButton(type: .system)
+    private let termsLabel = UILabel()
     
     init() {
         let layout = UICollectionViewFlowLayout()
@@ -29,6 +32,9 @@ final class PaymentViewController: UIViewController {
         view.backgroundColor = .systemBackground
         setupNav()
         setupCollection()
+        setupBottomView()
+        setupTerms()
+        setupPayButton()
     }
     
     private func setupNav() {
@@ -68,6 +74,55 @@ final class PaymentViewController: UIViewController {
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -150)
+        ])
+    }
+    
+    private func setupBottomView() {
+        bottomView.backgroundColor = .segmentPayCellBackground
+        
+        view.addSubview(bottomView)
+        bottomView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            bottomView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            bottomView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            bottomView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            bottomView.heightAnchor.constraint(equalToConstant: 186)
+        ])
+    }
+    
+    private func setupTerms() {
+        termsLabel.text = "Совершая покупку, вы соглашаетесь с условиями Пользовательского соглашения"
+        
+        termsLabel.font = .systemFont(ofSize: 13, weight: .regular)
+        termsLabel.numberOfLines = 2
+        termsLabel.textColor = .segmentButtonBackground
+        
+        view.addSubview(termsLabel)
+        termsLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            termsLabel.topAnchor.constraint(equalTo: bottomView.topAnchor, constant: 16),
+            termsLabel.leadingAnchor.constraint(equalTo: bottomView.leadingAnchor, constant: 16),
+            termsLabel.trailingAnchor.constraint(equalTo: bottomView.trailingAnchor, constant: -16)
+        ])
+    }
+    
+    private func setupPayButton() {
+        payButton.setTitle(NSLocalizedString("Pay", comment: ""), for: .normal)
+        payButton.titleLabel?.font = .systemFont(ofSize: 17, weight: .bold)
+        payButton.backgroundColor = .segmentButtonBackground
+        payButton.tintColor = .segmentButtonText
+        payButton.layer.cornerRadius = 16
+        
+        view.addSubview(payButton)
+        payButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            payButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            payButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -12),
+            payButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
+            payButton.heightAnchor.constraint(equalToConstant: 60)
         ])
     }
 }
