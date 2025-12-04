@@ -32,7 +32,7 @@ enum UserCardLayout {
     static let nftButtonArrowImageTrailing: CGFloat = -16
 }
 
-final class UserCardViewController: UIViewController, LoadingView, ErrorView {
+final class UserCardViewController: UIViewController, LoadingView {
     
     // MARK: - Private Properties
     private let viewModel: UserCardViewModel
@@ -319,26 +319,10 @@ final class UserCardViewController: UIViewController, LoadingView, ErrorView {
     }
     
     private func showErrorAlert() {
-        let retryActionText = NSLocalizedString("Statistics.errorAlert.retryAction.text", comment: "")
-        let errorModel = ErrorModel(
-            message: "",
-            actionText: retryActionText,
-            action: {[weak self] in
-                guard let self,
-                      let userId = self.viewModel.userId else { return }
-                self.viewModel.fetchUserById(userId)
-            }
-        )
-        
-        let title = NSLocalizedString("Statistics.errorAlert.title", comment: "")
-        
-        let retryAction = UIAlertAction(title: errorModel.actionText, style: .default) {_ in
-            errorModel.action()
+        self.universalErrorAlert {[weak self] in
+            guard let self,
+                  let userId = self.viewModel.userId else { return }
+            self.viewModel.fetchUserById(userId)
         }
-        
-        let cancelActionText = NSLocalizedString("Statistics.errorAlert.cancelAction.text", comment: "")
-        let cancelAction = UIAlertAction(title: cancelActionText, style: .cancel)
-        
-        self.showErrorAlertWithTwoButtons(titleOfAlert: title, firstAction: cancelAction, secondAction: retryAction)
     }
 }

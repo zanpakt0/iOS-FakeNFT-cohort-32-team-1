@@ -11,6 +11,7 @@ final class UserCollectionViewModel {
     
     // MARK: - Public Properties
     var nftList: [NftCellViewData] = []
+    var nftIdsList: [String]?
     
     // MARK: - Private Properties
     @Published private(set) var state: UserCollectionState = .idle
@@ -30,6 +31,7 @@ final class UserCollectionViewModel {
         guard !isLoading else { return }
         
         isLoading = true
+        self.nftIdsList = listOfNfts
         state = .loading
         
         let group = DispatchGroup()
@@ -60,7 +62,9 @@ final class UserCollectionViewModel {
             self.isLoading = false
             self.state = .loaded(self.nftList)
             print("Все загрузилось")
-            print("\(self.nftList.count)")
+            for nft in self.nftList {
+                print(nft.name)
+            }
         }
     }
     

@@ -55,7 +55,7 @@ final class NftServiceImpl: NftService {
     
     @discardableResult
     func getNft(id: String, completion: @escaping (Result<NFT, any Error>) -> Void) -> (any NetworkTask)? {
-        let request = NFTRequest(id: id)
+        let request = GetNftRequest(id: id)
         return networkClient.send(request: request, type: NFT.self) { result in
             completion(result)
         }

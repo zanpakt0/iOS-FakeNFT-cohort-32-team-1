@@ -48,9 +48,17 @@ final class UserCollectionViewController: UIViewController {
                 case .loaded(_):
                     break
                 case .error(_):
-                    break
+                    showErrorAlert()
                 }
             }
             .store(in: &cancellables)
+    }
+    
+    private func showErrorAlert() {
+        self.universalErrorAlert { [weak self] in
+            guard let self,
+            let nftIdsList = self.viewModel.nftIdsList else { return }
+            self.viewModel.fetchNfts(listOfNfts: nftIdsList)
+        }
     }
 }
