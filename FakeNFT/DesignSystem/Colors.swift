@@ -44,6 +44,9 @@ extension UIColor {
     static let greenUniversal = UIColor(hexString: "#1C9F00")
     static let redUniversal = UIColor(hexString: "#F56B6C")
     
+    private static let lightGrayDay = UIColor(hexString: "#F7F7F8")
+    private static let lightGrayNight = UIColor(hexString: "#2C2C2E")
+    
     private static let blackDay = UIColor(hexString: "#1A1B22")
     private static let blackNight = UIColor(hexString: "#FFFFFF")
     
@@ -57,6 +60,12 @@ extension UIColor {
         return traits.userInterfaceStyle == .dark
         ? .blackDay
         : .blackNight
+    }
+    
+    static let segmentPayCellBackground = UIColor { traits in
+        return traits.userInterfaceStyle == .dark
+        ? .lightGrayNight
+        : .lightGrayDay
     }
     
     private static let yaBlackLight = UIColor(hexString: "1A1B22")

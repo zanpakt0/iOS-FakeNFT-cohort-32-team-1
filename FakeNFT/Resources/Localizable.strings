@@ -5,7 +5,8 @@
 "Error.unknown" = "Произошла неизвестная ошибка";
 "Error.repeat" = "Повторить";
 "Error.title" = "Ошибка";
-
+"price" = "Цена";
+"Choose a payment method" = "Выберите способ оплаты";
 
 //Filter actionSheet
 "Filter.actionSheet.title" = "Сортировка";

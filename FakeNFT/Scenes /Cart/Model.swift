@@ -14,3 +14,9 @@ struct NFTItem {
     var rating: Int
     let price: Double
 }
+
+struct CryptoPayment {
+    let iconName: String
+    let title: String
+    let ticker: String
+}

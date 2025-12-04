@@ -33,25 +33,31 @@ final class CartViewController: UIViewController, ErrorView {
         btn.titleLabel?.font = .systemFont(ofSize: 18, weight: .bold)
         return btn
     }()
-
-    private let sortButton: UIButton = {
-        let btn = UIButton(type: .system)
-        btn.setImage(UIImage(named: "sortButton"), for: .normal)
-        btn.tintColor = UIColor.segmentButtonBackground
-        return btn
-    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
+        payButton.addTarget(self, action: #selector(payButtonTapped), for: .touchUpInside)
         
-        setupButton()
+        setupNavigationBar()
         setupBottom()
         setupTable()
         setupBindings()
         
         viewModel.updateTotal()
+    }
+    
+    // MARK: - Setup Navigation Bar
+    private func setupNavigationBar() {
         
+        let sortButtonItem = UIBarButtonItem(
+            image: UIImage(named: "sortButton"),
+            style: .plain,
+            target: self,
+            action: #selector(sortButtonTapped)
+        )
+        sortButtonItem.tintColor = UIColor.segmentButtonBackground
+        navigationItem.rightBarButtonItem = sortButtonItem
     }
     
     // MARK: - Setup bindings
@@ -65,30 +71,14 @@ final class CartViewController: UIViewController, ErrorView {
         }
     }
     
-    private func setupButton() {
-        view.addSubview(sortButton)
-        sortButton.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            sortButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 44),
-            sortButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -9),
-            sortButton.heightAnchor.constraint(equalToConstant: 42),
-            sortButton.widthAnchor.constraint(equalToConstant: 42)
-            ])
-        sortButton.addTarget(self, action: #selector(sortButtonTapped), for: .touchUpInside)
-    }
-
     @objc private func sortButtonTapped() {
         let priceAction = UIAlertAction(title: "По цене", style: .default) { [weak self] _ in
-            print("Сортировка по цене")
             self?.viewModel.sortByPrice()
         }
         let ratingAction = UIAlertAction(title: "По рейтингу", style: .default) { [weak self] _ in
-            print("Сортировка по рейтингу")
             self?.viewModel.sortByRating()
         }
         let titleAction = UIAlertAction(title: "По названию", style: .default) { [weak self] _ in
-            print("Сортировка по названию")
             self?.viewModel.sortByTitle()
         }
         showFilterActionSheet(
@@ -109,7 +99,7 @@ final class CartViewController: UIViewController, ErrorView {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: sortButton.bottomAnchor, constant: 2),
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: bottomView.topAnchor)
@@ -150,6 +140,12 @@ final class CartViewController: UIViewController, ErrorView {
             payButton.widthAnchor.constraint(equalToConstant: 240),
             payButton.heightAnchor.constraint(equalToConstant: 44)
         ])
+    }
+    
+    @objc private func payButtonTapped() {
+        let nextVC = PaymentViewController()
+        nextVC.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(nextVC, animated: true)
     }
 }
 

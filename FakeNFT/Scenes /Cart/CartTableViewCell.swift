@@ -41,7 +41,7 @@ final class CartTableViewCell: UITableViewCell {
     
     private let priceTitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Цена"
+        label.text = NSLocalizedString("price", comment: "")
         label.font = UIFont(name: "SFProText-Regular", size: 13) ?? UIFont.systemFont(ofSize: 13)
         label.textColor = .secondaryLabel
         return label
