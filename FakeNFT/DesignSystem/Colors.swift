@@ -41,7 +41,24 @@ extension UIColor {
     static let textSecondary = UIColor.gray
     static let textOnPrimary = UIColor.white
     static let textOnSecondary = UIColor.black
-
+    static let greenUniversal = UIColor(hexString: "#1C9F00")
+    static let redUniversal = UIColor(hexString: "#F56B6C")
+    
+    private static let blackDay = UIColor(hexString: "#1A1B22")
+    private static let blackNight = UIColor(hexString: "#FFFFFF")
+    
+    static let segmentButtonBackground = UIColor { traits in
+        return traits.userInterfaceStyle == .dark
+        ? .blackNight
+        : .blackDay
+    }
+    
+    static let segmentButtonText = UIColor { traits in
+        return traits.userInterfaceStyle == .dark
+        ? .blackDay
+        : .blackNight
+    }
+    
     private static let yaBlackLight = UIColor(hexString: "1A1B22")
     private static let yaBlackDark = UIColor.white
     private static let yaLightGrayLight = UIColor(hexString: "#F7F7F8")
@@ -61,6 +78,12 @@ extension UIColor {
 
     static let closeButton = UIColor { traits in
         return traits.userInterfaceStyle == .dark
+        ? .yaBlackDark
+        : .yaBlackLight
+    }
+    
+    static let forViewBackgound = UIColor { traits in
+        return traits.userInterfaceStyle == .light
         ? .yaBlackDark
         : .yaBlackLight
     }
