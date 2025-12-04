@@ -14,7 +14,17 @@ final class PaymentViewController: UIViewController {
     private let collectionView: UICollectionView
     private let bottomView = UIView()
     private let payButton = UIButton(type: .system)
-    private let termsLabel = UILabel()
+    private let termsTextView: UITextView = {
+        let tv = UITextView()
+        tv.isEditable = false
+        tv.isScrollEnabled = false
+        tv.backgroundColor = .clear
+        tv.font = .systemFont(ofSize: 13, weight: .regular)
+        tv.textColor = .segmentButtonBackground
+        tv.dataDetectorTypes = []
+        tv.isUserInteractionEnabled = true
+        return tv
+    }()
     
     init() {
         let layout = UICollectionViewFlowLayout()
@@ -86,26 +96,58 @@ final class PaymentViewController: UIViewController {
         NSLayoutConstraint.activate([
             bottomView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             bottomView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            bottomView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            bottomView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             bottomView.heightAnchor.constraint(equalToConstant: 186)
         ])
     }
     
     private func setupTerms() {
-        termsLabel.text = "Совершая покупку, вы соглашаетесь с условиями Пользовательского соглашения"
+        let fullText = "Совершая покупку, вы соглашаетесь с условиями Пользовательского соглашения"
+        let highlightText = "Пользовательского соглашения"
         
-        termsLabel.font = .systemFont(ofSize: 13, weight: .regular)
-        termsLabel.numberOfLines = 2
-        termsLabel.textColor = .segmentButtonBackground
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.minimumLineHeight = 18
+        paragraphStyle.maximumLineHeight = 18
         
-        view.addSubview(termsLabel)
-        termsLabel.translatesAutoresizingMaskIntoConstraints = false
+        let attributedString = NSMutableAttributedString(
+            string: fullText,
+            attributes: [
+                .paragraphStyle: paragraphStyle,
+                .kern: -0.08,
+                .font: UIFont.systemFont(ofSize: 13, weight: .regular),
+                .foregroundColor: UIColor.segmentButtonBackground
+            ]
+        )
         
+        let termsRange = (fullText as NSString).range(of: highlightText)
+        
+        let urlString = "https://yandex.ru/legal/practicum_termsofuse"
+        
+        attributedString.addAttribute(.link, value: urlString, range: termsRange)
+        
+        termsTextView.attributedText = attributedString
+        termsTextView.isEditable = false
+        termsTextView.isSelectable = true
+        termsTextView.isScrollEnabled = false
+        termsTextView.backgroundColor = .clear
+        termsTextView.textContainerInset = .zero
+        
+        termsTextView.dataDetectorTypes = .link
+        
+        termsTextView.linkTextAttributes = [
+            .foregroundColor: UIColor.systemBlue,
+            .underlineStyle: NSUnderlineStyle.single.rawValue
+        ]
+        
+        view.addSubview(termsTextView)
+        termsTextView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            termsLabel.topAnchor.constraint(equalTo: bottomView.topAnchor, constant: 16),
-            termsLabel.leadingAnchor.constraint(equalTo: bottomView.leadingAnchor, constant: 16),
-            termsLabel.trailingAnchor.constraint(equalTo: bottomView.trailingAnchor, constant: -16)
+            termsTextView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            termsTextView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            termsTextView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -100)
         ])
+        
+        termsTextView.delegate = self
     }
     
     private func setupPayButton() {
@@ -155,6 +197,19 @@ extension PaymentViewController: UICollectionViewDelegateFlowLayout, UICollectio
         
         let width = (collectionView.frame.width - 7) / 2
         return CGSize(width: width, height: 46)
+    }
+}
+
+extension PaymentViewController: UITextViewDelegate {
+    func textView(_ textView: UITextView,
+                  shouldInteractWith URL: URL,
+                  in characterRange: NSRange) -> Bool {
+        if URL.absoluteString == "https://yandex.ru/legal/practicum_termsofuse" {
+            let webVC = TermsWebViewController(urlString: URL.absoluteString)
+            navigationController?.pushViewController(webVC, animated: true)
+            return false
+        }
+        return true
     }
 }
 
