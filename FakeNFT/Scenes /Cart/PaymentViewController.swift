@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import ProgressHUD
 
 final class PaymentViewController: UIViewController {
     
@@ -45,6 +46,7 @@ final class PaymentViewController: UIViewController {
         setupBottomView()
         setupTerms()
         setupPayButton()
+        bindViewModel()
     }
     
     private func setupNav() {
@@ -102,8 +104,8 @@ final class PaymentViewController: UIViewController {
     }
     
     private func setupTerms() {
-        let fullText = "Совершая покупку, вы соглашаетесь с условиями Пользовательского соглашения"
-        let highlightText = "Пользовательского соглашения"
+        let fullText = NSLocalizedString("By making a purchase, you agree to the terms of the User Agreement", comment: "")
+        let highlightText = NSLocalizedString("User Agreement", comment: "")
         
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.minimumLineHeight = 18
@@ -135,8 +137,7 @@ final class PaymentViewController: UIViewController {
         termsTextView.dataDetectorTypes = .link
         
         termsTextView.linkTextAttributes = [
-            .foregroundColor: UIColor.systemBlue,
-            .underlineStyle: NSUnderlineStyle.single.rawValue
+            .foregroundColor: UIColor.systemBlue
         ]
         
         view.addSubview(termsTextView)
@@ -156,6 +157,7 @@ final class PaymentViewController: UIViewController {
         payButton.backgroundColor = .segmentButtonBackground
         payButton.tintColor = .segmentButtonText
         payButton.layer.cornerRadius = 16
+        payButton.addTarget(self, action: #selector(didTapPay), for: .touchUpInside)
         
         view.addSubview(payButton)
         payButton.translatesAutoresizingMaskIntoConstraints = false
@@ -166,6 +168,35 @@ final class PaymentViewController: UIViewController {
             payButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             payButton.heightAnchor.constraint(equalToConstant: 60)
         ])
+    }
+    
+    private func bindViewModel() {
+        viewModel.onSuccess = { [weak self] in
+            ProgressHUD.dismiss()
+            let successVC = SuccessViewController()
+            self?.navigationController?.pushViewController(successVC, animated: true)
+        }
+        
+        viewModel.onError = { [weak self] retryHandler in
+            ProgressHUD.dismiss()
+            let alertTitle = NSLocalizedString("Payment Failed", comment: "Title for payment error alert")
+            let retryTitle = NSLocalizedString("Retry", comment: "Retry button title")
+            let cancelTitle = NSLocalizedString("Cancel", comment: "Cancel button title")
+            
+            let alert = UIAlertController(title: alertTitle, message: "", preferredStyle: .alert)
+            
+            let retry = UIAlertAction(title: retryTitle, style: .default) { _ in
+                retryHandler()
+            }
+            alert.addAction(retry)
+            alert.addAction(UIAlertAction(title: cancelTitle, style: .cancel))
+            self?.present(alert, animated: true)
+        }
+    }
+    
+    @objc private func didTapPay() {
+        ProgressHUD.show()
+        viewModel.pay()
     }
 }
 

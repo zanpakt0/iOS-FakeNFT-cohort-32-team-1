@@ -8,6 +8,11 @@
 "price" = "Цена";
 "Choose a payment method" = "Выберите способ оплаты";
 "Pay" = "Оплатить";
+"By making a purchase, you agree to the terms of the User Agreement" = "Совершая покупку, вы соглашаетесь с условиями Пользовательского соглашения";
+"User Agreement" = "Пользовательского соглашения";
+"Payment Failed" = "Не удалось произвести оплату";
+"Retry" = "Повторить";
+"Cancel" = "Отмена";
 
 //Filter actionSheet
 "Filter.actionSheet.title" = "Сортировка";
