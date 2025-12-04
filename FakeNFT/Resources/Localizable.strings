@@ -13,6 +13,9 @@
 "Payment Failed" = "Не удалось произвести оплату";
 "Retry" = "Повторить";
 "Cancel" = "Отмена";
+"Your cart is empty" = "Корзина пуста";
+"Success! Your payment has been completed. Congratulations on your purchase!" = "Успех! Оплата прошла, поздравляем с покупкой!";
+"Return to Cart" = "Вернуться в корзину";
 
 //Filter actionSheet
 "Filter.actionSheet.title" = "Сортировка";

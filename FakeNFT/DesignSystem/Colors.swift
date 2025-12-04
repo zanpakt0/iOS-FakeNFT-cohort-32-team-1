@@ -51,19 +51,19 @@ extension UIColor {
     private static let blackNight = UIColor(hexString: "#FFFFFF")
     
     static let segmentButtonBackground = UIColor { traits in
-        return traits.userInterfaceStyle == .dark
+        traits.userInterfaceStyle == .dark
         ? .blackNight
         : .blackDay
     }
     
     static let segmentButtonText = UIColor { traits in
-        return traits.userInterfaceStyle == .dark
+        traits.userInterfaceStyle == .dark
         ? .blackDay
         : .blackNight
     }
     
     static let segmentPayCellBackground = UIColor { traits in
-        return traits.userInterfaceStyle == .dark
+        traits.userInterfaceStyle == .dark
         ? .lightGrayNight
         : .lightGrayDay
     }

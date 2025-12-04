@@ -5,8 +5,15 @@
 //  Created by Svetlana Varenova on 27.11.2025.
 //
 
-import Foundation
 import UIKit
+
+enum MockData {
+    static let items: [NFTItem] = [
+        NFTItem(image: UIImage(named: "nft1"), title: "April", rating: 1, price: 1.78),
+        NFTItem(image: UIImage(named: "nft2"), title: "Greena", rating: 3, price: 1.79),
+        NFTItem(image: UIImage(named: "nft3"), title: "Spring", rating: 5, price: 1.77)
+    ]
+}
 
 final class CartViewModel {
     
@@ -15,11 +22,7 @@ final class CartViewModel {
     var onTotalUpdated: ((String, String) -> Void)?
     
     // MARK: - Data
-    private(set) var items: [NFTItem] = [
-        NFTItem(image: UIImage(named: "nft1"), title: "April", rating: 1, price: 1.78),
-        NFTItem(image: UIImage(named: "nft2"), title: "Greena", rating: 3, price: 1.79),
-        NFTItem(image: UIImage(named: "nft3"), title: "Spring", rating: 5, price: 1.77)
-    ]
+    private(set) var items: [NFTItem] = MockData.items
     
     // MARK: - Methods
     func numberOfItems() -> Int { items.count }
@@ -28,6 +31,11 @@ final class CartViewModel {
     func removeItem(at index: Int) {
         guard items.indices.contains(index) else { return }
         items.remove(at: index)
+        notifyUpdates()
+    }
+    
+    func removeAllItems() {
+        items.removeAll()
         notifyUpdates()
     }
     

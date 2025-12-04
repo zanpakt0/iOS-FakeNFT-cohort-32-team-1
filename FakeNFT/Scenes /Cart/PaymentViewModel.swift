@@ -7,9 +7,8 @@
 
 import UIKit
 
-final class PaymentViewModel {
-    
-    private(set) var items: [CryptoPayment] = [
+enum MockCrypto {
+    static let items: [CryptoPayment] = [
         .init(iconName: "Bitcoin (BTC)", title: "Bitcoin", ticker: "BTC"),
         .init(iconName: "Dogecoin (DOGE)", title: "Dogecoin", ticker: "DOGE"),
         .init(iconName: "Tether (USDT)", title: "Tether", ticker: "USDT"),
@@ -19,6 +18,11 @@ final class PaymentViewModel {
         .init(iconName: "Cardano (ADA)", title: "Cardano", ticker: "ADA"),
         .init(iconName: "Shiba Inu (SHIB)", title: "Shiba Inu", ticker: "SHIB")
     ]
+}
+
+final class PaymentViewModel {
+    
+    private(set) var items: [CryptoPayment] = MockCrypto.items
     
     private(set) var selectedIndex: IndexPath?
     

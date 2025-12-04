@@ -33,6 +33,15 @@ final class CartViewController: UIViewController, ErrorView {
         btn.titleLabel?.font = .systemFont(ofSize: 18, weight: .bold)
         return btn
     }()
+    private let emptyLabel: UILabel = {
+        let label = UILabel()
+        label.text = NSLocalizedString("Your cart is empty", comment: "")
+        label.font = .systemFont(ofSize: 17, weight: .bold)
+        label.textColor = .segmentButtonBackground
+        label.textAlignment = .center
+        label.isHidden = true
+        return label
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -63,7 +72,9 @@ final class CartViewController: UIViewController, ErrorView {
     // MARK: - Setup bindings
     private func setupBindings() {
         viewModel.onItemsUpdated = { [weak self] in
-            self?.tableView.reloadData()
+            guard let self = self else { return }
+            self.tableView.reloadData()
+            self.emptyLabel.isHidden = !self.viewModel.items.isEmpty
         }
         viewModel.onTotalUpdated = { [weak self] count, total in
             self?.countLabel.text = count
@@ -98,11 +109,17 @@ final class CartViewController: UIViewController, ErrorView {
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
+        view.addSubview(emptyLabel)
+        emptyLabel.translatesAutoresizingMaskIntoConstraints = false
+        
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: bottomView.topAnchor)
+            tableView.bottomAnchor.constraint(equalTo: bottomView.topAnchor),
+            
+            emptyLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptyLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
     }
     
@@ -146,6 +163,17 @@ final class CartViewController: UIViewController, ErrorView {
         let nextVC = PaymentViewController()
         nextVC.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(nextVC, animated: true)
+    }
+    
+    func clearCart() {
+        viewModel.removeAllItems()
+    }
+    
+    func updateEmptyStateUI() {
+        tableView.isHidden = true
+        bottomView.isHidden = true
+        navigationItem.rightBarButtonItem = nil
+        emptyLabel.isHidden = false
     }
 }
 
