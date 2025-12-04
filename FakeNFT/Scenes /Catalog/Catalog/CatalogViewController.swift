@@ -159,7 +159,10 @@ extension CatalogViewController: UITableViewDataSource {
 extension CatalogViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let item = viewModel.catalog[indexPath.row]
-        let NFTvc = NFTCollectionViewController(catalogItem: item)
+        let provider = NftServiceImpl(networkClient: DefaultNetworkClient(),
+                                     storage: NftStorageImpl())
+        let viewModel = NFTCollectionViewModel(provider: provider, nftIds: item.nfts)
+        let NFTvc = NFTCollectionViewController(viewModel: viewModel, catalogItem: item)
         NFTvc.modalTransitionStyle = .crossDissolve
         NFTvc.modalPresentationStyle = .fullScreen
         present(NFTvc, animated: true)

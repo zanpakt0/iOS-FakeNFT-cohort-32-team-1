@@ -138,15 +138,9 @@ final class NFTCollectionViewController: UIViewController {
     }()
     
     //MARK: - Init
-    init(catalogItem: Catalog) {
+    init(viewModel: NFTCollectionViewModel, catalogItem: Catalog) {
         self.catalogItem = catalogItem
-        self.viewModel = NFTCollectionViewModel(
-            provider: NftServiceImpl(
-                networkClient: DefaultNetworkClient(),
-                storage: NftStorageImpl()
-            ),
-            nftIds: catalogItem.nfts
-        )
+        self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
     }
     
