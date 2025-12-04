@@ -12,7 +12,7 @@ final class TabBarController: UITabBarController {
     
     private let catalogTabBarItem = UITabBarItem(
         title: NSLocalizedString("Tab.catalog", comment: ""),
-        image: UIImage(resource: .catalogIcon),
+        image: UIImage(systemName: "square.stack.fill"),
         tag: 0
     )
 
@@ -24,7 +24,12 @@ final class TabBarController: UITabBarController {
         )
         testCatalogController.tabBarItem = testCatalogTabBarItem
         
-        let catalogViewController = CatalogViewController()
+        let catalogViewController = CatalogViewController(
+            viewModel: CatalogViewModel(
+                catalogProvider: CatalogProvider(
+                    networkClient: DefaultNetworkClient(),
+                    storage: CatalogStorageImpl())
+            ))
         catalogViewController.tabBarItem = catalogTabBarItem
 
         viewControllers = [testCatalogController, catalogViewController]

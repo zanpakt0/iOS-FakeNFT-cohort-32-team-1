@@ -2,16 +2,43 @@ import UIKit
 import Combine
 
 final class NFTCollectionViewController: UIViewController {
+    private enum CollectionLayout {
+        static let backButtonTop: CGFloat = 11
+        static let backButtonLeading: CGFloat = 9
+        static let backButtonSize: CGFloat = 24
+        
+        static let coverImageHeight: CGFloat = 310
+        
+        static let titleTop: CGFloat = 16
+        static let titleLeading: CGFloat = 16
+        static let titeTrailing: CGFloat = -16
+        
+        static let authorTop: CGFloat = 8
+        static let authorSpacing: CGFloat = 4
+        
+        static let descriptionTop: CGFloat = 4
+        
+        static let collectionTop: CGFloat = 24
+        static let collectionLeading: CGFloat = 16
+        static let collectionTrailing: CGFloat = -16
+        static let collectionBottom: CGFloat = -16
+        static let collectionBottomInset: CGFloat = 16
+        
+        static let itemWidth: CGFloat = 108
+        static let itemHeight: CGFloat = 192
+        
+        static let interItemSpacing: CGFloat = 10
+        static let lineSpacing: CGFloat = 8
+        
+        static let itemsPerRow: Int = 3
+    }
     
-    private var collectionViewHeightConstraint: NSLayoutConstraint?
-    
+    //MARK: - Constants
     private let viewModel: NFTCollectionViewModel
-    private var subscribes = Set<AnyCancellable>()
-    
     private let catalogItem: Catalog
     
-    private var favorites: [String] = []
-    private var itemsInCart: [String] = []
+    private var collectionViewHeightConstraint: NSLayoutConstraint?
+    private var subscribes = Set<AnyCancellable>()
     
     //MARK: - UI Elements
     private lazy var backButton: UIButton = {
@@ -109,7 +136,7 @@ final class NFTCollectionViewController: UIViewController {
         indicator.translatesAutoresizingMaskIntoConstraints = false
         return indicator
     }()
-
+    
     //MARK: - Init
     init(catalogItem: Catalog) {
         self.catalogItem = catalogItem
@@ -148,17 +175,17 @@ final class NFTCollectionViewController: UIViewController {
         view.addSubview(backButton)
         
         NSLayoutConstraint.activate([
-            backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 11),
-            backButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 9),
-            backButton.heightAnchor.constraint(equalToConstant: 24),
-            backButton.widthAnchor.constraint(equalToConstant: 24)
+            backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: CollectionLayout.backButtonTop),
+            backButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: CollectionLayout.backButtonLeading),
+            backButton.heightAnchor.constraint(equalToConstant: CollectionLayout.backButtonSize),
+            backButton.widthAnchor.constraint(equalToConstant: CollectionLayout.backButtonSize)
         ])
     }
     
     private func setupScrollView() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
-
+        
         scrollView.contentInsetAdjustmentBehavior = .never
         
         NSLayoutConstraint.activate([
@@ -167,7 +194,7 @@ final class NFTCollectionViewController: UIViewController {
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-
+            
             // contentView
             contentView.topAnchor.constraint(equalTo: scrollView.contentLayoutGuide.topAnchor),
             contentView.leadingAnchor.constraint(equalTo: scrollView.contentLayoutGuide.leadingAnchor),
@@ -191,48 +218,48 @@ final class NFTCollectionViewController: UIViewController {
             coverImage.topAnchor.constraint(equalTo: contentView.topAnchor),
             coverImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             coverImage.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            coverImage.heightAnchor.constraint(equalToConstant: 310),
+            coverImage.heightAnchor.constraint(equalToConstant: CollectionLayout.coverImageHeight),
             
             // title
-            titleLabel.topAnchor.constraint(equalTo: coverImage.bottomAnchor, constant: 16),
-            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            titleLabel.topAnchor.constraint(equalTo: coverImage.bottomAnchor, constant: CollectionLayout.titleTop),
+            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: CollectionLayout.titleLeading),
+            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: CollectionLayout.titeTrailing),
             
             // authorStack
-            authorStack.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
+            authorStack.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: CollectionLayout.authorTop),
             authorStack.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             
             // description
-            descriptionLabel.topAnchor.constraint(equalTo: authorStack.bottomAnchor, constant: 4),
+            descriptionLabel.topAnchor.constraint(equalTo: authorStack.bottomAnchor, constant: CollectionLayout.descriptionTop),
             descriptionLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             descriptionLabel.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor),
             
             // collectionView
-            collectionView.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 24),
-            collectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            collectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            collectionView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -16)
+            collectionView.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: CollectionLayout.collectionTop),
+            collectionView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: CollectionLayout.collectionLeading),
+            collectionView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: CollectionLayout.collectionTrailing),
+            collectionView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: CollectionLayout.collectionBottom)
         ])
     }
     
     private func updateCollectionViewHeight() {
         collectionView.reloadData()
         
-        let itemsPerRow = 3
-        let itemHeight: CGFloat = 192
-        let verticalSpacing: CGFloat = 8
-
+        let itemsPerRow = CollectionLayout.itemsPerRow
+        let itemHeight: CGFloat = CollectionLayout.itemHeight
+        let verticalSpacing: CGFloat = CollectionLayout.lineSpacing
+        
         let itemsCount = mockNFTs.count
         let rows = Int(ceil(Double(itemsCount) / Double(itemsPerRow)))
         let totalHeight = CGFloat(rows) * itemHeight + CGFloat(max(0, rows - 1)) * verticalSpacing
-
+        
         if collectionViewHeightConstraint == nil {
             collectionViewHeightConstraint = collectionView.heightAnchor.constraint(equalToConstant: totalHeight)
             collectionViewHeightConstraint?.isActive = true
         } else {
             collectionViewHeightConstraint?.constant = totalHeight
         }
-
+        
         // Обновим layout
         collectionView.layoutIfNeeded()
         contentView.layoutIfNeeded()
@@ -249,7 +276,7 @@ final class NFTCollectionViewController: UIViewController {
         webLabel.text = catalogItem.author
         descriptionLabel.text = catalogItem.description
     }
-
+    
     //MARK: - Actions
     @objc private func backButtonAction() {
         dismiss(animated: true)
@@ -269,7 +296,22 @@ final class NFTCollectionViewController: UIViewController {
             .sink { [weak self] isLoading in
                 guard let self else { return }
                 isLoading ? self.loadingIndicator.startAnimating() : self.loadingIndicator.stopAnimating()
+                self.scrollView.isHidden = isLoading
             }
+            .store(in: &subscribes)
+        
+        viewModel.$favorites
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: { [weak self] _ in
+                self?.collectionView.reloadData()
+            })
+            .store(in: &subscribes)
+        
+        viewModel.$itemsInCart
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: { [weak self] _ in
+                self?.collectionView.reloadData()
+            })
             .store(in: &subscribes)
     }
 }
@@ -289,12 +331,12 @@ extension NFTCollectionViewController: UICollectionViewDataSource, UICollectionV
         let cell: NFTCell = collectionView.dequeueReusableCell(indexPath: indexPath)
         let nft = mockNFTs[indexPath.item]
         cell.delegate = self
-            cell.configure(
-                nft: nft,
-                imageURL: nft.images[0],
-                inCart: itemsInCart.contains(nft.id),
-                isLiked: favorites.contains(nft.id)
-            )
+        cell.configure(
+            nft: nft,
+            imageURL: nft.images[0],
+            inCart: viewModel.itemsInCart.contains(nft.id),
+            isLiked: viewModel.favorites.contains(nft.id)
+        )
         return cell
     }
     
@@ -303,7 +345,7 @@ extension NFTCollectionViewController: UICollectionViewDataSource, UICollectionV
         layout collectionViewLayout: UICollectionViewLayout,
         sizeForItemAt indexPath: IndexPath
     ) -> CGSize {
-        CGSize(width: 108, height: 192)
+        CGSize(width: CollectionLayout.itemWidth, height: CollectionLayout.itemHeight)
     }
     
     func collectionView(
@@ -311,7 +353,7 @@ extension NFTCollectionViewController: UICollectionViewDataSource, UICollectionV
         layout collectionViewLayout: UICollectionViewLayout,
         minimumInteritemSpacingForSectionAt section: Int
     ) -> CGFloat {
-        10
+        CollectionLayout.interItemSpacing
     }
     
     func collectionView(
@@ -319,7 +361,7 @@ extension NFTCollectionViewController: UICollectionViewDataSource, UICollectionV
         layout collectionViewLayout: UICollectionViewLayout,
         minimumLineSpacingForSectionAt section: Int
     ) -> CGFloat {
-        8
+        CollectionLayout.lineSpacing
     }
     
     func collectionView(
@@ -327,32 +369,26 @@ extension NFTCollectionViewController: UICollectionViewDataSource, UICollectionV
         layout collectionViewLayout: UICollectionViewLayout,
         insetForSectionAt section: Int
     ) -> UIEdgeInsets {
-        UIEdgeInsets(top: 0, left: 0, bottom: 16, right: 0)
+        UIEdgeInsets(top: 0, left: 0, bottom: CollectionLayout.collectionBottomInset, right: 0)
     }
 }
 
 extension NFTCollectionViewController: NFTCellDelegate {
     func addInCart(id: String, in cell: NFTCell) {
-        self.itemsInCart.append(id)
-        print(itemsInCart)
+        viewModel.addInCart(id: id)
     }
     
     func deleteFromCart(id: String, in cell: NFTCell) {
-        if let index = itemsInCart.firstIndex(of: id) {
-            self.itemsInCart.remove(at: index)
-        }
-        print(itemsInCart)
+        viewModel.deleteFromCart(id: id)
     }
     
     func addLike(id: String, in cell: NFTCell) {
-        self.favorites.append(id)
-        print(favorites)
+        viewModel.addLike(id: id)
     }
     
     func deleteLike(id: String, in cell: NFTCell) {
-        if let index = favorites.firstIndex(of: id) {
-            self.favorites.remove(at: index)
-        }
-        print(favorites)
+        viewModel.deleteLike(id: id)
     }
+    
+    
 }

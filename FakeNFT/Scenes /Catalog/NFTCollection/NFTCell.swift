@@ -8,6 +8,32 @@ protocol NFTCellDelegate: AnyObject {
 }
 
 final class NFTCell: UICollectionViewCell, ReuseIdentifying {
+    private enum NFTCellLayout {
+        static let cornerRadius: CGFloat = 12
+
+        static let imageHeight: CGFloat = 108
+        static let imageWidth: CGFloat = 108
+
+        static let likeButtonWidth: CGFloat = 42
+        static let likeButtonHeight: CGFloat = 42
+        static let likeButtonTrailingOffset: CGFloat = 0
+
+        static let starSize: CGFloat = 12
+        static let starSpacing: CGFloat = 2
+        static let ratingTopSpacing: CGFloat = 8
+        static let ratingHeight: CGFloat = 12
+        static let ratingWidth: CGFloat = 68
+
+        static let labelTopSpacing: CGFloat = 4
+        static let priceTopSpacing: CGFloat = 2
+        static let labelToCartSpacing: CGFloat = -8
+
+        static let bottomPadding: CGFloat = -20
+
+        static let cartButtonWidth: CGFloat = 40
+        static let cartButtonHeight: CGFloat = 40
+        static let cartButtonTrailing: CGFloat = -4
+    }
     
     weak var delegate: NFTCellDelegate?
     
@@ -18,7 +44,7 @@ final class NFTCell: UICollectionViewCell, ReuseIdentifying {
     //MARK: - UI
     private lazy var nftImageView: UIImageView = {
         let image = UIImageView()
-        image.layer.cornerRadius = 12
+        image.layer.cornerRadius = NFTCellLayout.cornerRadius
         image.layer.masksToBounds = true
         image.translatesAutoresizingMaskIntoConstraints = false
         image.backgroundColor = .background
@@ -26,7 +52,7 @@ final class NFTCell: UICollectionViewCell, ReuseIdentifying {
         return image
     }()
     
-    private let ratingView = SimpleRatingView(starSize: 12, spacing: 2)
+    private let ratingView = SimpleRatingView(starSize: NFTCellLayout.starSize, spacing: NFTCellLayout.starSpacing)
     
     private lazy var nftLabel: UILabel = {
         let label = UILabel()
@@ -91,38 +117,38 @@ final class NFTCell: UICollectionViewCell, ReuseIdentifying {
             // nftImageView
             nftImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
             nftImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            nftImageView.heightAnchor.constraint(equalToConstant: 108),
-            nftImageView.widthAnchor.constraint(equalToConstant: 108),
+            nftImageView.heightAnchor.constraint(equalToConstant: NFTCellLayout.imageHeight),
+            nftImageView.widthAnchor.constraint(equalToConstant: NFTCellLayout.imageWidth),
             
             // nftLikeButton
             nftLikeButton.topAnchor.constraint(equalTo: nftImageView.topAnchor),
             nftLikeButton.trailingAnchor.constraint(equalTo: nftImageView.trailingAnchor),
-            nftLikeButton.heightAnchor.constraint(equalToConstant: 42),
-            nftLikeButton.widthAnchor.constraint(equalToConstant: 42),
+            nftLikeButton.heightAnchor.constraint(equalToConstant: NFTCellLayout.likeButtonHeight),
+            nftLikeButton.widthAnchor.constraint(equalToConstant: NFTCellLayout.likeButtonWidth),
             
             // ratingView
-            ratingView.topAnchor.constraint(equalTo: nftImageView.bottomAnchor, constant: 8),
+            ratingView.topAnchor.constraint(equalTo: nftImageView.bottomAnchor, constant: NFTCellLayout.ratingTopSpacing),
             ratingView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            ratingView.heightAnchor.constraint(equalToConstant: 12),
-            ratingView.widthAnchor.constraint(equalToConstant: 68),
+            ratingView.heightAnchor.constraint(equalToConstant: NFTCellLayout.ratingHeight),
+            ratingView.widthAnchor.constraint(equalToConstant: NFTCellLayout.ratingWidth),
             ratingView.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor),
             
             // nftLabel
-            nftLabel.topAnchor.constraint(equalTo: ratingView.bottomAnchor, constant: 4),
+            nftLabel.topAnchor.constraint(equalTo: ratingView.bottomAnchor, constant: NFTCellLayout.labelTopSpacing),
             nftLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            nftLabel.trailingAnchor.constraint(lessThanOrEqualTo: nftCartButton.leadingAnchor, constant: -8),
+            nftLabel.trailingAnchor.constraint(lessThanOrEqualTo: nftCartButton.leadingAnchor, constant: NFTCellLayout.labelToCartSpacing),
             
             // nftPriceLabel
-            nftPriceLabel.topAnchor.constraint(equalTo: nftLabel.bottomAnchor, constant: 2),
+            nftPriceLabel.topAnchor.constraint(equalTo: nftLabel.bottomAnchor, constant: NFTCellLayout.priceTopSpacing),
             nftPriceLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            nftPriceLabel.trailingAnchor.constraint(lessThanOrEqualTo: nftCartButton.leadingAnchor, constant: -8),
-            nftPriceLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20),
+            nftPriceLabel.trailingAnchor.constraint(lessThanOrEqualTo: nftCartButton.leadingAnchor, constant: NFTCellLayout.labelToCartSpacing),
+            nftPriceLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: NFTCellLayout.bottomPadding),
             
             // nftCartButton
             nftCartButton.topAnchor.constraint(equalTo: nftLabel.topAnchor),
-            nftCartButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -4),
-            nftCartButton.widthAnchor.constraint(equalToConstant: 40),
-            nftCartButton.heightAnchor.constraint(equalToConstant: 40)
+            nftCartButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: NFTCellLayout.cartButtonTrailing),
+            nftCartButton.widthAnchor.constraint(equalToConstant: NFTCellLayout.cartButtonWidth),
+            nftCartButton.heightAnchor.constraint(equalToConstant: NFTCellLayout.cartButtonHeight)
         ])
     }
     
@@ -131,7 +157,7 @@ final class NFTCell: UICollectionViewCell, ReuseIdentifying {
         self.nftId = nft.id
         
         nftImageView.kf.setImage(with: imageURL)
-
+        
         let firstWord = nft.name.split(separator: " ").first.map(String.init) ?? nft.name
         nftLabel.text = firstWord
         

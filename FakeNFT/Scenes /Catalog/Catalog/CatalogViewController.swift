@@ -2,12 +2,16 @@ import UIKit
 import Combine
 
 final class CatalogViewController: UIViewController, ErrorView {
+    private enum CatalogLayout {
+        static let sortButtonTrailing: CGFloat = -9
+        static let sortButtonSize: CGFloat = 42
+        static let tableViewLeading: CGFloat = 16
+        static let tableViewTrailing: CGFloat = -16
+        static let tableViewCornerRadius: CGFloat = 12
+    }
+
     //MARK: - Constants
-    private let viewModel = CatalogViewModel(
-        catalogProvider: CatalogProvider(
-            networkClient: DefaultNetworkClient(),
-            storage: CatalogStorageImpl())
-    )
+    private let viewModel: CatalogViewModel
     private var subscribes = Set<AnyCancellable>()
     
     private let sortByNameTitle: String = NSLocalizedString("catalog.sortByNameTitle", comment: "Sort by name")
@@ -17,7 +21,7 @@ final class CatalogViewController: UIViewController, ErrorView {
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.layer.cornerRadius = 12
+        tableView.layer.cornerRadius = CatalogLayout.tableViewCornerRadius
         tableView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         tableView.layer.masksToBounds = true
         tableView.backgroundColor = .background
@@ -43,6 +47,16 @@ final class CatalogViewController: UIViewController, ErrorView {
     
     private let refreshControl = UIRefreshControl()
 
+    //MARK: - Init
+    init(viewModel: CatalogViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     //MARK: - Lyfecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -63,9 +77,9 @@ final class CatalogViewController: UIViewController, ErrorView {
         
         NSLayoutConstraint.activate([
             sortButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            sortButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -9),
-            sortButton.heightAnchor.constraint(equalToConstant: 42),
-            sortButton.widthAnchor.constraint(equalToConstant: 42)
+            sortButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: CatalogLayout.sortButtonTrailing),
+            sortButton.heightAnchor.constraint(equalToConstant: CatalogLayout.sortButtonSize),
+            sortButton.widthAnchor.constraint(equalToConstant: CatalogLayout.sortButtonSize)
         ])
     }
     
@@ -82,8 +96,8 @@ final class CatalogViewController: UIViewController, ErrorView {
         
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: sortButton.bottomAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: CatalogLayout.tableViewLeading),
+            tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: CatalogLayout.tableViewTrailing),
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }

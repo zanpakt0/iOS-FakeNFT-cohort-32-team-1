@@ -2,10 +2,11 @@ import UIKit
 import Combine
 
 final class CatalogViewModel {
-    //MARK: - Constants
+    //MARK: - Published Variables
     @Published var catalog: [Catalog] = []
     @Published var isLoading = false
     
+    //MARK: - Constants
     private let catalogProvider: CatalogProviderProtocol
     
     //MARK: - Init

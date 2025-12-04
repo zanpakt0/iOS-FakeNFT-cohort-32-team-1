@@ -2,11 +2,18 @@ import UIKit
 import Kingfisher
 
 final class CatalogCell: UITableViewCell, ReuseIdentifying {
-    
+    private enum CatalogCellLayout {
+        static let imageTop: CGFloat = 20
+        static let imageHeight: CGFloat = 140
+        static let labelTop: CGFloat = 4
+        static let labelBottom: CGFloat = -1
+        static let imageCornerRadius: CGFloat = 12
+    }
+
     //MARK: - UI
     private lazy var catalogImage: UIImageView = {
         let image = UIImageView()
-        image.layer.cornerRadius = 12
+        image.layer.cornerRadius = CatalogCellLayout.imageCornerRadius
         image.layer.masksToBounds = true
         image.translatesAutoresizingMaskIntoConstraints = false
         image.backgroundColor = .background
@@ -40,10 +47,10 @@ final class CatalogCell: UITableViewCell, ReuseIdentifying {
         contentView.addSubview(catalogImage)
         
         NSLayoutConstraint.activate([
-            catalogImage.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),
+            catalogImage.topAnchor.constraint(equalTo: contentView.topAnchor, constant: CatalogCellLayout.imageTop),
             catalogImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             catalogImage.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            catalogImage.heightAnchor.constraint(equalToConstant: 140)
+            catalogImage.heightAnchor.constraint(equalToConstant: CatalogCellLayout.imageHeight)
         ])
     }
     
@@ -51,10 +58,10 @@ final class CatalogCell: UITableViewCell, ReuseIdentifying {
         contentView.addSubview(catalogLabel)
         
         NSLayoutConstraint.activate([
-            catalogLabel.topAnchor.constraint(equalTo: catalogImage.bottomAnchor, constant: 4),
+            catalogLabel.topAnchor.constraint(equalTo: catalogImage.bottomAnchor, constant: CatalogCellLayout.labelTop),
             catalogLabel.leadingAnchor.constraint(equalTo: catalogImage.leadingAnchor),
             catalogLabel.trailingAnchor.constraint(equalTo: catalogImage.trailingAnchor),
-            catalogLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -1)
+            catalogLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: CatalogCellLayout.labelBottom)
         ])
     }
     
