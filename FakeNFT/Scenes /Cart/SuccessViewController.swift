@@ -39,6 +39,9 @@ final class SuccessViewController: UIViewController {
         view.backgroundColor = .systemBackground
         setupUI()
         
+        navigationItem.hidesBackButton = true
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = false
+        
         buttonToCart.addTarget(self, action: #selector(didTapBack), for: .touchUpInside)
     }
     
