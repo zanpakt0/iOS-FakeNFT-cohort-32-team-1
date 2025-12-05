@@ -37,7 +37,7 @@ final class StatisticsTableViewCell: UITableViewCell {
     private let containerView: UIView = {
         let containerview = UIView()
         containerview.layer.cornerRadius = StatisticsTableViewCellLayout.containerCornerRadius
-        containerview.backgroundColor = .forViewBackgound
+        containerview.backgroundColor = .forViewBackground
         containerview.translatesAutoresizingMaskIntoConstraints = false
         return containerview
     }()
@@ -45,7 +45,7 @@ final class StatisticsTableViewCell: UITableViewCell {
         let numberingLabel = UILabel()
         numberingLabel.font = UIFont.caption1
         numberingLabel.textColor = .segmentActive
-        numberingLabel.backgroundColor = .forViewBackgound
+        numberingLabel.backgroundColor = .forViewBackground
         numberingLabel.translatesAutoresizingMaskIntoConstraints = false
         
         return numberingLabel
@@ -89,7 +89,7 @@ final class StatisticsTableViewCell: UITableViewCell {
     // MARK: - Initializers
     override init(style: StatisticsTableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .default, reuseIdentifier: reuseIdentifier)
-        contentView.backgroundColor = .forViewBackgound
+        contentView.backgroundColor = .forViewBackground
         
         addSubviews()
         setupConstraints()
@@ -104,7 +104,7 @@ final class StatisticsTableViewCell: UITableViewCell {
         self.numberingLabel.text = "\(numberingOfCell)"
         let processor = RoundCornerImageProcessor(cornerRadius: StatisticsTableViewCellLayout.avatarCornerRadius)
         let defaultImage = UIImage(systemName: "person.crop.circle.fill")?
-            .withTintColor(UIColor.forDefaultAvatarBackgound, renderingMode: .alwaysOriginal)
+            .withTintColor(UIColor.forDefaultAvatarBackground, renderingMode: .alwaysOriginal)
         guard let url = usersInfo.avatarURL else  {
             return self.userAvatarImageView.image = defaultImage
         }

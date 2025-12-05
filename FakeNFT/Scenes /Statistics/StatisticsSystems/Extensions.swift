@@ -20,3 +20,18 @@ extension UIViewController: ErrorView {
         self.showErrorAlertWithTwoButtons(titleOfAlert: title, firstAction: cancelAction, secondAction: retryAction)
     }
 }
+
+extension UIViewController {
+    func universalOpenPage(viewController: UIViewController) {
+        let transition = CATransition()
+        transition.duration = ConstantsForStatistics.transitionDurationWhenOpenPage
+        transition.type = .push
+        transition.subtype = .fromTop
+        navigationController?.view.layer.add(transition, forKey: kCATransition)
+        
+        navigationItem.backButtonTitle = ""
+        viewController.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(viewController, animated: false)
+    }
+}
+

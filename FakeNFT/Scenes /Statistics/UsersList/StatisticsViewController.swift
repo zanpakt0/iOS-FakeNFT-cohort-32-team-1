@@ -2,13 +2,6 @@ import UIKit
 import Combine
 
 // MARK: - Need enums
-enum UIStateForLoader {
-    case showLoaderHideViews
-    case showViewsHideLoader
-    case showBoth
-    case hideBoth
-}
-
 enum StatisticsViewControllerLayout {
     static let tableTop: CGFloat = 20
     static let tableLeading: CGFloat = 16
@@ -29,6 +22,7 @@ final class StatisticsViewController: UIViewController, LoadingView {
     lazy var activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .large)
         indicator.hidesWhenStopped = true
+        indicator.color = .black
         indicator.translatesAutoresizingMaskIntoConstraints = false
         
         return indicator
@@ -51,7 +45,7 @@ final class StatisticsViewController: UIViewController, LoadingView {
     }()
     private lazy var tableViewWithUsers: UITableView = {
         let tableViewWithUsers = UITableView()
-        tableViewWithUsers.backgroundColor = .forViewBackgound
+        tableViewWithUsers.backgroundColor = .forViewBackground
         tableViewWithUsers.dataSource = self
         tableViewWithUsers.delegate = self
         tableViewWithUsers.register(StatisticsTableViewCell.self, forCellReuseIdentifier: StatisticsTableViewCell.reuseIdentifier)
@@ -74,7 +68,7 @@ final class StatisticsViewController: UIViewController, LoadingView {
     // MARK: - View Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .forViewBackgound
+        view.backgroundColor = .forViewBackground
         
         setupNavBar()
         addSubviews()
@@ -150,7 +144,6 @@ final class StatisticsViewController: UIViewController, LoadingView {
         viewModel.$state
             .receive(on: RunLoop.main)
             .sink { [weak self] state in
-                
                 guard let self else { return }
                 
                 switch state {
@@ -171,10 +164,10 @@ final class StatisticsViewController: UIViewController, LoadingView {
                     switch self.viewModel.usersList.count {
                     case 0:
                         showNeedViewsInScreen(needToShowLoadingIndicator: .hideBoth)
-                        self.showErrorAlert()
+                        showErrorAlert()
                     default:
                         showNeedViewsInScreen(needToShowLoadingIndicator: .showViewsHideLoader)
-                        self.showErrorAlert()
+                        showErrorAlert()
                     }
                 }
             }
@@ -214,15 +207,7 @@ extension StatisticsViewController: UITableViewDataSource, UITableViewDelegate {
         let userCardViewModel = UserCardViewModel(serviceAssembly: self.viewModel.servicesAssembly)
         let userCardViewController = UserCardViewController(viewModel: userCardViewModel)
         
-        let transition = CATransition()
-        transition.duration = ConstantsForStatistics.transitionDurationWhenOpenPage
-        transition.type = .push
-        transition.subtype = .fromTop
-        navigationController?.view.layer.add(transition, forKey: kCATransition)
-        
-        navigationItem.backButtonTitle = ""
-        userCardViewController.hidesBottomBarWhenPushed = true
-        navigationController?.pushViewController(userCardViewController, animated: false)
+        universalOpenPage(viewController: userCardViewController)
         
         userCardViewModel.fetchUserById(viewModel.usersList[indexPath.row].id)
     }

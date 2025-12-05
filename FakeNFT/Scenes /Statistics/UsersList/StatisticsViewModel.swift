@@ -8,17 +8,6 @@ enum StatisticsState {
     case error(Error)
 }
 
-enum FilterType: String {
-    case byName = "ByName"
-    case byRating = "ByRating"
-}
-
-enum ConstantsForStatistics {
-    static let pageSize: Int = 10
-    static let keyForFilterTypeInStatistics: String = "filterTypeInStatistics"
-    static let transitionDurationWhenOpenPage: CFTimeInterval = 0.01
-}
-
 final class StatisticsViewModel {
     
     // MARK: - Public Properties

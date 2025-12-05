@@ -47,6 +47,7 @@ extension UIColor {
     private static let yaLightGrayLight = UIColor(hexString: "#F7F7F8")
     private static let yaLightGrayDark = UIColor(hexString: "#2C2C2E")
     private static let yaGrayUniversal = UIColor(hexString: "#625C5C")
+    private static let yaGrayForLoader = UIColor.yaLightGrayLight.withAlphaComponent(0.2)
 
     static let segmentActive = UIColor { traits in
         return traits.userInterfaceStyle == .dark
@@ -66,15 +67,46 @@ extension UIColor {
         : .yaBlackLight
     }
     
-    static let forViewBackgound = UIColor { traits in
+    static let forViewBackground = UIColor { traits in
         return traits.userInterfaceStyle == .light
         ? .yaBlackDark
         : .yaBlackLight
     }
 
-    static let forDefaultAvatarBackgound = UIColor { traits in
+    static let forDefaultAvatarBackground = UIColor { traits in
         return traits.userInterfaceStyle == .light
         ? .yaGrayUniversal
         : .yaGrayUniversal
+    }
+    
+    static let forActivityIndicatorBackground = UIColor { traits in
+        switch traits.userInterfaceStyle {
+        case .light:
+            return .yaLightGrayLight
+        case .dark:
+            return UIColor(patternImage: createDarkGradientImage())
+        default:
+            return .yaLightGrayLight
+        }
+    }
+    
+    private static func createDarkGradientImage() -> UIImage {
+        let bottom = UIColor.white
+        let overlay = UIColor.black.withAlphaComponent(0.2)
+        
+        let size = CGSize(width: 1, height: 100)
+        let renderer = UIGraphicsImageRenderer(size: size)
+        
+        return renderer.image { context in
+            let cg = context.cgContext
+            
+            // Нижний слой — белый
+            cg.setFillColor(bottom.cgColor)
+            cg.fill(CGRect(origin: .zero, size: size))
+            
+            // Верхний слой — чёрный 20%
+            cg.setFillColor(overlay.cgColor)
+            cg.fill(CGRect(origin: .zero, size: size))
+        }
     }
 }

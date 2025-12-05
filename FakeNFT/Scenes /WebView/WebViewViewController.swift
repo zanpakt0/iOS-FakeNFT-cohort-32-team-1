@@ -21,7 +21,7 @@ final class WebViewViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .forViewBackgound
+        view.backgroundColor = .forViewBackground
         
         navigationController?.navigationBar.tintColor = .closeButton
         

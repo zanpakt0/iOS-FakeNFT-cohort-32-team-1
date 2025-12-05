@@ -62,9 +62,7 @@ final class UserCollectionViewModel {
             self.isLoading = false
             self.state = .loaded(self.nftList)
             print("Все загрузилось")
-            for nft in self.nftList {
-                print(nft.name)
-            }
+            print(self.nftList.count)
         }
     }
     

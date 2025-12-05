@@ -42,13 +42,14 @@ final class UserCardViewController: UIViewController, LoadingView {
     lazy var activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .large)
         indicator.hidesWhenStopped = true
+        indicator.color = .black
         indicator.translatesAutoresizingMaskIntoConstraints = false
         
         return indicator
     }()
     private lazy var viewWithAllElements: UIView = {
         let viewWithAllElements = UIView()
-        viewWithAllElements.backgroundColor = .forViewBackgound
+        viewWithAllElements.backgroundColor = .forViewBackground
         viewWithAllElements.translatesAutoresizingMaskIntoConstraints = false
         
         return viewWithAllElements
@@ -66,7 +67,7 @@ final class UserCardViewController: UIViewController, LoadingView {
         let userNameLabel = UILabel()
         userNameLabel.font = UIFont.headline3
         userNameLabel.textColor = .segmentActive
-        userNameLabel.backgroundColor = .forViewBackgound
+        userNameLabel.backgroundColor = .forViewBackground
         userNameLabel.translatesAutoresizingMaskIntoConstraints = false
         
         return userNameLabel
@@ -75,7 +76,7 @@ final class UserCardViewController: UIViewController, LoadingView {
         let userDescriptionLabel = UILabel()
         userDescriptionLabel.font = UIFont.caption2
         userDescriptionLabel.textColor = .segmentActive
-        userDescriptionLabel.backgroundColor = .forViewBackgound
+        userDescriptionLabel.backgroundColor = .forViewBackground
         userDescriptionLabel.numberOfLines = UserCardLayout.descriptionNumberOfLines
         userDescriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         
@@ -161,7 +162,7 @@ final class UserCardViewController: UIViewController, LoadingView {
     // MARK: - View Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .forViewBackgound
+        view.backgroundColor = .forViewBackground
         navigationController?.navigationBar.tintColor = .closeButton
         
         addSubviews()
@@ -180,31 +181,15 @@ final class UserCardViewController: UIViewController, LoadingView {
         guard let webSiteURL = self.viewModel.userInfo?.website else { return }
         let webView = WebViewViewController(urlString: webSiteURL.absoluteString)
         
-        let transition = CATransition()
-        transition.duration = ConstantsForStatistics.transitionDurationWhenOpenPage
-        transition.type = .push
-        transition.subtype = .fromTop
-        navigationController?.view.layer.add(transition, forKey: kCATransition)
-        
-        navigationItem.backButtonTitle = ""
-        webView.hidesBottomBarWhenPushed = true
-        navigationController?.pushViewController(webView, animated: false)
+        universalOpenPage(viewController: webView)
     }
     
     @objc private func nftCollectionButtonClicked() {
         let userCollectionViewModel = UserCollectionViewModel(serviceAssembly: self.viewModel.serviceAssembly)
         let userCollectionViewController = UserCollectionViewController(viewModel: userCollectionViewModel)
         
-        let transition = CATransition()
-        transition.duration = ConstantsForStatistics.transitionDurationWhenOpenPage
-        transition.type = .push
-        transition.subtype = .fromTop
-        navigationController?.view.layer.add(transition, forKey: kCATransition)
-        
-        navigationItem.backButtonTitle = ""
-        userCollectionViewController.hidesBottomBarWhenPushed = true
-        navigationController?.pushViewController(userCollectionViewController, animated: false)
-        
+        universalOpenPage(viewController: userCollectionViewController)
+
         guard let nfts = viewModel.userInfo?.nfts else { return }
         userCollectionViewModel.fetchNfts(listOfNfts: nfts)
     }
@@ -274,7 +259,7 @@ final class UserCardViewController: UIViewController, LoadingView {
     private func insertUserDataIntoFields(userData: UserCardViewData) {
         let processor = RoundCornerImageProcessor(cornerRadius: UserCardLayout.avatarCornerRadius)
         let defaultImage = UIImage(systemName: "person.crop.circle.fill")?
-            .withTintColor(UIColor.forDefaultAvatarBackgound, renderingMode: .alwaysOriginal)
+            .withTintColor(UIColor.forDefaultAvatarBackground, renderingMode: .alwaysOriginal)
         guard let url = userData.avatarURL else  {
             return self.userAvatarImageView.image = defaultImage
         }
@@ -312,7 +297,7 @@ final class UserCardViewController: UIViewController, LoadingView {
                     insertUserDataIntoFields(userData: user)
                 case .error(_):
                     showNeedViewsInScreen(needToShowLoadingIndicator: .hideBoth)
-                    self.showErrorAlert()
+                    showErrorAlert()
                 }
             }
             .store(in: &cancellables)

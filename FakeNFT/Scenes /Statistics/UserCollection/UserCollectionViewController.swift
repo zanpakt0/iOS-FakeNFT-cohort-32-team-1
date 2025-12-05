@@ -1,11 +1,39 @@
 import UIKit
 import Combine
 
-final class UserCollectionViewController: UIViewController {
+final class UserCollectionViewController: UIViewController, LoadingView {
 
     // MARK: - Private Properties
     private let viewModel: UserCollectionViewModel
     private var cancellables = Set<AnyCancellable>()
+    
+    // MARK: - Views (elements)
+    lazy var activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .large)
+        indicator.hidesWhenStopped = true
+        indicator.color = .black 
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        
+        return indicator
+    }()
+    lazy var containerForActivityIndicator: UIView = {
+        let containerForActivityIndicator = UIView()
+        containerForActivityIndicator.backgroundColor = .forActivityIndicatorBackground
+        containerForActivityIndicator.layer.cornerRadius = 8
+        containerForActivityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            containerForActivityIndicator.widthAnchor.constraint(equalToConstant: 82),
+            containerForActivityIndicator.heightAnchor.constraint(equalToConstant: 82)
+        ])
+        
+        return containerForActivityIndicator
+    }()
+    lazy var collectionViewWithNfts: UICollectionView = {
+        let collectionViewWithNfts = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        
+        return collectionViewWithNfts
+    }()
     
     // MARK: - Initializers
     init(viewModel: UserCollectionViewModel) {
@@ -21,10 +49,13 @@ final class UserCollectionViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .forViewBackgound
+        view.backgroundColor = .forViewBackground
         navigationController?.navigationBar.tintColor = .closeButton
         
         setupTitle()
+        addSubviews()
+        setupConstraints()
+        
         bindViewModel()
     }
     
@@ -33,7 +64,43 @@ final class UserCollectionViewController: UIViewController {
         let title = NSLocalizedString("UserCollection.tite", comment: "")
         navigationItem.title = title
     }
+    
+    private func addSubviews() {
+        view.addSubview(containerForActivityIndicator)
+        containerForActivityIndicator.addSubview(activityIndicator)
+    }
+    
+    private func setupConstraints() {
+        NSLayoutConstraint.activate([
+            containerForActivityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            containerForActivityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            
+            activityIndicator.centerXAnchor.constraint(equalTo: containerForActivityIndicator.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: containerForActivityIndicator.centerYAnchor)
+        ])
+    }
 
+    private func showNeedViewsInScreen(needToShowLoadingIndicator: UIStateForLoader) {
+        switch needToShowLoadingIndicator {
+        case .showLoaderHideViews:
+            self.containerForActivityIndicator.isHidden = false
+            self.showLoading()
+            self.collectionViewWithNfts.isHidden = true
+        case .showViewsHideLoader:
+            self.containerForActivityIndicator.isHidden = true
+            self.hideLoading()
+            self.collectionViewWithNfts.isHidden = false
+        case .showBoth:
+            self.containerForActivityIndicator.isHidden = false
+            self.showLoading()
+            self.collectionViewWithNfts.isHidden = false
+        case .hideBoth:
+            self.containerForActivityIndicator.isHidden = true
+            self.hideLoading()
+            self.collectionViewWithNfts.isHidden = true
+        }
+    }
+    
     private func bindViewModel() {
         self.viewModel.$state
             .receive(on: RunLoop.main)
@@ -42,12 +109,13 @@ final class UserCollectionViewController: UIViewController {
                 
                 switch state {
                 case .idle:
-                    break
+                    showNeedViewsInScreen(needToShowLoadingIndicator: .hideBoth)
                 case .loading:
-                    break
+                    showNeedViewsInScreen(needToShowLoadingIndicator: .showLoaderHideViews)
                 case .loaded(_):
-                    break
+                    showNeedViewsInScreen(needToShowLoadingIndicator: .showViewsHideLoader)
                 case .error(_):
+                    showNeedViewsInScreen(needToShowLoadingIndicator: .hideBoth)
                     showErrorAlert()
                 }
             }
