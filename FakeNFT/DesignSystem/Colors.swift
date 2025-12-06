@@ -32,7 +32,9 @@ extension UIColor {
 
     // Secondary Colors
     static let secondary = UIColor(red: 255 / 255, green: 193 / 255, blue: 7 / 255, alpha: 1.0)
-
+    static let redForFavouritesButton = UIColor(red: 245 / 255, green: 107 / 255, blue: 108 / 255, alpha: 1.0)
+    static let yellowForStars = UIColor(hexString: "#FEEF0D")
+    
     // Background Colors
     static let background = UIColor.white
 
@@ -89,6 +91,8 @@ extension UIColor {
             return .yaLightGrayLight
         }
     }
+    
+    
     
     private static func createDarkGradientImage() -> UIImage {
         let bottom = UIColor.white

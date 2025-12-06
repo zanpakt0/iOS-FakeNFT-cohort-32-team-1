@@ -12,6 +12,8 @@ final class UserCollectionViewModel {
     // MARK: - Public Properties
     var nftList: [NftCellViewData] = []
     var nftIdsList: [String]?
+    var listOfFavouriteNfts: [String]?
+    var listOfNftsInShoppingCart: [String]?
     
     // MARK: - Private Properties
     @Published private(set) var state: UserCollectionState = .idle
@@ -64,6 +66,14 @@ final class UserCollectionViewModel {
             print("Все загрузилось")
             print(self.nftList.count)
         }
+    }
+    
+    func checkExistingNftInFavouritesList(nftId: String) -> Bool {
+        listOfFavouriteNfts?.contains(nftId) ?? false
+    }
+    
+    func checkExistingNftInShoppingCart(nftId: String) -> Bool {
+        listOfNftsInShoppingCart?.contains(nftId) ?? false
     }
     
     // MARK: - Private Methods
