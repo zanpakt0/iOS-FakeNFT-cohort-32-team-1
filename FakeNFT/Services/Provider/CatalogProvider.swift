@@ -1,4 +1,4 @@
-import UIKit
+import Foundation
 
 typealias CatalogCompletion = (Result<[Catalog], Error>) -> Void
 

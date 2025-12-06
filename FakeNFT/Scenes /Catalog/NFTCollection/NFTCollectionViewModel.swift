@@ -51,6 +51,7 @@ final class NFTCollectionViewModel {
         DispatchQueue.main.async {
             if !self.itemsInCart.contains(id) {
                 self.itemsInCart.append(id)
+                print(self.itemsInCart)
             }
         }
     }
@@ -59,6 +60,7 @@ final class NFTCollectionViewModel {
         DispatchQueue.main.async {
             if let index = self.itemsInCart.firstIndex(of: id) {
                 self.itemsInCart.remove(at: index)
+                print(self.itemsInCart)
             }
         }
     }
@@ -67,6 +69,7 @@ final class NFTCollectionViewModel {
         DispatchQueue.main.async {
             if !self.favorites.contains(id){
                 self.favorites.append(id)
+                print(self.favorites)
             }
         }
     }
@@ -75,6 +78,7 @@ final class NFTCollectionViewModel {
         DispatchQueue.main.async {
             if let index = self.favorites.firstIndex(of: id) {
                 self.favorites.remove(at: index)
+                print(self.favorites)
             }
         }
     }

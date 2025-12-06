@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		093A86D32EE4D1CF00B2C1C4 /* NftCollectionGetFavoritesRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093A86D22EE4D1CF00B2C1C4 /* NftCollectionGetFavoritesRequest.swift */; };
+		093A86D52EE4D1E500B2C1C4 /* NftCollectionPutFavoritesRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093A86D42EE4D1E500B2C1C4 /* NftCollectionPutFavoritesRequest.swift */; };
+		093A86D72EE4D2D700B2C1C4 /* FavoriteNftProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093A86D62EE4D2D700B2C1C4 /* FavoriteNftProvider.swift */; };
+		093A86D92EE4D35500B2C1C4 /* FavoriteStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093A86D82EE4D35500B2C1C4 /* FavoriteStorage.swift */; };
+		093A86DB2EE4D50100B2C1C4 /* FavoritesDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 093A86DA2EE4D50100B2C1C4 /* FavoritesDto.swift */; };
 		09664E3E2EDB47180089146A /* NFTCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09664E3D2EDB47180089146A /* NFTCollectionViewController.swift */; };
 		0990C3B12ED37D07008072D2 /* WebViewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0990C3AF2ED37D07008072D2 /* WebViewViewController.swift */; };
 		0990C3B62ED4A679008072D2 /* CatalogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0990C3B52ED4A679008072D2 /* CatalogViewController.swift */; };
@@ -82,6 +87,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		093A86D22EE4D1CF00B2C1C4 /* NftCollectionGetFavoritesRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NftCollectionGetFavoritesRequest.swift; sourceTree = "<group>"; };
+		093A86D42EE4D1E500B2C1C4 /* NftCollectionPutFavoritesRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NftCollectionPutFavoritesRequest.swift; sourceTree = "<group>"; };
+		093A86D62EE4D2D700B2C1C4 /* FavoriteNftProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteNftProvider.swift; sourceTree = "<group>"; };
+		093A86D82EE4D35500B2C1C4 /* FavoriteStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteStorage.swift; sourceTree = "<group>"; };
+		093A86DA2EE4D50100B2C1C4 /* FavoritesDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesDto.swift; sourceTree = "<group>"; };
 		09664E3D2EDB47180089146A /* NFTCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFTCollectionViewController.swift; sourceTree = "<group>"; };
 		0990C3AF2ED37D07008072D2 /* WebViewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewViewController.swift; sourceTree = "<group>"; };
 		0990C3B52ED4A679008072D2 /* CatalogViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogViewController.swift; sourceTree = "<group>"; };
@@ -203,9 +213,12 @@
 			isa = PBXGroup;
 			children = (
 				0990C3C62ED5E85B008072D2 /* CatalogProvider.swift */,
+				093A86D62EE4D2D700B2C1C4 /* FavoriteNftProvider.swift */,
 				09D97D192EE0C68900E057E9 /* CatalogStorage.swift */,
+				093A86D82EE4D35500B2C1C4 /* FavoriteStorage.swift */,
 				09DFED232EDF4F9C006F5A5C /* MockNft.swift */,
 				09D97D1F2EE0D77400E057E9 /* NftCollectionStorage.swift */,
+				093A86DA2EE4D50100B2C1C4 /* FavoritesDto.swift */,
 			);
 			path = Provider;
 			sourceTree = "<group>";
@@ -440,6 +453,8 @@
 				3FC8C39029D2453B0081F015 /* ExamplePutRequest.swift */,
 				0C79EE602A76DCD600EE90EA /* NftByIdRequest.swift */,
 				09D97D172EE0C3E900E057E9 /* NftCatalogRequest.swift */,
+				093A86D22EE4D1CF00B2C1C4 /* NftCollectionGetFavoritesRequest.swift */,
+				093A86D42EE4D1E500B2C1C4 /* NftCollectionPutFavoritesRequest.swift */,
 			);
 			path = Requests;
 			sourceTree = "<group>";
@@ -617,10 +632,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				3FC8C38B29D242E90081F015 /* ProductDetailsTableViewCell.swift in Sources */,
+				093A86D92EE4D35500B2C1C4 /* FavoriteStorage.swift in Sources */,
 				3F478ECF29DB474E00F6D39E /* Colors.swift in Sources */,
 				0C79EE662A76DDFF00EE90EA /* NftDetailViewController.swift in Sources */,
 				09DFED042EDCA143006F5A5C /* NFTCell.swift in Sources */,
 				E1A1B9DA2AA01CE400C3AFBC /* TabBarController.swift in Sources */,
+				093A86D52EE4D1E500B2C1C4 /* NftCollectionPutFavoritesRequest.swift in Sources */,
 				09DFED0F2EDDE803006F5A5C /* StarRatingView.swift in Sources */,
 				3F478ED129DB476500F6D39E /* Fonts.swift in Sources */,
 				09DFED242EDF4F9C006F5A5C /* MockNft.swift in Sources */,
@@ -645,6 +662,7 @@
 				3F68069929CBBAF100B4F915 /* SceneDelegate.swift in Sources */,
 				0C79EE6C2A76DE2E00EE90EA /* ServicesAssemly.swift in Sources */,
 				0CFCB74E2A7817DC0009A829 /* NftStorage.swift in Sources */,
+				093A86D32EE4D1CF00B2C1C4 /* NftCollectionGetFavoritesRequest.swift in Sources */,
 				3FC8C39129D2453B0081F015 /* ExamplePutRequest.swift in Sources */,
 				0CFCB7462A78064B0009A829 /* NftDetailCellModel.swift in Sources */,
 				0CFCB74B2A780EA80009A829 /* UIView+Constraints.swift in Sources */,
@@ -653,10 +671,12 @@
 				0C79EE612A76DCD600EE90EA /* NftByIdRequest.swift in Sources */,
 				09D97D1A2EE0C68900E057E9 /* CatalogStorage.swift in Sources */,
 				E19CD5AB2A98B56600CA39A5 /* NftImageCollectionViewCell.swift in Sources */,
+				093A86D72EE4D2D700B2C1C4 /* FavoriteNftProvider.swift in Sources */,
 				0CF2C2E12A784C7000FDC837 /* LinePageControl.swift in Sources */,
 				0990C3C72ED5E85B008072D2 /* CatalogProvider.swift in Sources */,
 				3F6806D329CBBE9600B4F915 /* NetworkRequest.swift in Sources */,
 				0CFCB7492A7808900009A829 /* TestCatalogController.swift in Sources */,
+				093A86DB2EE4D50100B2C1C4 /* FavoritesDto.swift in Sources */,
 				3F6806D129CBBE6B00B4F915 /* NetworkClient.swift in Sources */,
 				0CFCB7442A7802440009A829 /* NftDetailInput.swift in Sources */,
 				0C79EE632A76DD1900EE90EA /* RequestConstants.swift in Sources */,

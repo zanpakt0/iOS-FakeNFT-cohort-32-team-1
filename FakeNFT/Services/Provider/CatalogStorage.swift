@@ -11,7 +11,7 @@ final class CatalogStorageImpl: CatalogStorage {
     private let syncQueue = DispatchQueue(label: "sync-catalog-queue")
 
     func saveCatalog(_ catalog: [Catalog]) {
-        syncQueue.async { [weak self] in
+        syncQueue.sync { [weak self] in
             self?.storage = catalog
         }
     }
