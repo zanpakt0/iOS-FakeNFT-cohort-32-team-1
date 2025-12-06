@@ -87,7 +87,7 @@ final class NFTCollectionViewController: UIViewController {
         label.font = .caption1
         label.textAlignment = .left
         label.text = "John Doe"
-        label.textColor = .blue
+        label.textColor = .authorBlue
         return label
     }()
     
@@ -137,6 +137,8 @@ final class NFTCollectionViewController: UIViewController {
         return indicator
     }()
     
+    private let refreshControl = UIRefreshControl()
+    
     //MARK: - Init
     init(viewModel: NFTCollectionViewModel, catalogItem: Catalog) {
         self.catalogItem = catalogItem
@@ -151,7 +153,6 @@ final class NFTCollectionViewController: UIViewController {
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .background
         updateCollectionViewHeight()
         setupUI()
         applyCatalogData()
@@ -160,6 +161,7 @@ final class NFTCollectionViewController: UIViewController {
     
     //MARK: - Setup Methods
     private func setupUI() {
+        view.backgroundColor = .forViewBackgound
         setupScrollView()
         setupUIInsideContent()
         setupBackButton()
@@ -180,7 +182,9 @@ final class NFTCollectionViewController: UIViewController {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         
-        scrollView.contentInsetAdjustmentBehavior = .never
+        scrollView.contentInsetAdjustmentBehavior = .never  // Нужно, чтобы cover заходил за safeArea
+        scrollView.refreshControl = refreshControl
+        refreshControl.addTarget(self, action: #selector(refreshData), for: .valueChanged)
         
         NSLayoutConstraint.activate([
             // scrollView
@@ -243,7 +247,7 @@ final class NFTCollectionViewController: UIViewController {
         let itemHeight: CGFloat = CollectionLayout.itemHeight
         let verticalSpacing: CGFloat = CollectionLayout.lineSpacing
         
-        let itemsCount = mockNFTs.count
+        let itemsCount = viewModel.nfts.count
         let rows = Int(ceil(Double(itemsCount) / Double(itemsPerRow)))
         let totalHeight = CGFloat(rows) * itemHeight + CGFloat(max(0, rows - 1)) * verticalSpacing
         
@@ -276,12 +280,17 @@ final class NFTCollectionViewController: UIViewController {
         dismiss(animated: true)
     }
     
+    @objc private func refreshData() {
+        collectionView.reloadData()
+        viewModel.loadData()
+    }
     //MARK: - Bind
     func bindViewModel() {
         viewModel.$nfts
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: { [weak self] _ in
-                self?.collectionView.reloadData()
+                self?.updateCollectionViewHeight()
+                self?.refreshControl.endRefreshing()
             })
             .store(in: &subscribes)
         
@@ -315,7 +324,7 @@ extension NFTCollectionViewController: UICollectionViewDataSource, UICollectionV
         _ collectionView: UICollectionView,
         numberOfItemsInSection section: Int
     ) -> Int {
-        mockNFTs.count
+        viewModel.nfts.count
     }
     
     func collectionView(
@@ -323,7 +332,7 @@ extension NFTCollectionViewController: UICollectionViewDataSource, UICollectionV
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
         let cell: NFTCell = collectionView.dequeueReusableCell(indexPath: indexPath)
-        let nft = mockNFTs[indexPath.item]
+        let nft = viewModel.nfts[indexPath.item]
         cell.delegate = self
         cell.configure(
             nft: nft,

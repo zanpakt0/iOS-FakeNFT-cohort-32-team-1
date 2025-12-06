@@ -24,7 +24,7 @@ final class CatalogViewController: UIViewController, ErrorView {
         tableView.layer.cornerRadius = CatalogLayout.tableViewCornerRadius
         tableView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         tableView.layer.masksToBounds = true
-        tableView.backgroundColor = .background
+        tableView.backgroundColor = .forViewBackgound
         tableView.separatorStyle = .none
         return tableView
     }()
@@ -66,7 +66,7 @@ final class CatalogViewController: UIViewController, ErrorView {
     
     //MARK: - Setup UI
     private func setupUI() {
-        view.backgroundColor = .background
+        view.backgroundColor = .forViewBackgound
         setupSortButton()
         setupTableView()
         setupLoadingIndicator()

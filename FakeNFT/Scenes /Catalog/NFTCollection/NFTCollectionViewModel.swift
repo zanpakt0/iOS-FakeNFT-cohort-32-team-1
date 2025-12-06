@@ -11,17 +11,20 @@ final class NFTCollectionViewModel {
     
     //MARK: - Constants
     private let provider: NftService
+    private let nftIds: [String]
     
     //MARK: - Init
     init(provider: NftServiceImpl, nftIds: [String]) {
         self.provider = provider
         self.isLoading = true
-        self.loadData(nftIds: nftIds)
+        self.nftIds = nftIds
+        self.loadData()
     }
     
     //MARK: - Methods
-    func loadData(nftIds: [String]) {
-        for id in nftIds {
+    func loadData() {
+        self.nfts = []
+        for id in self.nftIds {
             provider.loadNft(id: id) { [weak self] result in
                 guard let self else { return }
                 

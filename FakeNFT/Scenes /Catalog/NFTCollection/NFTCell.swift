@@ -37,8 +37,8 @@ final class NFTCell: UICollectionViewCell, ReuseIdentifying {
     
     weak var delegate: NFTCellDelegate?
     
-    private var inCart: Bool = false
-    private var isLiked: Bool = false
+    private var inCart = false
+    private var isLiked = false
     private var nftId: String?
     
     //MARK: - UI
@@ -57,7 +57,7 @@ final class NFTCell: UICollectionViewCell, ReuseIdentifying {
     private lazy var nftLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.bodyBold
-        label.textColor = .textPrimary
+        label.textColor = .textColor
         label.textAlignment = .left
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -66,7 +66,7 @@ final class NFTCell: UICollectionViewCell, ReuseIdentifying {
     private lazy var nftPriceLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.caption3
-        label.textColor = .textPrimary
+        label.textColor = .textColor
         label.textAlignment = .left
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -96,7 +96,6 @@ final class NFTCell: UICollectionViewCell, ReuseIdentifying {
     //MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
-        contentView.backgroundColor = .background
         setupUI()
     }
     
@@ -106,6 +105,7 @@ final class NFTCell: UICollectionViewCell, ReuseIdentifying {
     
     //MARK: - Setup UI
     private func setupUI() {
+        contentView.backgroundColor = .forViewBackgound
         contentView.addSubview(nftImageView)
         contentView.addSubview(nftLikeButton)
         contentView.addSubview(ratingView)

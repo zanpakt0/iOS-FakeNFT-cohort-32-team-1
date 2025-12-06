@@ -48,6 +48,7 @@ extension UIColor {
     private static let yaLightGrayDark = UIColor(hexString: "#2C2C2E")
     
     static let starsRatingYellow = UIColor(hexString: "#FEEF0D")
+    static let authorBlue = UIColor(hexString: "#0A84FF")
 
     static let segmentActive = UIColor { traits in
         return traits.userInterfaceStyle == .dark
@@ -71,5 +72,11 @@ extension UIColor {
         return traits.userInterfaceStyle == .light
         ? .yaBlackDark
         : .yaBlackLight
+    }
+    
+    static let textColor = UIColor { traits in
+        return traits.userInterfaceStyle == .dark
+        ? .textOnPrimary
+        : .textPrimary
     }
 }

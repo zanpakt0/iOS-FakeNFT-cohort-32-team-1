@@ -12,7 +12,6 @@ final class CatalogViewModel {
     //MARK: - Init
     init(catalogProvider: CatalogProvider) {
         self.catalogProvider = catalogProvider
-        self.isLoading = true
         
         loadData()
     }
@@ -27,6 +26,7 @@ final class CatalogViewModel {
     }
     
     func loadData() {
+        self.isLoading = true
         catalogProvider.loadCatalog { [weak self] result in
             guard let self else { return }
             self.isLoading = false
