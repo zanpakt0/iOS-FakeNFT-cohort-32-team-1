@@ -1,14 +1,22 @@
 import UIKit
+import Kingfisher
 
 final class CatalogCell: UITableViewCell, ReuseIdentifying {
-    
+    private enum CatalogCellLayout {
+        static let imageTop: CGFloat = 20
+        static let imageHeight: CGFloat = 140
+        static let labelTop: CGFloat = 4
+        static let labelBottom: CGFloat = -1
+        static let imageCornerRadius: CGFloat = 12
+    }
+
     //MARK: - UI
     private lazy var catalogImage: UIImageView = {
         let image = UIImageView()
-        image.layer.cornerRadius = 12
+        image.layer.cornerRadius = CatalogCellLayout.imageCornerRadius
         image.layer.masksToBounds = true
         image.translatesAutoresizingMaskIntoConstraints = false
-        image.backgroundColor = .background
+        image.backgroundColor = .forViewBackgound
         image.contentMode = .scaleAspectFill
         return image
     }()
@@ -16,7 +24,7 @@ final class CatalogCell: UITableViewCell, ReuseIdentifying {
     private lazy var catalogLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.bodyBold
-        label.textColor = .textPrimary
+        label.textColor = .textColor
         label.textAlignment = .left
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -25,7 +33,7 @@ final class CatalogCell: UITableViewCell, ReuseIdentifying {
     //MARK: - Init
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        contentView.backgroundColor = .background
+        contentView.backgroundColor = .forViewBackgound
         setupImage()
         setupLabel()
     }
@@ -39,10 +47,10 @@ final class CatalogCell: UITableViewCell, ReuseIdentifying {
         contentView.addSubview(catalogImage)
         
         NSLayoutConstraint.activate([
-            catalogImage.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 20),
+            catalogImage.topAnchor.constraint(equalTo: contentView.topAnchor, constant: CatalogCellLayout.imageTop),
             catalogImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             catalogImage.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            catalogImage.heightAnchor.constraint(equalToConstant: 140)
+            catalogImage.heightAnchor.constraint(equalToConstant: CatalogCellLayout.imageHeight)
         ])
     }
     
@@ -50,10 +58,10 @@ final class CatalogCell: UITableViewCell, ReuseIdentifying {
         contentView.addSubview(catalogLabel)
         
         NSLayoutConstraint.activate([
-            catalogLabel.topAnchor.constraint(equalTo: catalogImage.bottomAnchor, constant: 4),
+            catalogLabel.topAnchor.constraint(equalTo: catalogImage.bottomAnchor, constant: CatalogCellLayout.labelTop),
             catalogLabel.leadingAnchor.constraint(equalTo: catalogImage.leadingAnchor),
             catalogLabel.trailingAnchor.constraint(equalTo: catalogImage.trailingAnchor),
-            catalogLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -1)
+            catalogLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: CatalogCellLayout.labelBottom)
         ])
     }
     
@@ -64,8 +72,8 @@ final class CatalogCell: UITableViewCell, ReuseIdentifying {
         catalogLabel.text = nil
     }
     
-    func configure(image: UIImage, text: String, numberOfNfts: Int) {
-        catalogImage.image = image
+    func configure(imageURL: URL, text: String, numberOfNfts: Int) {
+        catalogImage.kf.setImage(with: imageURL)
         catalogLabel.text = "\(text.capitalized) (\(numberOfNfts))"
     }
 }

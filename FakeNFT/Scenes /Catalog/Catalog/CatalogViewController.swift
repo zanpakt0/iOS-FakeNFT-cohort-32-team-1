@@ -2,28 +2,36 @@ import UIKit
 import Combine
 
 final class CatalogViewController: UIViewController, ErrorView {
+    private enum CatalogLayout {
+        static let sortButtonTrailing: CGFloat = -9
+        static let sortButtonSize: CGFloat = 42
+        static let tableViewLeading: CGFloat = 16
+        static let tableViewTrailing: CGFloat = -16
+        static let tableViewCornerRadius: CGFloat = 12
+    }
+
     //MARK: - Constants
-    private let viewModel = CatalogViewModel(catalogProvider: CatalogProvider())
+    private let viewModel: CatalogViewModel
     private var subscribes = Set<AnyCancellable>()
     
     private let sortByNameTitle: String = NSLocalizedString("catalog.sortByNameTitle", comment: "Sort by name")
     private let sortByCountTitle: String = NSLocalizedString("catalog.sortByCountTitle", comment: "Sort by count of nfts")
     
-    //MARK: - UI
+    //MARK: - UI Elements
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.layer.cornerRadius = 12
+        tableView.layer.cornerRadius = CatalogLayout.tableViewCornerRadius
         tableView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         tableView.layer.masksToBounds = true
-        tableView.backgroundColor = .background
+        tableView.backgroundColor = .forViewBackgound
         tableView.separatorStyle = .none
         return tableView
     }()
     
     private lazy var sortButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(resource: .sortButton), for: .normal)
+        button.setImage(UIImage(resource: .sortCatalogButton), for: .normal)
         button.tintColor = .segmentActive
         button.imageView?.contentMode = .scaleAspectFit
         button.addTarget(self, action: #selector(sortButtonTapped), for: .touchUpInside)
@@ -39,6 +47,16 @@ final class CatalogViewController: UIViewController, ErrorView {
     
     private let refreshControl = UIRefreshControl()
 
+    //MARK: - Init
+    init(viewModel: CatalogViewModel) {
+        self.viewModel = viewModel
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     //MARK: - Lyfecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,7 +66,7 @@ final class CatalogViewController: UIViewController, ErrorView {
     
     //MARK: - Setup UI
     private func setupUI() {
-        view.backgroundColor = .background
+        view.backgroundColor = .forViewBackgound
         setupSortButton()
         setupTableView()
         setupLoadingIndicator()
@@ -59,9 +77,9 @@ final class CatalogViewController: UIViewController, ErrorView {
         
         NSLayoutConstraint.activate([
             sortButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            sortButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -9),
-            sortButton.heightAnchor.constraint(equalToConstant: 42),
-            sortButton.widthAnchor.constraint(equalToConstant: 42)
+            sortButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: CatalogLayout.sortButtonTrailing),
+            sortButton.heightAnchor.constraint(equalToConstant: CatalogLayout.sortButtonSize),
+            sortButton.widthAnchor.constraint(equalToConstant: CatalogLayout.sortButtonSize)
         ])
     }
     
@@ -78,8 +96,8 @@ final class CatalogViewController: UIViewController, ErrorView {
         
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: sortButton.bottomAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: CatalogLayout.tableViewLeading),
+            tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: CatalogLayout.tableViewTrailing),
             tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
         ])
     }
@@ -101,7 +119,7 @@ final class CatalogViewController: UIViewController, ErrorView {
     }
     
     @objc private func refreshData() {
-        viewModel.reload()
+        viewModel.loadData()
     }
 
     //MARK: - Bind
@@ -132,10 +150,21 @@ extension CatalogViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: CatalogCell = tableView.dequeueReusableCell()
         let item = viewModel.catalog[indexPath.row]
-        cell.configure(image: item.image, text: item.title, numberOfNfts: item.count)
+        cell.configure(imageURL: item.cover, text: item.name, numberOfNfts: item.nfts.count)
         return cell
     }
     
 }
 
-extension CatalogViewController: UITableViewDelegate { }
+extension CatalogViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let item = viewModel.catalog[indexPath.row]
+        let provider = NftServiceImpl(networkClient: DefaultNetworkClient(),
+                                     storage: NftStorageImpl())
+        let viewModel = NFTCollectionViewModel(provider: provider, nftIds: item.nfts)
+        let NFTvc = NFTCollectionViewController(viewModel: viewModel, catalogItem: item)
+        NFTvc.modalTransitionStyle = .crossDissolve
+        NFTvc.modalPresentationStyle = .fullScreen
+        present(NFTvc, animated: true)
+    }
+}
