@@ -23,20 +23,28 @@ final class NFTCollectionViewModel {
     
     //MARK: - Methods
     func loadData() {
-        self.nfts = []
-        for id in self.nftIds {
-            provider.loadNft(id: id) { [weak self] result in
-                guard let self else { return }
-                
+        self.isLoading = true
+        
+        let group = DispatchGroup()
+        var loadedNfts: [Nft] = []
+        
+        for id in nftIds {
+            group.enter()
+            provider.loadNft(id: id) { result in
                 switch result {
                 case .success(let nft):
-                    self.nfts.append(nft)
+                    loadedNfts.append(nft)
                 case .failure(let error):
                     print("Load failed", error)
                 }
+                group.leave()
             }
         }
-        self.isLoading = false
+        group.notify(queue: .main) { [weak self] in
+            guard let self else { return }
+            self.nfts = loadedNfts
+            self.isLoading = false
+        }
     }
     
     func addInCart(id: String) {

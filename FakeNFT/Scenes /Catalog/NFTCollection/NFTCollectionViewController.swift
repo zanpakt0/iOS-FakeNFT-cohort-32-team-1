@@ -134,6 +134,7 @@ final class NFTCollectionViewController: UIViewController {
     private lazy var loadingIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView()
         indicator.translatesAutoresizingMaskIntoConstraints = false
+        indicator.hidesWhenStopped = true
         return indicator
     }()
     
@@ -163,6 +164,7 @@ final class NFTCollectionViewController: UIViewController {
     private func setupUI() {
         view.backgroundColor = .forViewBackgound
         setupScrollView()
+        setupLoadingIndicator()
         setupUIInsideContent()
         setupBackButton()
     }
