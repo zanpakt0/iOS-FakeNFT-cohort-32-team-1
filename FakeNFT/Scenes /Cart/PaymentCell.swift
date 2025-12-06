@@ -1,10 +1,3 @@
-//
-//  PaymentCell.swift
-//  FakeNFT
-//
-//  Created by Svetlana Varenova on 04.12.2025.
-//
-
 import UIKit
 
 final class PaymentCell: UICollectionViewCell {
@@ -17,7 +10,12 @@ final class PaymentCell: UICollectionViewCell {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
+        setupUI()
+    }
+    
+    required init?(coder: NSCoder) { fatalError() }
+    
+    private func setupUI() {
         contentView.layer.cornerRadius = 12
         contentView.layer.borderWidth = 0
         contentView.backgroundColor = .segmentPayCellBackground
@@ -50,8 +48,6 @@ final class PaymentCell: UICollectionViewCell {
         iconView.heightAnchor.constraint(equalToConstant: 36).isActive = true
         iconView.contentMode = .scaleAspectFit
     }
-    
-    required init?(coder: NSCoder) { fatalError() }
     
     func configure(with item: CryptoPayment) {
         iconView.image = UIImage(named: item.iconName)

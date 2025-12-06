@@ -1,10 +1,3 @@
-//
-//  PaymentViewController.swift
-//  FakeNFT
-//
-//  Created by Svetlana Varenova on 04.12.2025.
-//
-
 import UIKit
 import ProgressHUD
 
@@ -236,7 +229,7 @@ extension PaymentViewController: UITextViewDelegate {
                   shouldInteractWith URL: URL,
                   in characterRange: NSRange) -> Bool {
         if URL.absoluteString == "https://yandex.ru/legal/practicum_termsofuse" {
-            let webVC = TermsWebViewController(urlString: URL.absoluteString)
+            let webVC = WebViewViewController(urlString: URL.absoluteString)
             navigationController?.pushViewController(webVC, animated: true)
             return false
         }

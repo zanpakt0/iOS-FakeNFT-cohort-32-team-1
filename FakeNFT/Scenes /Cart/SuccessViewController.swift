@@ -1,11 +1,21 @@
-//
-//  SuccessViewController.swift
-//  FakeNFT
-//
-//  Created by Svetlana Varenova on 04.12.2025.
-//
-
 import UIKit
+
+enum SuccessViewLayout {
+    static let imageViewTop: CGFloat = 196
+    static let imageViewSizes: CGFloat = 278
+    static let labelTextTop: CGFloat = 20
+    static let labelTextLeading: CGFloat = 35
+    static let labelTextTrailing: CGFloat = -36
+    static let buttonToCartLeading: CGFloat = 16
+    static let buttonToCartTrailing: CGFloat = -16
+    static let buttonToCartBottom: CGFloat = -16
+    static let buttonToCartHeight: CGFloat = 60
+}
+enum SuccessViewStyle {
+    static let buttonToCartCornerRadius: CGFloat = 16
+    static let titleFont: UIFont = .systemFont(ofSize: 22, weight: .bold)
+    static let buttonFont: UIFont = .systemFont(ofSize: 17, weight: .bold)
+}
 
 final class SuccessViewController: UIViewController {
     
@@ -18,7 +28,7 @@ final class SuccessViewController: UIViewController {
     private let labelText: UILabel = {
         let label = UILabel()
         label.text = NSLocalizedString("Success! Your payment has been completed. Congratulations on your purchase!", comment: "")
-        label.font = .systemFont(ofSize: 22, weight: .bold)
+        label.font = SuccessViewStyle.titleFont
         label.numberOfLines = 2
         label.textAlignment = .center
         return label
@@ -27,9 +37,9 @@ final class SuccessViewController: UIViewController {
         let button = UIButton()
         button.setTitle(NSLocalizedString("Return to Cart", comment: ""), for: .normal)
         button.backgroundColor = .segmentButtonBackground
-        button.layer.cornerRadius = 16
+        button.layer.cornerRadius = SuccessViewStyle.buttonToCartCornerRadius
         button.setTitleColor(.segmentButtonText, for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 17, weight: .bold)
+        button.titleLabel?.font = SuccessViewStyle.buttonFont
         return button
     }()
     
@@ -57,19 +67,19 @@ final class SuccessViewController: UIViewController {
         
         NSLayoutConstraint.activate([
             
-            imageView.topAnchor.constraint(equalTo: view.topAnchor, constant: 196),
+            imageView.topAnchor.constraint(equalTo: view.topAnchor, constant: SuccessViewLayout.imageViewTop),
             imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            imageView.widthAnchor.constraint(equalToConstant: 278),
-            imageView.heightAnchor.constraint(equalToConstant: 278),
+            imageView.widthAnchor.constraint(equalToConstant: SuccessViewLayout.imageViewSizes),
+            imageView.heightAnchor.constraint(equalToConstant: SuccessViewLayout.imageViewSizes),
             
-            labelText.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 20),
-            labelText.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 35),
-            labelText.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -36),
+            labelText.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: SuccessViewLayout.labelTextTop),
+            labelText.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: SuccessViewLayout.labelTextLeading),
+            labelText.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: SuccessViewLayout.labelTextTrailing),
             
-            buttonToCart.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            buttonToCart.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            buttonToCart.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
-            buttonToCart.heightAnchor.constraint(equalToConstant: 60)
+            buttonToCart.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: SuccessViewLayout.buttonToCartLeading),
+            buttonToCart.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: SuccessViewLayout.buttonToCartTrailing),
+            buttonToCart.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: SuccessViewLayout.buttonToCartBottom),
+            buttonToCart.heightAnchor.constraint(equalToConstant: SuccessViewLayout.buttonToCartHeight)
         ])
     }
     

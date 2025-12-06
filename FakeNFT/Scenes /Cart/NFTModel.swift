@@ -1,10 +1,3 @@
-//
-//  Model.swift
-//  FakeNFT
-//
-//  Created by Svetlana Varenova on 01.12.2025.
-//
-
 import UIKit
 
 struct NFTItem {

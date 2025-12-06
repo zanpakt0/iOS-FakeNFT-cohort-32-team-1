@@ -1,10 +1,3 @@
-//
-//  CartTableViewCell.swift
-//  FakeNFT
-//
-//  Created by Svetlana Varenova on 26.11.2025.
-//
-
 import UIKit
 
 protocol CartTableViewCellDelegate: AnyObject {

@@ -1,10 +1,3 @@
-//
-//  DeleteModalViewController.swift
-//  FakeNFT
-//
-//  Created by Svetlana Varenova on 02.12.2025.
-//
-
 import UIKit
 
 final class DeleteModalViewController: UIViewController {

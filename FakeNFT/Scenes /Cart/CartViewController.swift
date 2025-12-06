@@ -1,10 +1,3 @@
-//
-//  CartViewController.swift
-//  FakeNFT
-//
-//  Created by Svetlana Varenova on 25.11.2025.
-//
-
 import UIKit
 
 final class CartViewController: UIViewController, ErrorView {
