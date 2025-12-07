@@ -34,7 +34,7 @@ final class StatisticsTableViewCell: UITableViewCell {
     static let reuseIdentifier = "StatisticsTableViewCell"
     
     // MARK: - Views (elements)
-    private let containerView: UIView = {
+    private lazy var containerView: UIView = {
         let containerview = UIView()
         containerview.layer.cornerRadius = StatisticsTableViewCellLayout.containerCornerRadius
         containerview.backgroundColor = .forViewBackground

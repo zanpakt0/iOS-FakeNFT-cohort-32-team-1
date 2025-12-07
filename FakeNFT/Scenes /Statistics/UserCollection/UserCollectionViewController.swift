@@ -16,7 +16,7 @@ final class UserCollectionViewController: UIViewController, LoadingView {
         
         return indicator
     }()
-    lazy var containerForActivityIndicator: UIView = {
+    private lazy var containerForActivityIndicator: UIView = {
         let containerForActivityIndicator = UIView()
         containerForActivityIndicator.backgroundColor = .forActivityIndicatorBackground
         containerForActivityIndicator.layer.cornerRadius = 8
@@ -29,8 +29,18 @@ final class UserCollectionViewController: UIViewController, LoadingView {
         
         return containerForActivityIndicator
     }()
-    lazy var collectionViewWithNfts: UICollectionView = {
+    private lazy var collectionViewWithNfts: UICollectionView = {
         let collectionViewWithNfts = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
+        collectionViewWithNfts.delegate = self
+        collectionViewWithNfts.dataSource = self
+        collectionViewWithNfts.alwaysBounceVertical = true
+        collectionViewWithNfts.backgroundColor = .forViewBackground
+        
+        collectionViewWithNfts.register(
+            UserCollectionViewCell.self,
+            forCellWithReuseIdentifier: UserCollectionViewCell.reuseIdentifier)
+        
+        collectionViewWithNfts.translatesAutoresizingMaskIntoConstraints = false
         
         return collectionViewWithNfts
     }()
@@ -67,6 +77,8 @@ final class UserCollectionViewController: UIViewController, LoadingView {
     
     private func addSubviews() {
         view.addSubview(containerForActivityIndicator)
+        view.addSubview(collectionViewWithNfts)
+        
         containerForActivityIndicator.addSubview(activityIndicator)
     }
     
@@ -76,7 +88,12 @@ final class UserCollectionViewController: UIViewController, LoadingView {
             containerForActivityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             
             activityIndicator.centerXAnchor.constraint(equalTo: containerForActivityIndicator.centerXAnchor),
-            activityIndicator.centerYAnchor.constraint(equalTo: containerForActivityIndicator.centerYAnchor)
+            activityIndicator.centerYAnchor.constraint(equalTo: containerForActivityIndicator.centerYAnchor),
+            
+            collectionViewWithNfts.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            collectionViewWithNfts.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            collectionViewWithNfts.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -17),
+            collectionViewWithNfts.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
 
@@ -114,6 +131,7 @@ final class UserCollectionViewController: UIViewController, LoadingView {
                     showNeedViewsInScreen(needToShowLoadingIndicator: .showLoaderHideViews)
                 case .loaded(_):
                     showNeedViewsInScreen(needToShowLoadingIndicator: .showViewsHideLoader)
+                    collectionViewWithNfts.reloadData()
                 case .error(_):
                     showNeedViewsInScreen(needToShowLoadingIndicator: .hideBoth)
                     showErrorAlert()
@@ -128,5 +146,47 @@ final class UserCollectionViewController: UIViewController, LoadingView {
             let nftIdsList = self.viewModel.nftIdsList else { return }
             self.viewModel.fetchNfts(listOfNfts: nftIdsList)
         }
+    }
+}
+
+extension UserCollectionViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        1
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        viewModel.nftList.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserCollectionViewCell.reuseIdentifier, for: indexPath) as? UserCollectionViewCell else {
+            return UICollectionViewCell()
+        }
+        cell.configure(nftData: viewModel.nftList[indexPath.row])
+        
+        return cell
+    }
+}
+
+extension UserCollectionViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let spacing: CGFloat = 8
+        let itemsPerRow: CGFloat = 3
+        
+        let totalSpacing = spacing * (itemsPerRow - 1)
+        let availableWidth = collectionView.frame.width - totalSpacing
+        let cellWidth = availableWidth / itemsPerRow
+        
+        return CGSize(width: cellWidth, height: 192)
+        }
+    
+    func collectionView(_: UICollectionView, layout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt: Int) -> CGFloat {
+        8
+    }
+    
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        8
     }
 }

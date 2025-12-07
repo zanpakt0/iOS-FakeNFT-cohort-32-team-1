@@ -1,4 +1,5 @@
 import UIKit
+import Kingfisher
 
 final class UserCollectionViewCell: UICollectionViewCell {
     
@@ -6,8 +7,10 @@ final class UserCollectionViewCell: UICollectionViewCell {
     var onFavouritesButtonTapped: ((Bool) -> Void)?
     var onCartButtonTapped: ((Bool) -> Void)?
     
+    // MARK: - Static properties
+    static let reuseIdentifier = "StatisticsTableViewCell"
+    
     // MARK: - Private Properties
-    private var viewModel: UserCollectionViewModel?
     private var isFavourite = false
     private var isInCart = false
     
@@ -16,6 +19,7 @@ final class UserCollectionViewCell: UICollectionViewCell {
         let exampleImage = UIImage(systemName: "");
         let nftImageView = UIImageView(image: exampleImage)
         nftImageView.layer.cornerRadius = 12
+        nftImageView.layer.masksToBounds = true
         nftImageView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -42,11 +46,6 @@ final class UserCollectionViewCell: UICollectionViewCell {
         let viewWithAdditionalInfo = UIView()
         viewWithAdditionalInfo.backgroundColor = .forViewBackground
         viewWithAdditionalInfo.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            viewWithAdditionalInfo.widthAnchor.constraint(equalToConstant: 108),
-            viewWithAdditionalInfo.heightAnchor.constraint(equalToConstant: 56)
-        ])
         
         return viewWithAdditionalInfo
     }()
@@ -118,6 +117,21 @@ final class UserCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func configure(nftData: NftCellViewData) {
+        let processor = RoundCornerImageProcessor(cornerRadius: 12)
+        guard let url = nftData.nft.image else  {
+            return
+        }
+        self.nftImageView.kf.setImage(with: url,
+                                             placeholder: nil,
+                                             options: [.processor(processor)])
+        
+        visualizeFavouritesAndCartButtons(isFavourtie: nftData.isFavourite, isInChart: nftData.isInChart)
+        visualizeStars(rating: nftData.nft.rating)
+        nftNameLabel.text = nftData.nft.name
+        nftPriceLabel.text = replaceDotsWithCommas(price: nftData.nft.price)
+    }
+    
     // MARK: - Private Methods
     @objc private func favouritesButtonClicked() {
         onFavouritesButtonTapped?(isFavourite)
@@ -145,61 +159,45 @@ final class UserCollectionViewCell: UICollectionViewCell {
             favouritesButton.topAnchor.constraint(equalTo: nftImageView.topAnchor),
             favouritesButton.trailingAnchor.constraint(equalTo: nftImageView.trailingAnchor),
             
-            viewWithAdditionalInfo.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            viewWithAdditionalInfo.leadingAnchor.constraint(equalTo: nftImageView.leadingAnchor),
             viewWithAdditionalInfo.topAnchor.constraint(equalTo: nftImageView.bottomAnchor, constant: 8),
             viewWithAdditionalInfo.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20),
             
             stackViewOfStars.topAnchor.constraint(equalTo: viewWithAdditionalInfo.topAnchor),
-            stackViewOfStars.leadingAnchor.constraint(equalTo: viewWithAdditionalInfo.leadingAnchor),
+            stackViewOfStars.leadingAnchor.constraint(equalTo: nftImageView.leadingAnchor),
             
-            nftNameLabel.leadingAnchor.constraint(equalTo: viewWithAdditionalInfo.leadingAnchor),
+            nftNameLabel.leadingAnchor.constraint(equalTo: nftImageView.leadingAnchor),
             nftNameLabel.topAnchor.constraint(equalTo: stackViewOfStars.bottomAnchor, constant: 5),
             
-            nftPriceLabel.leadingAnchor.constraint(equalTo: viewWithAdditionalInfo.leadingAnchor),
+            nftPriceLabel.leadingAnchor.constraint(equalTo: nftImageView.leadingAnchor),
             nftPriceLabel.topAnchor.constraint(equalTo: nftNameLabel.bottomAnchor, constant: 4),
             
             cartButton.topAnchor.constraint(equalTo: viewWithAdditionalInfo.topAnchor, constant: 16),
-            cartButton.trailingAnchor.constraint(equalTo: viewWithAdditionalInfo.trailingAnchor)
+            cartButton.trailingAnchor.constraint(equalTo: nftImageView.trailingAnchor)
         ])
     }
     
-    private func visualizeStars(rating: Int) {
-        switch rating {
-        case 1:
-            firstStar.tintColor = .yellowForStars
-        case 2:
-            firstStar.tintColor = .yellowForStars
-            secondStar.tintColor = .yellowForStars
-        case 3:
-            firstStar.tintColor = .yellowForStars
-            secondStar.tintColor = .yellowForStars
-            thirdStar.tintColor = .yellowForStars
-        case 4:
-            firstStar.tintColor = .yellowForStars
-            secondStar.tintColor = .yellowForStars
-            thirdStar.tintColor = .yellowForStars
-            fourthStar.tintColor = .yellowForStars
-        case 5:
-            firstStar.tintColor = .yellowForStars
-            secondStar.tintColor = .yellowForStars
-            thirdStar.tintColor = .yellowForStars
-            fourthStar.tintColor = .yellowForStars
-            fifthStar.tintColor = .yellowForStars
-        default:
-            break
-        }
-    }
-    
-    private func visualizeFavouritesAndCartButtons(nftId: String) {
-        guard let viewModel = viewModel else { return }
-        
-        isFavourite = viewModel.checkExistingNftInFavouritesList(nftId: nftId)
+    private func visualizeFavouritesAndCartButtons(isFavourtie: Bool, isInChart: Bool) {
+        isFavourite = isFavourtie
         favouritesButton.tintColor = isFavourite ? .redForFavouritesButton : .background
         
-        isInCart = viewModel.checkExistingNftInShoppingCart(nftId: nftId)
+        isInCart = isInChart
         let cartImage = isInCart ? UIImage(resource: .deleteCartIcon) : UIImage(resource: .addCartIcon)
         cartButton.setImage(cartImage, for: .normal)
         cartButton.tintColor = .segmentActive
+    }
+
+    
+    private func replaceDotsWithCommas(price: Decimal) -> String {
+        let string = "\(price)"
+        return "\(string.replacingOccurrences(of: ".", with: ",")) ETH"
+    }
+    
+    private func visualizeStars(rating: Int) {
+        let stars = [firstStar, secondStar, thirdStar, fourthStar, fifthStar]
+        for (index, star) in stars.enumerated() {
+            star.tintColor = index < rating ? .yellowForStars : .segmentInactive
+        }
     }
     
     private func createDefaultStar() -> UIImageView {

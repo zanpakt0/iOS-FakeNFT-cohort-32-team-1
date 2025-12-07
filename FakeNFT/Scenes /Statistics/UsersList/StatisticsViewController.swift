@@ -22,7 +22,7 @@ final class StatisticsViewController: UIViewController, LoadingView {
     lazy var activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .large)
         indicator.hidesWhenStopped = true
-        indicator.color = .black
+        indicator.color = .segmentActive
         indicator.translatesAutoresizingMaskIntoConstraints = false
         
         return indicator
