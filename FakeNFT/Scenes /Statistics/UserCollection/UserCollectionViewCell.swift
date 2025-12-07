@@ -126,7 +126,7 @@ final class UserCollectionViewCell: UICollectionViewCell {
                                              placeholder: nil,
                                              options: [.processor(processor)])
         
-        visualizeFavouritesAndCartButtons(isFavourtie: nftData.isFavourite, isInChart: nftData.isInChart)
+        visualizeFavouritesAndCartButtons(isFavourtie: nftData.isFavourite, isInCart: nftData.isInCart)
         visualizeStars(rating: nftData.nft.rating)
         nftNameLabel.text = nftData.nft.name
         nftPriceLabel.text = replaceDotsWithCommas(price: nftData.nft.price)
@@ -177,11 +177,11 @@ final class UserCollectionViewCell: UICollectionViewCell {
         ])
     }
     
-    private func visualizeFavouritesAndCartButtons(isFavourtie: Bool, isInChart: Bool) {
-        isFavourite = isFavourtie
+    private func visualizeFavouritesAndCartButtons(isFavourtie: Bool, isInCart: Bool) {
+        self.isFavourite = isFavourtie
         favouritesButton.tintColor = isFavourite ? .redForFavouritesButton : .background
         
-        isInCart = isInChart
+        self.isInCart = isInCart
         let cartImage = isInCart ? UIImage(resource: .deleteCartIcon) : UIImage(resource: .addCartIcon)
         cartButton.setImage(cartImage, for: .normal)
         cartButton.tintColor = .segmentActive

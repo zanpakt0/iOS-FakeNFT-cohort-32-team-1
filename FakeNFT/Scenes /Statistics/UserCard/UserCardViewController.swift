@@ -185,13 +185,13 @@ final class UserCardViewController: UIViewController, LoadingView {
     }
     
     @objc private func nftCollectionButtonClicked() {
-        let userCollectionViewModel = UserCollectionViewModel(serviceAssembly: self.viewModel.serviceAssembly)
+        let userCollectionViewModel = UserCollectionViewModel(servicesAssembly: self.viewModel.servicesAssembly)
         let userCollectionViewController = UserCollectionViewController(viewModel: userCollectionViewModel)
         
         universalOpenPage(viewController: userCollectionViewController)
 
         guard let nfts = viewModel.userInfo?.nfts else { return }
-        userCollectionViewModel.fetchNfts(listOfNfts: nfts)
+        userCollectionViewModel.loadEverything(listOfNfts: nfts)
     }
     
     private func addSubviews() {

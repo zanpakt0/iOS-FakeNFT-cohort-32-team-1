@@ -204,7 +204,7 @@ extension StatisticsViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let userCardViewModel = UserCardViewModel(serviceAssembly: self.viewModel.servicesAssembly)
+        let userCardViewModel = UserCardViewModel(servicesAssembly: self.viewModel.servicesAssembly)
         let userCardViewController = UserCardViewController(viewModel: userCardViewModel)
         
         universalOpenPage(viewController: userCardViewController)

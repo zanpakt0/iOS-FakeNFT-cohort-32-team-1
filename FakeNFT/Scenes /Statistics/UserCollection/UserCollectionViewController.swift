@@ -144,7 +144,7 @@ final class UserCollectionViewController: UIViewController, LoadingView {
         self.universalErrorAlert { [weak self] in
             guard let self,
             let nftIdsList = self.viewModel.nftIdsList else { return }
-            self.viewModel.fetchNfts(listOfNfts: nftIdsList)
+            self.viewModel.loadEverything(listOfNfts: nftIdsList)
         }
     }
 }
