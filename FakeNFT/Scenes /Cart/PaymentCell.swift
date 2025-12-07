@@ -13,7 +13,8 @@ final class PaymentCell: UICollectionViewCell {
         setupUI()
     }
     
-    required init?(coder: NSCoder) { fatalError() }
+    @available(*, unavailable)
+    required init?(coder: NSCoder) { nil }
     
     private func setupUI() {
         contentView.layer.cornerRadius = 12

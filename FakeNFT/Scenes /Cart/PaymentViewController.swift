@@ -201,10 +201,12 @@ extension PaymentViewController: UICollectionViewDelegateFlowLayout, UICollectio
     
     func collectionView(_ collectionView: UICollectionView,
                         cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(
+        guard let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: PaymentCell.reuseIdentifier,
             for: indexPath
-        ) as! PaymentCell
+        ) as? PaymentCell else {
+            return UICollectionViewCell()
+        }
         
         cell.configure(with: viewModel.items[indexPath.item])
         return cell

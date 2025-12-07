@@ -53,7 +53,7 @@ final class CartViewController: UIViewController, ErrorView {
     private func setupNavigationBar() {
         
         let sortButtonItem = UIBarButtonItem(
-            image: UIImage(named: "sortButton"),
+            image: UIImage(resource: .sortButton),
             style: .plain,
             target: self,
             action: #selector(sortButtonTapped)
@@ -65,7 +65,7 @@ final class CartViewController: UIViewController, ErrorView {
     // MARK: - Setup bindings
     private func setupBindings() {
         viewModel.onItemsUpdated = { [weak self] in
-            guard let self = self else { return }
+            guard let self else { return }
             self.tableView.reloadData()
             self.emptyLabel.isHidden = !self.viewModel.items.isEmpty
         }
