@@ -1,10 +1,3 @@
-//
-//  CartTableViewCell.swift
-//  FakeNFT
-//
-//  Created by Svetlana Varenova on 26.11.2025.
-//
-
 import UIKit
 
 protocol CartTableViewCellDelegate: AnyObject {
@@ -41,7 +34,7 @@ final class CartTableViewCell: UITableViewCell {
     
     private let priceTitleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Цена"
+        label.text = NSLocalizedString("price", comment: "")
         label.font = UIFont(name: "SFProText-Regular", size: 13) ?? UIFont.systemFont(ofSize: 13)
         label.textColor = .secondaryLabel
         return label
@@ -56,7 +49,7 @@ final class CartTableViewCell: UITableViewCell {
     
     let deleteButton: UIButton = {
         let btn = UIButton(type: .system)
-        btn.setImage(UIImage(named: "Delete"), for: .normal)
+        btn.setImage(UIImage(resource: .delete), for: .normal)
         btn.tintColor = UIColor.segmentButtonBackground
         return btn
     }()
