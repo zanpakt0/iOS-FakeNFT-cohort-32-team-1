@@ -12,13 +12,19 @@ final class NFTCollectionViewModel {
     //MARK: - Constants
     private let provider: NftService
     private let nftIds: [String]
+    private let favoriteProvider : FavoriteNftProvider
     
     //MARK: - Init
     init(provider: NftServiceImpl, nftIds: [String]) {
+        self.favoriteProvider = FavoriteNftProviderImpl(
+            networkClient: DefaultNetworkClient(),
+            storage: FavoriteNftStorageImpl()
+        )
         self.provider = provider
         self.isLoading = true
         self.nftIds = nftIds
         self.loadData()
+        self.fetchFavorites()
     }
     
     //MARK: - Methods
@@ -69,7 +75,14 @@ final class NFTCollectionViewModel {
         DispatchQueue.main.async {
             if !self.favorites.contains(id){
                 self.favorites.append(id)
-                print(self.favorites)
+                
+                self.putFavorites(id: id) { success in
+                    if !success {
+                        if let index = self.favorites.firstIndex(of: id) {
+                            self.favorites.remove(at: index)
+                        }
+                    }
+                }
             }
         }
     }
@@ -78,7 +91,45 @@ final class NFTCollectionViewModel {
         DispatchQueue.main.async {
             if let index = self.favorites.firstIndex(of: id) {
                 self.favorites.remove(at: index)
-                print(self.favorites)
+                
+                self.putFavorites(id: id) { success in
+                    if !success {
+                        if !self.favorites.contains(id) {
+                            self.favorites.append(id)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    //MARK: - Private Methods
+    private func putFavorites(id: String, completion: @escaping (Bool) -> Void) {
+        self.favoriteProvider.putFavorite(id: id) { [weak self] result in
+            DispatchQueue.main.async {
+                guard let self else { return }
+                
+                switch result {
+                case .success(let likes):
+                    self.favorites = likes
+                    completion(true)
+                case .failure(let error):
+                    print("Load failed", error)
+                    completion(false)
+                }
+            }
+        }
+    }
+    
+    private func fetchFavorites() {
+        self.favoriteProvider.loadFavorites { [weak self] result in
+            guard let self else { return }
+            
+            switch result {
+            case .success(let favoriteList):
+                self.favorites = favoriteList
+            case .failure(let error):
+                print("Load failed", error)
             }
         }
     }

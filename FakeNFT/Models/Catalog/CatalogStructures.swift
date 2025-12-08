@@ -9,3 +9,6 @@ struct Catalog: Codable {
     let id: String
 }
 
+struct Favorites: Codable {
+    let likes: [String]
+}

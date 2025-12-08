@@ -2,12 +2,12 @@ import Foundation
 
 typealias FavoriteNftCompletion = (Result<[String], Error>) -> Void
 
-protocol FavoriteNftProviderProtocol {
+protocol FavoriteNftProvider {
     func loadFavorites(completion: @escaping FavoriteNftCompletion)
     func putFavorite(id: String, completion: @escaping FavoriteNftCompletion)
 }
 
-final class FavoriteNftProvider: FavoriteNftProviderProtocol {
+final class FavoriteNftProviderImpl: FavoriteNftProvider {
     private let networkClient: NetworkClient
     private let storage: FavoriteNftStorage
     
@@ -19,11 +19,11 @@ final class FavoriteNftProvider: FavoriteNftProviderProtocol {
     func loadFavorites(completion: @escaping FavoriteNftCompletion) {
         let request = NftCollectionGetFavoritesRequest()
         
-        networkClient.send(request: request, type: [String].self) { [weak storage] result in
+        networkClient.send(request: request, type: Favorites.self) { [weak storage] result in
             switch result {
             case .success(let favoritesList):
-                storage?.saveFavoriteNft(favoritesList)
-                completion(.success(favoritesList))
+                storage?.saveFavoriteNft(favoritesList.likes)
+                completion(.success(favoritesList.likes))
             case .failure(let error):
                 completion(.failure(error))
             }
@@ -31,14 +31,23 @@ final class FavoriteNftProvider: FavoriteNftProviderProtocol {
     }
     
     func putFavorite(id: String, completion: @escaping FavoriteNftCompletion) {
-        let dto = FavoriteDto(FavoriteId: id)
+        var current = storage.getFavoriteNft() ?? []
+        if current.contains(id) {
+            current.removeAll { $0 == id }
+        } else {
+            current.append(id)
+        }
+        
+        let likeValue = current.joined(separator: ",")
+        
+        let dto = FavoriteDto(likes: likeValue)
         let request = NftCollectionPutFavoritesRequest(dto: dto)
         
-        networkClient.send(request: request, type: [String].self) { [weak storage] result in
+        networkClient.send(request: request, type: Favorites.self) { [weak storage] result in
             switch result {
             case .success(let favoritesList):
-                storage?.saveFavoriteNft(favoritesList)
-                completion(.success(favoritesList))
+                storage?.saveFavoriteNft(favoritesList.likes)
+                completion(.success(favoritesList.likes))
             case . failure(let error):
                 completion(.failure(error))
             }
