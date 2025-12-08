@@ -1,6 +1,34 @@
 import UIKit
 import Kingfisher
 
+// MARK: - Need enums
+enum UserCollectionViewCellLayout {
+    static let nftImageCornerRadius: CGFloat = 12
+    static let nftImageSizes: CGFloat = 108
+    
+    static let sizesOfButtons: CGFloat = 40
+    
+    static let viewWithAdditionalInfoHeight: CGFloat = 56
+    static let viewWithAdditionalInfoWidth: CGFloat = 68
+    static let viewWithAdditionalInfoTop: CGFloat = 8
+    static let viewWithAdditionalInfoBottom: CGFloat = -20
+    
+    static let spacingInStackViewOfStars: CGFloat = 2
+    
+    static let sizeOfStars: CGFloat = 12
+    
+    static let numberOfLinesInLabels: Int = 1
+    static let maximumWidthOfLabels: CGFloat = 68
+    
+    static let nftNameLabelHeight: CGFloat = 22
+    static let nftNameLabelTop: CGFloat = 5
+    
+    static let nftPriceLabelHeight: CGFloat = 12
+    static let nftPriceLabelTop: CGFloat = 4
+    
+    static let cartButtonTop: CGFloat = 16
+}
+
 final class UserCollectionViewCell: UICollectionViewCell {
     
     // MARK: - Callbacks
@@ -13,19 +41,15 @@ final class UserCollectionViewCell: UICollectionViewCell {
     // MARK: - Private Properties
     private var isFavourite = false
     private var isInCart = false
+    private let processor = RoundCornerImageProcessor(cornerRadius: UserCollectionViewCellLayout.nftImageCornerRadius)
     
     // MARK: - Views (elements)
     private lazy var nftImageView: UIImageView = {
         let exampleImage = UIImage(systemName: "");
         let nftImageView = UIImageView(image: exampleImage)
-        nftImageView.layer.cornerRadius = 12
+        nftImageView.layer.cornerRadius = UserCollectionViewCellLayout.nftImageCornerRadius
         nftImageView.layer.masksToBounds = true
         nftImageView.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            nftImageView.widthAnchor.constraint(equalToConstant: 108),
-            nftImageView.heightAnchor.constraint(equalToConstant: 108)
-        ])
         
         return nftImageView
     }()
@@ -36,8 +60,8 @@ final class UserCollectionViewCell: UICollectionViewCell {
         favouritesButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            favouritesButton.widthAnchor.constraint(equalToConstant: 40),
-            favouritesButton.heightAnchor.constraint(equalToConstant: 40)
+            favouritesButton.widthAnchor.constraint(equalToConstant: UserCollectionViewCellLayout.sizesOfButtons),
+            favouritesButton.heightAnchor.constraint(equalToConstant: UserCollectionViewCellLayout.sizesOfButtons)
         ])
         
         return favouritesButton
@@ -48,8 +72,8 @@ final class UserCollectionViewCell: UICollectionViewCell {
         viewWithAdditionalInfo.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            viewWithAdditionalInfo.widthAnchor.constraint(equalToConstant: 68),
-            viewWithAdditionalInfo.heightAnchor.constraint(equalToConstant: 56)
+            viewWithAdditionalInfo.widthAnchor.constraint(equalToConstant: UserCollectionViewCellLayout.viewWithAdditionalInfoWidth),
+            viewWithAdditionalInfo.heightAnchor.constraint(equalToConstant: UserCollectionViewCellLayout.viewWithAdditionalInfoHeight)
         ])
         
         return viewWithAdditionalInfo
@@ -63,7 +87,7 @@ final class UserCollectionViewCell: UICollectionViewCell {
         let stackViewOfStars = UIStackView(arrangedSubviews: [firstStar, secondStar, thirdStar, fourthStar, fifthStar])
         stackViewOfStars.axis = .horizontal
         stackViewOfStars.translatesAutoresizingMaskIntoConstraints = false
-        stackViewOfStars.spacing = 2
+        stackViewOfStars.spacing = UserCollectionViewCellLayout.spacingInStackViewOfStars
         
         return stackViewOfStars
     }()
@@ -71,12 +95,12 @@ final class UserCollectionViewCell: UICollectionViewCell {
         let nftNameLabel = UILabel()
         nftNameLabel.font = .bodyBold
         nftNameLabel.textColor = .segmentActive
-        nftNameLabel.numberOfLines = 1
+        nftNameLabel.numberOfLines = UserCollectionViewCellLayout.numberOfLinesInLabels
         nftNameLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            nftNameLabel.widthAnchor.constraint(lessThanOrEqualToConstant: 68),
-            nftNameLabel.heightAnchor.constraint(equalToConstant: 22)
+            nftNameLabel.widthAnchor.constraint(lessThanOrEqualToConstant: UserCollectionViewCellLayout.maximumWidthOfLabels),
+            nftNameLabel.heightAnchor.constraint(equalToConstant: UserCollectionViewCellLayout.nftNameLabelHeight)
         ])
         
         return nftNameLabel
@@ -85,12 +109,12 @@ final class UserCollectionViewCell: UICollectionViewCell {
         let nftPriceLabel = UILabel()
         nftPriceLabel.font = .caption3
         nftPriceLabel.textColor = .segmentActive
-        nftPriceLabel.numberOfLines = 1
+        nftPriceLabel.numberOfLines = UserCollectionViewCellLayout.numberOfLinesInLabels
         nftPriceLabel.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            nftPriceLabel.widthAnchor.constraint(lessThanOrEqualToConstant: 68),
-            nftPriceLabel.heightAnchor.constraint(equalToConstant: 12)
+            nftPriceLabel.widthAnchor.constraint(lessThanOrEqualToConstant: UserCollectionViewCellLayout.maximumWidthOfLabels),
+            nftPriceLabel.heightAnchor.constraint(equalToConstant: UserCollectionViewCellLayout.nftPriceLabelHeight)
         ])
         
         return nftPriceLabel
@@ -102,8 +126,8 @@ final class UserCollectionViewCell: UICollectionViewCell {
         cartButton.addTarget(self, action: #selector(cartButtonClicked), for: .touchUpInside)
         
         NSLayoutConstraint.activate([
-            cartButton.widthAnchor.constraint(equalToConstant: 40),
-            cartButton.heightAnchor.constraint(equalToConstant: 40)
+            cartButton.widthAnchor.constraint(equalToConstant: UserCollectionViewCellLayout.sizesOfButtons),
+            cartButton.heightAnchor.constraint(equalToConstant: UserCollectionViewCellLayout.sizesOfButtons)
         ])
         
         return cartButton
@@ -122,14 +146,14 @@ final class UserCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Public Methods
     func configure(nftData: NftCellViewData) {
-        let processor = RoundCornerImageProcessor(cornerRadius: 12)
         guard let url = nftData.nft.image else  {
             return
         }
         self.nftImageView.kf.setImage(with: url,
-                                             placeholder: nil,
-                                             options: [.processor(processor)])
+                                      placeholder: nil,
+                                      options: [.processor(self.processor)])
         
         visualizeFavouritesAndCartButtons(isFavourtie: nftData.isFavourite, isInCart: nftData.isInCart)
         visualizeStars(rating: nftData.nft.rating)
@@ -160,24 +184,26 @@ final class UserCollectionViewCell: UICollectionViewCell {
         NSLayoutConstraint.activate([
             nftImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
             nftImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            nftImageView.widthAnchor.constraint(equalToConstant: UserCollectionViewCellLayout.nftImageSizes),
+            nftImageView.heightAnchor.constraint(equalToConstant: UserCollectionViewCellLayout.nftImageSizes),
             
             favouritesButton.topAnchor.constraint(equalTo: nftImageView.topAnchor),
             favouritesButton.trailingAnchor.constraint(equalTo: nftImageView.trailingAnchor),
             
             viewWithAdditionalInfo.leadingAnchor.constraint(equalTo: nftImageView.leadingAnchor),
-            viewWithAdditionalInfo.topAnchor.constraint(equalTo: nftImageView.bottomAnchor, constant: 8),
-            viewWithAdditionalInfo.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20),
+            viewWithAdditionalInfo.topAnchor.constraint(equalTo: nftImageView.bottomAnchor, constant: UserCollectionViewCellLayout.viewWithAdditionalInfoTop),
+            viewWithAdditionalInfo.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: UserCollectionViewCellLayout.viewWithAdditionalInfoBottom),
             
             stackViewOfStars.topAnchor.constraint(equalTo: viewWithAdditionalInfo.topAnchor),
             stackViewOfStars.leadingAnchor.constraint(equalTo: nftImageView.leadingAnchor),
             
             nftNameLabel.leadingAnchor.constraint(equalTo: nftImageView.leadingAnchor),
-            nftNameLabel.topAnchor.constraint(equalTo: stackViewOfStars.bottomAnchor, constant: 5),
+            nftNameLabel.topAnchor.constraint(equalTo: stackViewOfStars.bottomAnchor, constant: UserCollectionViewCellLayout.nftNameLabelTop),
             
             nftPriceLabel.leadingAnchor.constraint(equalTo: nftImageView.leadingAnchor),
-            nftPriceLabel.topAnchor.constraint(equalTo: nftNameLabel.bottomAnchor, constant: 4),
+            nftPriceLabel.topAnchor.constraint(equalTo: nftNameLabel.bottomAnchor, constant: UserCollectionViewCellLayout.nftPriceLabelTop),
             
-            cartButton.topAnchor.constraint(equalTo: viewWithAdditionalInfo.topAnchor, constant: 16),
+            cartButton.topAnchor.constraint(equalTo: viewWithAdditionalInfo.topAnchor, constant: UserCollectionViewCellLayout.cartButtonTop),
             cartButton.trailingAnchor.constraint(equalTo: nftImageView.trailingAnchor)
         ])
     }
@@ -212,8 +238,8 @@ final class UserCollectionViewCell: UICollectionViewCell {
         star.tintColor = .segmentInactive
         
         NSLayoutConstraint.activate([
-            star.widthAnchor.constraint(equalToConstant: 12),
-            star.heightAnchor.constraint(equalToConstant: 12)
+            star.widthAnchor.constraint(equalToConstant: UserCollectionViewCellLayout.sizeOfStars),
+            star.heightAnchor.constraint(equalToConstant: UserCollectionViewCellLayout.sizeOfStars)
         ])
         
         return star

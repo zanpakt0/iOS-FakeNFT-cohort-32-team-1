@@ -1,6 +1,23 @@
 import UIKit
 import Combine
 
+// MARK: - Need enums
+enum UserCollectionViewControllerLayout {
+    static let containerForActivityIndicatorCornerRadius: CGFloat = 8
+    static let containerForActivityIndicatorSizes: CGFloat = 82
+    
+    static let collectionViewWithNftsTop: CGFloat = 20
+    static let collectionViewWithNftsLeading: CGFloat = 16
+    static let collectionViewWithNftsTrailing: CGFloat = -17
+    
+    static let horizontlSpacingBetweenCells: CGFloat = 9
+    static let verticalSpacingBetweenCells: CGFloat = 8
+    static let cellHeight: CGFloat = 192
+    
+    static let itemsPerRowInCollectionView: CGFloat = 3
+    static let numberOfSectionsInCollectionView: Int = 1
+}
+
 final class UserCollectionViewController: UIViewController, LoadingView {
 
     // MARK: - Private Properties
@@ -19,12 +36,12 @@ final class UserCollectionViewController: UIViewController, LoadingView {
     private lazy var containerForActivityIndicator: UIView = {
         let containerForActivityIndicator = UIView()
         containerForActivityIndicator.backgroundColor = .forActivityIndicatorBackground
-        containerForActivityIndicator.layer.cornerRadius = 8
+        containerForActivityIndicator.layer.cornerRadius = UserCollectionViewControllerLayout.containerForActivityIndicatorCornerRadius
         containerForActivityIndicator.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            containerForActivityIndicator.widthAnchor.constraint(equalToConstant: 82),
-            containerForActivityIndicator.heightAnchor.constraint(equalToConstant: 82)
+            containerForActivityIndicator.widthAnchor.constraint(equalToConstant: UserCollectionViewControllerLayout.containerForActivityIndicatorSizes),
+            containerForActivityIndicator.heightAnchor.constraint(equalToConstant: UserCollectionViewControllerLayout.containerForActivityIndicatorSizes)
         ])
         
         return containerForActivityIndicator
@@ -90,9 +107,9 @@ final class UserCollectionViewController: UIViewController, LoadingView {
             activityIndicator.centerXAnchor.constraint(equalTo: containerForActivityIndicator.centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: containerForActivityIndicator.centerYAnchor),
             
-            collectionViewWithNfts.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            collectionViewWithNfts.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            collectionViewWithNfts.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -17),
+            collectionViewWithNfts.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: UserCollectionViewControllerLayout.collectionViewWithNftsTop),
+            collectionViewWithNfts.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: UserCollectionViewControllerLayout.collectionViewWithNftsLeading),
+            collectionViewWithNfts.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: UserCollectionViewControllerLayout.collectionViewWithNftsTrailing),
             collectionViewWithNfts.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
@@ -166,9 +183,10 @@ final class UserCollectionViewController: UIViewController, LoadingView {
     }
 }
 
+// MARK: - UICollectionViewDataSource, UICollectionViewDelegate
 extension UserCollectionViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        1
+        UserCollectionViewControllerLayout.numberOfSectionsInCollectionView
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -180,42 +198,40 @@ extension UserCollectionViewController: UICollectionViewDelegate, UICollectionVi
             return UICollectionViewCell()
         }
         cell.configure(nftData: viewModel.nftList[indexPath.row])
-        
+        let nftId = viewModel.nftList[indexPath.row].nft.id
+
         cell.onFavouritesButtonTapped = { [weak self] isFavourite in
-            guard let self else { return }
-            
-            self.viewModel.likeOrDislikeNft(isItLike: !isFavourite, nftId: self.viewModel.nftList[indexPath.row].nft.id)
+            self?.viewModel.likeOrDislikeNft(isItLike: !isFavourite, nftId: nftId)
         }
         
         cell.onCartButtonTapped = { [weak self] isInCart in
-            guard let self else { return }
-            
-            self.viewModel.orderOrUnorderNft(isInCart: !isInCart, nftId: self.viewModel.nftList[indexPath.row].nft.id)
+            self?.viewModel.orderOrUnorderNft(isInCart: !isInCart, nftId: nftId)
         }
         
         return cell
     }
 }
 
+// MARK: - UICollectionViewDelegateFlowLayout
 extension UserCollectionViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let spacing: CGFloat = 8
-        let itemsPerRow: CGFloat = 3
+        let spacing: CGFloat = UserCollectionViewControllerLayout.horizontlSpacingBetweenCells
+        let itemsPerRow: CGFloat = UserCollectionViewControllerLayout.itemsPerRowInCollectionView
         
         let totalSpacing = spacing * (itemsPerRow - 1)
         let availableWidth = collectionView.frame.width - totalSpacing
         let cellWidth = availableWidth / itemsPerRow
         
-        return CGSize(width: cellWidth, height: 192)
+        return CGSize(width: cellWidth, height: UserCollectionViewControllerLayout.cellHeight)
         }
     
     func collectionView(_: UICollectionView, layout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt: Int) -> CGFloat {
-        8
+        UserCollectionViewControllerLayout.horizontlSpacingBetweenCells
     }
     
     func collectionView(_ collectionView: UICollectionView,
                         layout collectionViewLayout: UICollectionViewLayout,
                         minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        8
+        UserCollectionViewControllerLayout.verticalSpacingBetweenCells
     }
 }

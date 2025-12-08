@@ -19,7 +19,13 @@ final class UserCollectionViewModel {
     // MARK: - Private Properties
     @Published private(set) var state: UserCollectionState = .idle
     private let servicesAssembly: ServicesAssembly
-    private var currentTask: NetworkTask?
+    
+    private var taskForLikeOrDislike: NetworkTask?
+    private var taskForOrderOrUnorder: NetworkTask?
+    private var taskForGetCollectionOfNfts: NetworkTask?
+    private var taskForGetFavouriteNfts: NetworkTask?
+    private var taskForGetOrderedNfts: NetworkTask?
+    
     private var isLoadingCollection = false
     private var isLoadingFavourites = false
     private var isLoadingOrdered = false
@@ -33,14 +39,21 @@ final class UserCollectionViewModel {
     
     // MARK: - Public Methods
     func loadEverything(listOfNfts: [String]) {
-        fetchFavouritesNftsList { [weak self] in
-            self?.fetchOrderedNftsList { [weak self] in
-                self?.fetchNftsCollectionOfUser(listOfNfts: listOfNfts) { [weak self] in
-                    guard let nftList = self?.nftList else { return }
-                    
-                    self?.state = .loaded(nftList)
-                }
-            }
+        state = .loading
+        let group = DispatchGroup()
+        
+        group.enter()
+        fetchFavouritesNftsList { group.leave() }
+        
+        group.enter()
+        fetchOrderedNftsList { group.leave() }
+        
+        group.enter()
+        fetchNftsCollectionOfUser(listOfNfts: listOfNfts) { group.leave() }
+        
+        group.notify(queue: .main) {
+            self.nftList.sort(by: {$0.nft.name < $1.nft.name})
+            self.state = .loaded(self.nftList)
         }
     }
     
@@ -57,7 +70,7 @@ final class UserCollectionViewModel {
         isLikingNft = true
         state = .loading
         
-        currentTask = servicesAssembly.nftService.putToFavoritesNft(likes: likes) { [weak self] result in
+        taskForLikeOrDislike = servicesAssembly.nftService.putToFavoritesNft(likes: likes) { [weak self] result in
             DispatchQueue.main.async {
                 guard let self else { return }
                 
@@ -105,7 +118,7 @@ final class UserCollectionViewModel {
         isOrderingNft = true
         state = .loading
         
-        currentTask = servicesAssembly.nftService.putToOrderedNft(nfts: nfts) { [weak self] result in
+        taskForOrderOrUnorder = servicesAssembly.nftService.putToOrderedNft(nfts: nfts) { [weak self] result in
             DispatchQueue.main.async {
                 guard let self else { return }
                 
@@ -148,14 +161,13 @@ final class UserCollectionViewModel {
         
         isLoadingCollection = true
         self.nftIdsList = listOfNfts
-        state = .loading
         
         let group = DispatchGroup()
         
         for nftid in listOfNfts {
             group.enter()
             
-            currentTask = servicesAssembly.nftService.getNft(id: nftid) { [weak self] result in
+            taskForGetCollectionOfNfts = servicesAssembly.nftService.getNft(id: nftid) { [weak self] result in
                 DispatchQueue.main.async {
                     guard let self else { return }
                     
@@ -191,9 +203,8 @@ final class UserCollectionViewModel {
         guard !isLoadingFavourites else { return }
         
         isLoadingFavourites = true
-        state = .loading
         
-        currentTask = servicesAssembly.nftService.getFavouritesNft { [weak self] result in
+        taskForGetFavouriteNfts = servicesAssembly.nftService.getFavouritesNft { [weak self] result in
             DispatchQueue.main.async {
                 guard let self else { return }
                 
@@ -223,9 +234,8 @@ final class UserCollectionViewModel {
         guard !isLoadingOrdered else { return }
         
         isLoadingOrdered = true
-        state = .loading
         
-        currentTask = servicesAssembly.nftService.getOrderedNft { [weak self] result in
+        taskForGetOrderedNfts = servicesAssembly.nftService.getOrderedNft { [weak self] result in
             DispatchQueue.main.async {
                 guard let self else { return }
                 
