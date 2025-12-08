@@ -128,24 +128,41 @@ final class UserCollectionViewController: UIViewController, LoadingView {
                 case .idle:
                     showNeedViewsInScreen(needToShowLoadingIndicator: .hideBoth)
                 case .loading:
-                    showNeedViewsInScreen(needToShowLoadingIndicator: .showLoaderHideViews)
+                    if viewModel.nftList.isEmpty {
+                        showNeedViewsInScreen(needToShowLoadingIndicator: .showLoaderHideViews)
+                    } else {
+                        showNeedViewsInScreen(needToShowLoadingIndicator: .showBoth)
+                    }
                 case .loaded(_):
                     showNeedViewsInScreen(needToShowLoadingIndicator: .showViewsHideLoader)
                     collectionViewWithNfts.reloadData()
                 case .error(_):
                     showNeedViewsInScreen(needToShowLoadingIndicator: .hideBoth)
-                    showErrorAlert()
+                    showErrorAlertWhenLoadingEverything()
+                case .errorWhenTapOnButtonsInCell(_):
+                    showNeedViewsInScreen(needToShowLoadingIndicator: .showViewsHideLoader)
+                    showErrorAlertWhenTappingButtonsInCell()
                 }
             }
             .store(in: &cancellables)
     }
     
-    private func showErrorAlert() {
+    private func showErrorAlertWhenLoadingEverything() {
         self.universalErrorAlert { [weak self] in
             guard let self,
             let nftIdsList = self.viewModel.nftIdsList else { return }
             self.viewModel.loadEverything(listOfNfts: nftIdsList)
         }
+    }
+    
+    private func showErrorAlertWhenTappingButtonsInCell() {
+        let message = NSLocalizedString("UserCollection.errorAlert.message", comment: "")
+        let actionText = NSLocalizedString("UserCollection.errorAlert.actionText", comment: "")
+        
+        let errorModel = ErrorModel(message: message,
+                                    actionText: actionText) { return }
+        
+        self.showError(errorModel)
     }
 }
 
@@ -163,6 +180,18 @@ extension UserCollectionViewController: UICollectionViewDelegate, UICollectionVi
             return UICollectionViewCell()
         }
         cell.configure(nftData: viewModel.nftList[indexPath.row])
+        
+        cell.onFavouritesButtonTapped = { [weak self] isFavourite in
+            guard let self else { return }
+            
+            self.viewModel.likeOrDislikeNft(isItLike: !isFavourite, nftId: self.viewModel.nftList[indexPath.row].nft.id)
+        }
+        
+        cell.onCartButtonTapped = { [weak self] isInCart in
+            guard let self else { return }
+            
+            self.viewModel.orderOrUnorderNft(isInCart: !isInCart, nftId: self.viewModel.nftList[indexPath.row].nft.id)
+        }
         
         return cell
     }

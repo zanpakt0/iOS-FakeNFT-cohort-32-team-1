@@ -8,7 +8,7 @@ final class UserCollectionViewCell: UICollectionViewCell {
     var onCartButtonTapped: ((Bool) -> Void)?
     
     // MARK: - Static properties
-    static let reuseIdentifier = "StatisticsTableViewCell"
+    static let reuseIdentifier = "UserCollectionViewCell"
     
     // MARK: - Private Properties
     private var isFavourite = false
@@ -46,6 +46,11 @@ final class UserCollectionViewCell: UICollectionViewCell {
         let viewWithAdditionalInfo = UIView()
         viewWithAdditionalInfo.backgroundColor = .forViewBackground
         viewWithAdditionalInfo.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            viewWithAdditionalInfo.widthAnchor.constraint(equalToConstant: 68),
+            viewWithAdditionalInfo.heightAnchor.constraint(equalToConstant: 56)
+        ])
         
         return viewWithAdditionalInfo
     }()
@@ -142,11 +147,11 @@ final class UserCollectionViewCell: UICollectionViewCell {
     }
     
     private func addSubviews() {
-        [stackViewOfStars, nftNameLabel, nftPriceLabel, cartButton].forEach {
+        [stackViewOfStars, nftNameLabel, nftPriceLabel].forEach {
             viewWithAdditionalInfo.addSubview($0)
         }
         
-        [nftImageView, favouritesButton, viewWithAdditionalInfo].forEach {
+        [nftImageView, favouritesButton, viewWithAdditionalInfo, cartButton].forEach {
             contentView.addSubview($0)
         }
     }

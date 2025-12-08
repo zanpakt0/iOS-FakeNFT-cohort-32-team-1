@@ -5,6 +5,7 @@ enum UserCollectionState {
     case loading
     case loaded([NftCellViewData])
     case error(Error)
+    case errorWhenTapOnButtonsInCell(Error)
 }
 
 final class UserCollectionViewModel {
@@ -12,8 +13,8 @@ final class UserCollectionViewModel {
     // MARK: - Public Properties
     var nftList: [NftCellViewData] = []
     var nftIdsList: [String]?
-    var listOfFavouriteNfts: [String]?
-    var listOfNftsInShoppingCart: [String]?
+    var listOfFavouriteNfts: [String] = []
+    var listOfNftsInShoppingCart: [String] = []
     
     // MARK: - Private Properties
     @Published private(set) var state: UserCollectionState = .idle
@@ -22,6 +23,8 @@ final class UserCollectionViewModel {
     private var isLoadingCollection = false
     private var isLoadingFavourites = false
     private var isLoadingOrdered = false
+    private var isLikingNft = false
+    private var isOrderingNft = false
     
     // MARK: - Initializers
     init(servicesAssembly: ServicesAssembly) {
@@ -30,14 +33,110 @@ final class UserCollectionViewModel {
     
     // MARK: - Public Methods
     func loadEverything(listOfNfts: [String]) {
-        fetchNftsCollectionOfUser(listOfNfts: listOfNfts) { [weak self] in
-            self?.fetchFavouritesNftsList { [weak self] in
-                self?.fetchOrderedNftsList { [weak self] in
+        fetchFavouritesNftsList { [weak self] in
+            self?.fetchOrderedNftsList { [weak self] in
+                self?.fetchNftsCollectionOfUser(listOfNfts: listOfNfts) { [weak self] in
                     guard let nftList = self?.nftList else { return }
                     
                     self?.state = .loaded(nftList)
                 }
             }
+        }
+    }
+    
+    func likeOrDislikeNft(isItLike: Bool, nftId: String) {
+        let likes = configureNeedRequestBodyToPutRequests(
+            nftId: nftId,
+            isFavourite: isItLike,
+            needNftList: self.listOfFavouriteNfts)
+        
+        print("Дошло до лайка nft")
+        
+        guard !isLikingNft else { return }
+        
+        isLikingNft = true
+        state = .loading
+        
+        currentTask = servicesAssembly.nftService.putToFavoritesNft(likes: likes) { [weak self] result in
+            DispatchQueue.main.async {
+                guard let self else { return }
+                
+                self.isLikingNft = false
+                
+                switch result {
+                case .success(let profile):
+                    print("Успех при лайке nft")
+                    let favouriteNfts = ListOfFavouriteNftsData(profile: profile)
+                    self.listOfFavouriteNfts = favouriteNfts.likes
+                    
+                    print("(Лайк) Количество понравившихся nft: \(self.listOfFavouriteNfts.count)")
+                    
+                    if let index = self.nftList.firstIndex(where: { $0.nft.id == nftId }) {
+                        let old = self.nftList[index]
+                        
+                        let updated = NftCellViewData(
+                            nft: old.nft,
+                            isFavourite: isItLike,
+                            isInCart: old.isInCart
+                        )
+                        
+                        self.nftList[index] = updated
+                    }
+                    self.state = .loaded(self.nftList)
+                case .failure(let error):
+                    print("Ошибка при лайке nft")
+                    self.state = .errorWhenTapOnButtonsInCell(error)
+                }
+            }
+            
+        }
+    }
+    
+    func orderOrUnorderNft(isInCart: Bool, nftId: String) {
+        let nfts = configureNeedRequestBodyToPutRequests(
+            nftId: nftId,
+            isFavourite: isInCart,
+            needNftList: self.listOfNftsInShoppingCart)
+        
+        print("Дошло до добавления в корзину nft")
+        
+        guard !isOrderingNft else { return }
+        
+        isOrderingNft = true
+        state = .loading
+        
+        currentTask = servicesAssembly.nftService.putToOrderedNft(nfts: nfts) { [weak self] result in
+            DispatchQueue.main.async {
+                guard let self else { return }
+                
+                self.isOrderingNft = false
+                
+                switch result {
+                case .success(let order):
+                    print("Успех при добавлений в корзину nft")
+                    let orderedNfts = ListOfOrderedNftsData(order: order)
+                    self.listOfNftsInShoppingCart = orderedNfts.nfts
+                    
+                    print("(Добавление в корзину) Количество nft в корзине: \(self.listOfNftsInShoppingCart.count)")
+                    
+                    if let index = self.nftList.firstIndex(where: { $0.nft.id == nftId }) {
+                        let old = self.nftList[index]
+                        
+                        let updated = NftCellViewData(
+                            nft: old.nft,
+                            isFavourite: old.isFavourite,
+                            isInCart: isInCart
+                        )
+                        
+                        self.nftList[index] = updated
+                    }
+                    self.state = .loaded(self.nftList)
+                case .failure(let error):
+                    print("Ошибка при добавлений в корзину nft")
+                    self.state = .errorWhenTapOnButtonsInCell(error)
+                }
+            }
+            
         }
     }
     
@@ -106,8 +205,7 @@ final class UserCollectionViewModel {
                     let favouriteNfts = ListOfFavouriteNftsData(profile: nfts)
                     self.listOfFavouriteNfts = favouriteNfts.likes
                     
-                    guard let listOfFavouriteNfts = self.listOfFavouriteNfts else { return }
-                    print("Количество понравившихся nft: \(listOfFavouriteNfts.count)")
+                    print("Количество понравившихся nft: \(self.listOfFavouriteNfts.count)")
                     
                     completion()
                 case .failure(let error):
@@ -139,8 +237,7 @@ final class UserCollectionViewModel {
                     let orderedNfts = ListOfOrderedNftsData(order: nfts)
                     self.listOfNftsInShoppingCart = orderedNfts.nfts
                     
-                    guard let listOfOrderedNfts = self.listOfNftsInShoppingCart else { return }
-                    print("Количество nft в корзине: \(listOfOrderedNfts.count)")
+                    print("Количество nft в корзине: \(self.listOfNftsInShoppingCart.count)")
                     
                     completion()
                 case .failure(let error):
@@ -153,18 +250,28 @@ final class UserCollectionViewModel {
     }
     
     private func prepareNftCellData(nft: NftData) -> NftCellViewData {
-        let isFavourite = listOfFavouriteNfts?.contains(nft.id) ?? false
-        let isInCart = listOfNftsInShoppingCart?.contains(nft.id) ?? false
+        let isFavourite = listOfFavouriteNfts.contains(nft.id)
+        let isInCart = listOfNftsInShoppingCart.contains(nft.id)
         
         return NftCellViewData(
             nft: nft,
             isFavourite: isFavourite,
-            isInChart: isInCart)
+            isInCart: isInCart)
     }
 
     private func addToListOfNftsExcludingDuplicates(_ newNft: NftCellViewData) {
         if !nftList.contains(where: {newNft.nft.id == $0.nft.id}) {
             nftList.append(newNft)
         }
+    }
+    
+    private func configureNeedRequestBodyToPutRequests(nftId: String, isFavourite: Bool, needNftList: [String]) -> String {
+        var updatedList = needNftList
+        if isFavourite {
+            updatedList.append(nftId)
+        } else if let index = updatedList.firstIndex(of: nftId) {
+            updatedList.remove(at: index)
+        }
+        return updatedList.isEmpty ? "null" : updatedList.joined(separator: ", ")
     }
 }

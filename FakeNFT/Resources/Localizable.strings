@@ -25,3 +25,6 @@
 
 // User collection page
 "UserCollection.tite" = "Коллекция NFT";
+"UserCollection.errorAlert.message" = "Что-то пошло не так";
+"UserCollection.errorAlert.actionText" = "Ок";
+

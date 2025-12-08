@@ -22,9 +22,9 @@ struct NftCellViewData {
     let isFavourite: Bool
     let isInCart: Bool
     
-    init(nft: NftData, isFavourite: Bool, isInChart: Bool) {
+    init(nft: NftData, isFavourite: Bool, isInCart: Bool) {
         self.nft = nft
         self.isFavourite = isFavourite
-        self.isInCart = isInChart
+        self.isInCart = isInCart
     }
 }
