@@ -16,6 +16,9 @@ final class CatalogViewController: UIViewController, ErrorView {
     
     private let sortByNameTitle: String = NSLocalizedString("catalog.sortByNameTitle", comment: "Sort by name")
     private let sortByCountTitle: String = NSLocalizedString("catalog.sortByCountTitle", comment: "Sort by count of nfts")
+    private let alertTitle: String = NSLocalizedString("catalog.alertTitle", comment: "Не удалось загрузить данные")
+    private let repeatAlertButton: String = NSLocalizedString("catalog.repeatAlertButton", comment: "Повторить")
+    private let cancelAlertButton: String = NSLocalizedString("catalog.cancelAlertButton", comment: "Отмена")
     
     //MARK: - UI Elements
     private lazy var tableView: UITableView = {
@@ -107,6 +110,19 @@ final class CatalogViewController: UIViewController, ErrorView {
         loadingIndicator.constraintCenters(to: view)
     }
     
+    private func showError() {
+        let repeatAction = UIAlertAction(title: repeatAlertButton, style: .default) { _ in
+            self.viewModel.loadData()
+        }
+        let cancelAction = UIAlertAction(title: cancelAlertButton, style: .cancel)
+
+        self.showErrorAlertWithTwoButtons(
+            titleOfAlert: alertTitle,
+            firstAction: repeatAction,
+            secondAction: cancelAction
+        )
+    }
+    
     //MARK: - Actions
     @objc func sortButtonTapped() {
         let sortByNameTitleAction = UIAlertAction(title: sortByNameTitle, style: .default) { [weak self] _ in
@@ -137,6 +153,15 @@ final class CatalogViewController: UIViewController, ErrorView {
             .sink { [weak self] isLoading in
                 guard let self else { return }
                 isLoading ? self.loadingIndicator.startAnimating() : self.loadingIndicator.stopAnimating()
+            }
+            .store(in: &subscribes)
+        
+        viewModel.$loadError
+            .compactMap { $0 }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] error in
+                guard let self else { return }
+                self.showError()
             }
             .store(in: &subscribes)
     }

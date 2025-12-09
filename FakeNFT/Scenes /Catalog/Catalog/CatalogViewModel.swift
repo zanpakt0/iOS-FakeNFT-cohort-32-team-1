@@ -5,6 +5,7 @@ final class CatalogViewModel {
     //MARK: - Published Variables
     @Published var catalog: [Catalog] = []
     @Published var isLoading = false
+    @Published var loadError: Error?
     
     //MARK: - Constants
     private let catalogProvider: CatalogProviderProtocol
@@ -27,6 +28,7 @@ final class CatalogViewModel {
     
     func loadData() {
         self.isLoading = true
+        self.loadError = nil
         catalogProvider.loadCatalog { [weak self] result in
             guard let self else { return }
             self.isLoading = false
@@ -36,6 +38,7 @@ final class CatalogViewModel {
                 self.catalog = catalog
             case .failure(let error):
                 print("Load failed", error)
+                self.loadError = error
             }
         }
     }

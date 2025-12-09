@@ -5,6 +5,7 @@ final class NFTCollectionViewModel {
     //MARK: - Published Variables
     @Published var nfts: [Nft] = []
     @Published var isLoading = false
+    @Published var loadError: Error?
     
     @Published private(set) var favorites: [String] = []
     @Published private(set) var itemsInCart: [String] = []
@@ -30,6 +31,7 @@ final class NFTCollectionViewModel {
     //MARK: - Methods
     func loadData() {
         self.isLoading = true
+        self.loadError = nil
         
         let group = DispatchGroup()
         var loadedNfts: [Nft] = []
@@ -42,6 +44,7 @@ final class NFTCollectionViewModel {
                     loadedNfts.append(nft)
                 case .failure(let error):
                     print("Load failed", error)
+                    self.loadError = error
                 }
                 group.leave()
             }

@@ -1,7 +1,7 @@
 import UIKit
 import Combine
 
-final class NFTCollectionViewController: UIViewController {
+final class NFTCollectionViewController: UIViewController, ErrorView {
     private enum CollectionLayout {
         static let backButtonTop: CGFloat = 11
         static let backButtonLeading: CGFloat = 9
@@ -39,6 +39,10 @@ final class NFTCollectionViewController: UIViewController {
     
     private var collectionViewHeightConstraint: NSLayoutConstraint?
     private var subscribes = Set<AnyCancellable>()
+    
+    private let alertTitle: String = NSLocalizedString("nftCollection.alertTitle", comment: "Не удалось загрузить данные")
+    private let repeatAlertButton: String = NSLocalizedString("nftCollection.repeatAlertButton", comment: "Повторить")
+    private let cancelAlertButton: String = NSLocalizedString("nftCollection.cancelAlertButton", comment: "Отмена")
     
     //MARK: - UI Elements
     private lazy var backButton: UIButton = {
@@ -289,6 +293,19 @@ final class NFTCollectionViewController: UIViewController {
         present(nftViewController, animated: true)
     }
     
+    private func showError() {
+        let repeatAction = UIAlertAction(title: repeatAlertButton, style: .default) { _ in
+            self.viewModel.loadData()
+        }
+        let cancelAction = UIAlertAction(title: cancelAlertButton, style: .cancel)
+
+        self.showErrorAlertWithTwoButtons(
+            titleOfAlert: alertTitle,
+            firstAction: repeatAction,
+            secondAction: cancelAction
+        )
+    }
+    
     //MARK: - Actions
     @objc private func backButtonAction() {
         dismiss(animated: true)
@@ -329,6 +346,15 @@ final class NFTCollectionViewController: UIViewController {
             .sink(receiveValue: { [weak self] _ in
                 self?.collectionView.reloadData()
             })
+            .store(in: &subscribes)
+        
+        viewModel.$loadError
+            .compactMap { $0 }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] error in
+                guard let self else { return }
+                self.showError()
+            }
             .store(in: &subscribes)
     }
 }
