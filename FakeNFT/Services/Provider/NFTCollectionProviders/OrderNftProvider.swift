@@ -8,14 +8,17 @@ protocol OrderNftProvider {
 }
 
 final class OrderNftProviderImpl: OrderNftProvider {
+    //MARK: - Constants
     private let networkClient: NetworkClient
     private let storage: OrdersNftStorage
     
+    //MARK: - Init
     init(networkClient: NetworkClient, storage: OrdersNftStorage) {
         self.networkClient = networkClient
         self.storage = storage
     }
     
+    //MARK: - Methods
     func loadOrders(completion: @escaping OrderNftCompletion) {
         let request = NftCollectionGetOrdersRequest()
         

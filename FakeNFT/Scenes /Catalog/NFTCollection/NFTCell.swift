@@ -35,6 +35,7 @@ final class NFTCell: UICollectionViewCell, ReuseIdentifying {
         static let cartButtonTrailing: CGFloat = -4
     }
     
+    //MARK: - Variables
     weak var delegate: NFTCellDelegate?
     
     private var inCart = false
@@ -52,7 +53,10 @@ final class NFTCell: UICollectionViewCell, ReuseIdentifying {
         return image
     }()
     
-    private let ratingView = SimpleRatingView(starSize: NFTCellLayout.starSize, spacing: NFTCellLayout.starSpacing)
+    private let ratingView = SimpleRatingView(
+        starSize: NFTCellLayout.starSize,
+        spacing: NFTCellLayout.starSpacing
+    )
     
     private lazy var nftLabel: UILabel = {
         let label = UILabel()

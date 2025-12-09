@@ -248,7 +248,6 @@ final class NFTCollectionViewController: UIViewController, ErrorView {
             collectionViewHeightConstraint?.constant = totalHeight
         }
         
-        // Обновим layout
         collectionView.layoutIfNeeded()
         contentView.layoutIfNeeded()
     }
@@ -258,6 +257,14 @@ final class NFTCollectionViewController: UIViewController, ErrorView {
         loadingIndicator.constraintCenters(to: view)
     }
     
+    private func setupNavigationBackButton() {
+        let image = UIImage(resource: .collectionBackButton)
+        let barButton = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(backButtonAction))
+        navigationItem.leftBarButtonItem = barButton
+        navigationController?.navigationBar.tintColor = .closeButton
+    }
+    
+    //MARK: - Private Methods
     private func applyCatalogData() {
         coverImage.kf.setImage(with: catalogItem.cover)
         titleLabel.text = catalogItem.name.capitalized
@@ -282,19 +289,12 @@ final class NFTCollectionViewController: UIViewController, ErrorView {
             self.viewModel.loadData()
         }
         let cancelAction = UIAlertAction(title: cancelAlertButton, style: .cancel)
-
+        
         self.showErrorAlertWithTwoButtons(
             titleOfAlert: alertTitle,
             firstAction: repeatAction,
             secondAction: cancelAction
         )
-    }
-    
-    private func setupNavigationBackButton() {
-        let image = UIImage(resource: .collectionBackButton)
-        let barButton = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(backButtonAction))
-        navigationItem.leftBarButtonItem = barButton
-        navigationController?.navigationBar.tintColor = .closeButton
     }
     
     //MARK: - Actions
@@ -443,6 +443,5 @@ extension NFTCollectionViewController: NFTCellDelegate {
     func deleteLike(id: String, in cell: NFTCell) {
         viewModel.deleteLike(id: id)
     }
-    
     
 }

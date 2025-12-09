@@ -8,14 +8,17 @@ protocol FavoriteNftProvider {
 }
 
 final class FavoriteNftProviderImpl: FavoriteNftProvider {
+    //MARK: - Constants
     private let networkClient: NetworkClient
     private let storage: FavoriteNftStorage
     
+    //MARK: - Init
     init(networkClient: NetworkClient, storage: FavoriteNftStorage) {
         self.storage = storage
         self.networkClient = networkClient
     }
     
+    //MARK: - Methods
     func loadFavorites(completion: @escaping FavoriteNftCompletion) {
         let request = NftCollectionGetFavoritesRequest()
         

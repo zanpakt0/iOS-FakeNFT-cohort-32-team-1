@@ -9,7 +9,7 @@ final class CatalogViewController: UIViewController, ErrorView {
         static let tableViewTrailing: CGFloat = -16
         static let tableViewCornerRadius: CGFloat = 12
     }
-
+    
     //MARK: - Constants
     private let viewModel: CatalogViewModel
     private var subscribes = Set<AnyCancellable>()
@@ -49,7 +49,7 @@ final class CatalogViewController: UIViewController, ErrorView {
     }()
     
     private let refreshControl = UIRefreshControl()
-
+    
     //MARK: - Init
     init(viewModel: CatalogViewModel) {
         self.viewModel = viewModel
@@ -115,7 +115,7 @@ final class CatalogViewController: UIViewController, ErrorView {
             self.viewModel.loadData()
         }
         let cancelAction = UIAlertAction(title: cancelAlertButton, style: .cancel)
-
+        
         self.showErrorAlertWithTwoButtons(
             titleOfAlert: alertTitle,
             firstAction: repeatAction,
@@ -137,7 +137,7 @@ final class CatalogViewController: UIViewController, ErrorView {
     @objc private func refreshData() {
         viewModel.loadData()
     }
-
+    
     //MARK: - Bind
     func bindViewModel() {
         viewModel.$catalog
@@ -186,12 +186,14 @@ extension CatalogViewController: UITableViewDelegate {
         let item = viewModel.catalog[indexPath.row]
         let provider = NftServiceImpl(
             networkClient: DefaultNetworkClient(),
-                                     storage: NftStorageImpl()
+            storage: NftStorageImpl()
         )
+        
         let favoriteProvider = FavoriteNftProviderImpl(
             networkClient: DefaultNetworkClient(),
             storage: FavoriteNftStorageImpl()
         )
+        
         let orderProvider = OrderNftProviderImpl(
             networkClient: DefaultNetworkClient(),
             storage: OrdersNftStorageImpl()
