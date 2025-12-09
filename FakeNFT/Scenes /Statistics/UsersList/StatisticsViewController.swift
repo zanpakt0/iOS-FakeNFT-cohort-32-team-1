@@ -2,13 +2,6 @@ import UIKit
 import Combine
 
 // MARK: - Need enums
-enum UIStateForLoader {
-    case showLoaderHideViews
-    case showViewsHideLoader
-    case showBoth
-    case hideBoth
-}
-
 enum StatisticsViewControllerLayout {
     static let tableTop: CGFloat = 20
     static let tableLeading: CGFloat = 16
@@ -19,7 +12,7 @@ enum StatisticsViewControllerLayout {
     static let filterButtonSizes: CGFloat = 42
 }
 
-final class StatisticsViewController: UIViewController, LoadingView, ErrorView {
+final class StatisticsViewController: UIViewController, LoadingView {
     
     // MARK: - Private Properties
     private let viewModel: StatisticsViewModel
@@ -29,6 +22,7 @@ final class StatisticsViewController: UIViewController, LoadingView, ErrorView {
     lazy var activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .large)
         indicator.hidesWhenStopped = true
+        indicator.color = .segmentActive
         indicator.translatesAutoresizingMaskIntoConstraints = false
         
         return indicator
@@ -51,7 +45,7 @@ final class StatisticsViewController: UIViewController, LoadingView, ErrorView {
     }()
     private lazy var tableViewWithUsers: UITableView = {
         let tableViewWithUsers = UITableView()
-        tableViewWithUsers.backgroundColor = .forViewBackgound
+        tableViewWithUsers.backgroundColor = .forViewBackground
         tableViewWithUsers.dataSource = self
         tableViewWithUsers.delegate = self
         tableViewWithUsers.register(StatisticsTableViewCell.self, forCellReuseIdentifier: StatisticsTableViewCell.reuseIdentifier)
@@ -68,13 +62,13 @@ final class StatisticsViewController: UIViewController, LoadingView, ErrorView {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        nil
     }
     
     // MARK: - View Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .forViewBackgound
+        view.backgroundColor = .forViewBackground
         
         setupNavBar()
         addSubviews()
@@ -87,7 +81,7 @@ final class StatisticsViewController: UIViewController, LoadingView, ErrorView {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        if self.viewModel.usersList.isEmpty {
+        if viewModel.usersList.isEmpty {
             viewModel.fetchUsers()
         }
     }
@@ -97,13 +91,13 @@ final class StatisticsViewController: UIViewController, LoadingView, ErrorView {
         let textOfByNameButton = NSLocalizedString("Statistics.actionSheet.byNameAction.text", comment: "")
         let textOfByRatingButton = NSLocalizedString("Statistics.actionSheet.byRatingAction.text", comment: "")
         
-        let byNameAction = UIAlertAction(title: textOfByNameButton, style: .default) {[weak self] _ in
+        let byNameAction = UIAlertAction(title: textOfByNameButton, style: .default) { [weak self] _ in
             self?.viewModel.setFilterTypeToStorage(FilterType.byName.rawValue)
             self?.viewModel.sortByNeedFilterType()
             self?.tableViewWithUsers.reloadData()
         }
         
-        let byRatingAction = UIAlertAction(title: textOfByRatingButton, style: .default) {[weak self] _ in
+        let byRatingAction = UIAlertAction(title: textOfByRatingButton, style: .default) { [weak self] _ in
             self?.viewModel.setFilterTypeToStorage(FilterType.byRating.rawValue)
             self?.viewModel.sortByNeedFilterType()
             self?.tableViewWithUsers.reloadData()
@@ -132,19 +126,17 @@ final class StatisticsViewController: UIViewController, LoadingView, ErrorView {
     private func showNeedViewsInScreen(needToShowLoadingIndicator: UIStateForLoader) {
         switch needToShowLoadingIndicator {
         case .showLoaderHideViews:
-            self.showLoading()
+            showLoading()
             self.tableViewWithUsers.isHidden = true
         case .showViewsHideLoader:
-            self.hideLoading()
+            hideLoading()
             self.tableViewWithUsers.isHidden = false
         case .showBoth:
-            self.showLoading()
+            showLoading()
             self.tableViewWithUsers.isHidden = false
         case .hideBoth:
-            self.hideLoading()
+            hideLoading()
             self.tableViewWithUsers.isHidden = true
-        default:
-            break
         }
     }
     
@@ -152,7 +144,6 @@ final class StatisticsViewController: UIViewController, LoadingView, ErrorView {
         viewModel.$state
             .receive(on: RunLoop.main)
             .sink { [weak self] state in
-                
                 guard let self else { return }
                 
                 switch state {
@@ -173,13 +164,11 @@ final class StatisticsViewController: UIViewController, LoadingView, ErrorView {
                     switch self.viewModel.usersList.count {
                     case 0:
                         showNeedViewsInScreen(needToShowLoadingIndicator: .hideBoth)
-                        self.showErrorAlert()
+                        showErrorAlert()
                     default:
                         showNeedViewsInScreen(needToShowLoadingIndicator: .showViewsHideLoader)
-                        self.showErrorAlert()
+                        showErrorAlert()
                     }
-                default:
-                    break
                 }
             }
             .store(in: &cancellables)
@@ -190,33 +179,17 @@ final class StatisticsViewController: UIViewController, LoadingView, ErrorView {
     }
     
     private func showErrorAlert() {
-        let retryActionText = NSLocalizedString("Statistics.errorAlert.retryAction.text", comment: "")
-        let errorModel = ErrorModel(
-            message: "",
-            actionText: retryActionText,
-            action: {[weak self] in
-                guard let self else { return }
-                self.viewModel.fetchUsers()
-            }
-        )
-        
-        let title = NSLocalizedString("Statistics.errorAlert.title", comment: "")
-        
-        let retryAction = UIAlertAction(title: errorModel.actionText, style: .default) {_ in
-            errorModel.action()
+        universalErrorAlert { [weak self] in
+            guard let self else { return }
+            self.viewModel.fetchUsers()
         }
-        
-        let cancelActionText = NSLocalizedString("Statistics.errorAlert.cancelAction.text", comment: "")
-        let cancelAction = UIAlertAction(title: cancelActionText, style: .cancel)
-        
-        self.showErrorAlertWithTwoButtons(titleOfAlert: title, firstAction: cancelAction, secondAction: retryAction)
     }
 }
 
 // MARK: - UITableViewDataSource, UITableViewDelegate
 extension StatisticsViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        self.viewModel.usersList.count
+        viewModel.usersList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -224,27 +197,19 @@ extension StatisticsViewController: UITableViewDataSource, UITableViewDelegate {
             return UITableViewCell()
         }
         
-        let userInfo = self.viewModel.usersList[indexPath.row]
+        let userInfo = viewModel.usersList[indexPath.row]
         cell.configure(numberingOfCell: indexPath.row + 1, with: userInfo)
         
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let userCardViewModel = UserCardViewModel(serviceAssembly: self.viewModel.servicesAssembly)
+        let userCardViewModel = UserCardViewModel(servicesAssembly: viewModel.servicesAssembly)
         let userCardViewController = UserCardViewController(viewModel: userCardViewModel)
         
-        let transition = CATransition()
-        transition.duration = ConstantsForStatistics.transitionDurationWhenOpenPage
-        transition.type = .push
-        transition.subtype = .fromTop
-        navigationController?.view.layer.add(transition, forKey: kCATransition)
+        universalOpenPage(viewController: userCardViewController)
         
-        navigationItem.backButtonTitle = ""
-        userCardViewController.hidesBottomBarWhenPushed = true
-        navigationController?.pushViewController(userCardViewController, animated: false)
-        
-        userCardViewModel.fetchUserById(self.viewModel.usersList[indexPath.row].id)
+        userCardViewModel.fetchUserById(viewModel.usersList[indexPath.row].id)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -252,8 +217,8 @@ extension StatisticsViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if self.viewModel.usersList.count - 1 == indexPath.row {
-            self.viewModel.fetchUsers()
+        if viewModel.usersList.count - 1 == indexPath.row {
+            viewModel.fetchUsers()
         }
     }
 }

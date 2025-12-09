@@ -8,10 +8,10 @@ enum StatisticsTableViewCellLayout {
 
     static let numberingLabelTop: CGFloat = 30
     static let numberingLabelBottom: CGFloat = -30
-    static let numberingLabelTrailing: CGFloat = -8
+    static let numberingLabelHeight: CGFloat = 20
+    static let numberingLabelWidth: CGFloat = 27
 
     static let avatarLeading: CGFloat = 16
-    static let avatarVerticalPadding: CGFloat = 26
     static let avatarWidth: CGFloat = 28
     static let avatarCornerRadius: CGFloat = 14
 
@@ -21,8 +21,9 @@ enum StatisticsTableViewCellLayout {
     static let nftCountTrailing: CGFloat = -16
     static let nftCountWidth: CGFloat = 38
     
-    static let usersInfoViewWidth: CGFloat = 343
     static let usersInfoViewCornerRadius: CGFloat = 12
+    static let usersInfoViewLeading: CGFloat = 8
+    
     static let heightOfViewsInUsersInfoView: CGFloat = 28
     static let topAnchorOfViewsInUsersInfoView: CGFloat = 26
     static let bottomAnchorOfViewsInUsersInfoView: CGFloat = -26
@@ -34,10 +35,10 @@ final class StatisticsTableViewCell: UITableViewCell {
     static let reuseIdentifier = "StatisticsTableViewCell"
     
     // MARK: - Views (elements)
-    private let containerView: UIView = {
+    private lazy var containerView: UIView = {
         let containerview = UIView()
         containerview.layer.cornerRadius = StatisticsTableViewCellLayout.containerCornerRadius
-        containerview.backgroundColor = .forViewBackgound
+        containerview.backgroundColor = .forViewBackground
         containerview.translatesAutoresizingMaskIntoConstraints = false
         return containerview
     }()
@@ -45,7 +46,8 @@ final class StatisticsTableViewCell: UITableViewCell {
         let numberingLabel = UILabel()
         numberingLabel.font = UIFont.caption1
         numberingLabel.textColor = .segmentActive
-        numberingLabel.backgroundColor = .forViewBackgound
+        numberingLabel.backgroundColor = .forViewBackground
+        numberingLabel.textAlignment = .center
         numberingLabel.translatesAutoresizingMaskIntoConstraints = false
         
         return numberingLabel
@@ -81,6 +83,7 @@ final class StatisticsTableViewCell: UITableViewCell {
         countOfNftsLabel.font = UIFont.headline3
         countOfNftsLabel.textColor = .segmentActive
         countOfNftsLabel.backgroundColor = .segmentInactive
+        countOfNftsLabel.textAlignment = .center
         countOfNftsLabel.translatesAutoresizingMaskIntoConstraints = false
         
         return countOfNftsLabel
@@ -89,14 +92,14 @@ final class StatisticsTableViewCell: UITableViewCell {
     // MARK: - Initializers
     override init(style: StatisticsTableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: .default, reuseIdentifier: reuseIdentifier)
-        contentView.backgroundColor = .forViewBackgound
+        contentView.backgroundColor = .forViewBackground
         
         addSubviews()
         setupConstraints()
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        nil
     }
     
     // MARK: - Public Methods
@@ -104,7 +107,7 @@ final class StatisticsTableViewCell: UITableViewCell {
         self.numberingLabel.text = "\(numberingOfCell)"
         let processor = RoundCornerImageProcessor(cornerRadius: StatisticsTableViewCellLayout.avatarCornerRadius)
         let defaultImage = UIImage(systemName: "person.crop.circle.fill")?
-            .withTintColor(UIColor.forDefaultAvatarBackgound, renderingMode: .alwaysOriginal)
+            .withTintColor(UIColor.forDefaultAvatarBackground, renderingMode: .alwaysOriginal)
         guard let url = usersInfo.avatarURL else  {
             return self.userAvatarImageView.image = defaultImage
         }
@@ -145,15 +148,16 @@ final class StatisticsTableViewCell: UITableViewCell {
             containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             
-            usersInfoView.topAnchor.constraint(equalTo: containerView.topAnchor),
-            usersInfoView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
-            usersInfoView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
-            usersInfoView.widthAnchor.constraint(equalToConstant: StatisticsTableViewCellLayout.usersInfoViewWidth),
-            
             numberingLabel.topAnchor.constraint(equalTo: containerView.topAnchor, constant: StatisticsTableViewCellLayout.numberingLabelTop),
             numberingLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
             numberingLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: StatisticsTableViewCellLayout.numberingLabelBottom),
-            numberingLabel.trailingAnchor.constraint(equalTo: usersInfoView.leadingAnchor, constant: StatisticsTableViewCellLayout.numberingLabelTrailing),
+            numberingLabel.heightAnchor.constraint(equalToConstant: StatisticsTableViewCellLayout.numberingLabelHeight),
+            numberingLabel.widthAnchor.constraint(equalToConstant: StatisticsTableViewCellLayout.numberingLabelWidth),
+            
+            usersInfoView.topAnchor.constraint(equalTo: containerView.topAnchor),
+            usersInfoView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            usersInfoView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+            usersInfoView.leadingAnchor.constraint(equalTo: numberingLabel.trailingAnchor, constant: StatisticsTableViewCellLayout.usersInfoViewLeading),
             
             userAvatarImageView.heightAnchor.constraint(equalToConstant: StatisticsTableViewCellLayout.heightOfViewsInUsersInfoView),
             userAvatarImageView.widthAnchor.constraint(equalToConstant: StatisticsTableViewCellLayout.avatarWidth),

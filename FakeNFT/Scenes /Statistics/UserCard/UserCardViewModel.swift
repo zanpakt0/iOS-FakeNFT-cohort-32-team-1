@@ -13,7 +13,7 @@ final class UserCardViewModel {
     // MARK: - Public Properties
     var userInfo: UserCardViewData?
     var userId: String?
-    let serviceAssembly: ServicesAssembly
+    let servicesAssembly: ServicesAssembly
     
     // MARK: - Private Properties
     @Published private(set) var state: UserCardState = .idle
@@ -21,8 +21,8 @@ final class UserCardViewModel {
     private var isLoading = false
     
     // MARK: - Initializers
-    init(serviceAssembly: ServicesAssembly) {
-        self.serviceAssembly = serviceAssembly
+    init(servicesAssembly: ServicesAssembly) {
+        self.servicesAssembly = servicesAssembly
     }
     
     // MARK: - Public Methods
@@ -32,10 +32,10 @@ final class UserCardViewModel {
         guard !isLoading else { return }
         
         isLoading = true
-        self.userId = id
+        userId = id
         state = .loading
         
-        currentTask = serviceAssembly.nftService.getUserCard(id: id) {[weak self] result in
+        currentTask = servicesAssembly.nftService.getUserCard(id: id) { [weak self] result in
             DispatchQueue.main.async {
                 guard let self else { return }
                 

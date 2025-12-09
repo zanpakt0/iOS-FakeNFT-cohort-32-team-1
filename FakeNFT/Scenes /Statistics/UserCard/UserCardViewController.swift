@@ -3,7 +3,7 @@ import Combine
 import Kingfisher
 
 // MARK: - Need enums
-enum UserCardLayout {
+enum UserCardViewControllerLayout {
     static let avatarSize: CGFloat = 70
     static let avatarLeading: CGFloat = 16
     static let avatarTop: CGFloat = 20
@@ -32,7 +32,7 @@ enum UserCardLayout {
     static let nftButtonArrowImageTrailing: CGFloat = -16
 }
 
-final class UserCardViewController: UIViewController, LoadingView, ErrorView {
+final class UserCardViewController: UIViewController, LoadingView {
     
     // MARK: - Private Properties
     private let viewModel: UserCardViewModel
@@ -42,13 +42,14 @@ final class UserCardViewController: UIViewController, LoadingView, ErrorView {
     lazy var activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .large)
         indicator.hidesWhenStopped = true
+        indicator.color = .segmentActive
         indicator.translatesAutoresizingMaskIntoConstraints = false
         
         return indicator
     }()
     private lazy var viewWithAllElements: UIView = {
         let viewWithAllElements = UIView()
-        viewWithAllElements.backgroundColor = .forViewBackgound
+        viewWithAllElements.backgroundColor = .forViewBackground
         viewWithAllElements.translatesAutoresizingMaskIntoConstraints = false
         
         return viewWithAllElements
@@ -57,7 +58,7 @@ final class UserCardViewController: UIViewController, LoadingView, ErrorView {
         let exampleImage = UIImage(systemName: "person.crop.circle.fill")
         let userAvatarImageView = UIImageView(image: exampleImage)
         userAvatarImageView.clipsToBounds = true
-        userAvatarImageView.layer.cornerRadius = UserCardLayout.avatarCornerRadius
+        userAvatarImageView.layer.cornerRadius = UserCardViewControllerLayout.avatarCornerRadius
         userAvatarImageView.translatesAutoresizingMaskIntoConstraints = false
         
         return userAvatarImageView
@@ -66,7 +67,7 @@ final class UserCardViewController: UIViewController, LoadingView, ErrorView {
         let userNameLabel = UILabel()
         userNameLabel.font = UIFont.headline3
         userNameLabel.textColor = .segmentActive
-        userNameLabel.backgroundColor = .forViewBackgound
+        userNameLabel.backgroundColor = .forViewBackground
         userNameLabel.translatesAutoresizingMaskIntoConstraints = false
         
         return userNameLabel
@@ -75,8 +76,8 @@ final class UserCardViewController: UIViewController, LoadingView, ErrorView {
         let userDescriptionLabel = UILabel()
         userDescriptionLabel.font = UIFont.caption2
         userDescriptionLabel.textColor = .segmentActive
-        userDescriptionLabel.backgroundColor = .forViewBackgound
-        userDescriptionLabel.numberOfLines = UserCardLayout.descriptionNumberOfLines
+        userDescriptionLabel.backgroundColor = .forViewBackground
+        userDescriptionLabel.numberOfLines = UserCardViewControllerLayout.descriptionNumberOfLines
         userDescriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         
         return userDescriptionLabel
@@ -93,10 +94,10 @@ final class UserCardViewController: UIViewController, LoadingView, ErrorView {
         
         goToUserWebsiteButton.addTarget(self, action: #selector(goToUserWebsiteButtonClicked), for: .touchUpInside)
         
-        goToUserWebsiteButton.layer.borderWidth = UserCardLayout.websiteBorderWidth
+        goToUserWebsiteButton.layer.borderWidth = UserCardViewControllerLayout.websiteBorderWidth
         goToUserWebsiteButton.layer.borderColor = UIColor.segmentActive.cgColor
         
-        goToUserWebsiteButton.layer.cornerRadius = UserCardLayout.websiteCornerRadius
+        goToUserWebsiteButton.layer.cornerRadius = UserCardViewControllerLayout.websiteCornerRadius
         goToUserWebsiteButton.translatesAutoresizingMaskIntoConstraints = false
         
         return goToUserWebsiteButton
@@ -117,7 +118,7 @@ final class UserCardViewController: UIViewController, LoadingView, ErrorView {
         
         let stack = UIStackView(arrangedSubviews: [leftLabel, countOfNftsLabel])
         stack.axis = .horizontal
-        stack.spacing = UserCardLayout.nftButtonSpaceInStack
+        stack.spacing = UserCardViewControllerLayout.nftButtonSpaceInStack
         stack.alignment = .center
         
         nftCollectionButton.addSubview(stack)
@@ -130,10 +131,10 @@ final class UserCardViewController: UIViewController, LoadingView, ErrorView {
         arrowImage.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            stack.leadingAnchor.constraint(equalTo: nftCollectionButton.leadingAnchor, constant: UserCardLayout.nftButtonStackLeading),
+            stack.leadingAnchor.constraint(equalTo: nftCollectionButton.leadingAnchor, constant: UserCardViewControllerLayout.nftButtonStackLeading),
             stack.centerYAnchor.constraint(equalTo: nftCollectionButton.centerYAnchor),
             
-            arrowImage.trailingAnchor.constraint(equalTo: nftCollectionButton.trailingAnchor, constant: UserCardLayout.nftButtonArrowImageTrailing),
+            arrowImage.trailingAnchor.constraint(equalTo: nftCollectionButton.trailingAnchor, constant: UserCardViewControllerLayout.nftButtonArrowImageTrailing),
             arrowImage.centerYAnchor.constraint(equalTo: nftCollectionButton.centerYAnchor)
         ])
         
@@ -155,13 +156,13 @@ final class UserCardViewController: UIViewController, LoadingView, ErrorView {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        nil
     }
     
     // MARK: - View Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .forViewBackgound
+        view.backgroundColor = .forViewBackground
         navigationController?.navigationBar.tintColor = .closeButton
         
         addSubviews()
@@ -177,33 +178,20 @@ final class UserCardViewController: UIViewController, LoadingView, ErrorView {
     
     // MARK: - Private Methods
     @objc private func goToUserWebsiteButtonClicked() {
-        guard let webSiteURL = self.viewModel.userInfo?.website else { return }
+        guard let webSiteURL = viewModel.userInfo?.website else { return }
         let webView = WebViewViewController(urlString: webSiteURL.absoluteString)
         
-        let transition = CATransition()
-        transition.duration = ConstantsForStatistics.transitionDurationWhenOpenPage
-        transition.type = .push
-        transition.subtype = .fromTop
-        navigationController?.view.layer.add(transition, forKey: kCATransition)
-        
-        navigationItem.backButtonTitle = ""
-        webView.hidesBottomBarWhenPushed = true
-        navigationController?.pushViewController(webView, animated: false)
+        universalOpenPage(viewController: webView)
     }
     
     @objc private func nftCollectionButtonClicked() {
-        let userCollectionViewModel = UserCollectionViewModel(serviceAssembly: self.viewModel.serviceAssembly)
+        let userCollectionViewModel = UserCollectionViewModel(servicesAssembly: viewModel.servicesAssembly)
         let userCollectionViewController = UserCollectionViewController(viewModel: userCollectionViewModel)
         
-        let transition = CATransition()
-        transition.duration = ConstantsForStatistics.transitionDurationWhenOpenPage
-        transition.type = .push
-        transition.subtype = .fromTop
-        navigationController?.view.layer.add(transition, forKey: kCATransition)
-        
-        navigationItem.backButtonTitle = ""
-        userCollectionViewController.hidesBottomBarWhenPushed = true
-        navigationController?.pushViewController(userCollectionViewController, animated: false)
+        universalOpenPage(viewController: userCollectionViewController)
+
+        guard let nfts = viewModel.userInfo?.nfts else { return }
+        userCollectionViewModel.loadEverything(listOfNfts: nfts)
     }
     
     private func addSubviews() {
@@ -225,29 +213,29 @@ final class UserCardViewController: UIViewController, LoadingView, ErrorView {
             viewWithAllElements.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             viewWithAllElements.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             
-            userAvatarImageView.heightAnchor.constraint(equalToConstant: UserCardLayout.avatarSize),
-            userAvatarImageView.widthAnchor.constraint(equalToConstant: UserCardLayout.avatarSize),
-            userAvatarImageView.leadingAnchor.constraint(equalTo: viewWithAllElements.leadingAnchor, constant: UserCardLayout.avatarLeading),
-            userAvatarImageView.topAnchor.constraint(equalTo: viewWithAllElements.topAnchor, constant: UserCardLayout.avatarTop),
+            userAvatarImageView.heightAnchor.constraint(equalToConstant: UserCardViewControllerLayout.avatarSize),
+            userAvatarImageView.widthAnchor.constraint(equalToConstant: UserCardViewControllerLayout.avatarSize),
+            userAvatarImageView.leadingAnchor.constraint(equalTo: viewWithAllElements.leadingAnchor, constant: UserCardViewControllerLayout.avatarLeading),
+            userAvatarImageView.topAnchor.constraint(equalTo: viewWithAllElements.topAnchor, constant: UserCardViewControllerLayout.avatarTop),
             
-            userNameLabel.leadingAnchor.constraint(equalTo: userAvatarImageView.trailingAnchor, constant: UserCardLayout.userNameLeading),
-            userNameLabel.trailingAnchor.constraint(equalTo: viewWithAllElements.trailingAnchor, constant: UserCardLayout.userNameTrailing),
+            userNameLabel.leadingAnchor.constraint(equalTo: userAvatarImageView.trailingAnchor, constant: UserCardViewControllerLayout.userNameLeading),
+            userNameLabel.trailingAnchor.constraint(equalTo: viewWithAllElements.trailingAnchor, constant: UserCardViewControllerLayout.userNameTrailing),
             userNameLabel.centerYAnchor.constraint(equalTo: userAvatarImageView.centerYAnchor),
             
-            userDescriptionLabel.leadingAnchor.constraint(equalTo: viewWithAllElements.leadingAnchor, constant: UserCardLayout.descriptionLeading),
-            userDescriptionLabel.trailingAnchor.constraint(equalTo: viewWithAllElements.trailingAnchor, constant: UserCardLayout.descriptionTrailing),
-            userDescriptionLabel.topAnchor.constraint(equalTo: userAvatarImageView.bottomAnchor, constant: UserCardLayout.descriptionTop),
-            userDescriptionLabel.heightAnchor.constraint(equalToConstant: UserCardLayout.descriptionHeight),
+            userDescriptionLabel.leadingAnchor.constraint(equalTo: viewWithAllElements.leadingAnchor, constant: UserCardViewControllerLayout.descriptionLeading),
+            userDescriptionLabel.trailingAnchor.constraint(equalTo: viewWithAllElements.trailingAnchor, constant: UserCardViewControllerLayout.descriptionTrailing),
+            userDescriptionLabel.topAnchor.constraint(equalTo: userAvatarImageView.bottomAnchor, constant: UserCardViewControllerLayout.descriptionTop),
+            userDescriptionLabel.heightAnchor.constraint(equalToConstant: UserCardViewControllerLayout.descriptionHeight),
             
-            goToUserWebsiteButton.leadingAnchor.constraint(equalTo: viewWithAllElements.leadingAnchor, constant: UserCardLayout.websiteButtonLeading),
-            goToUserWebsiteButton.trailingAnchor.constraint(equalTo: viewWithAllElements.trailingAnchor, constant: UserCardLayout.websiteButtonTrailing),
-            goToUserWebsiteButton.topAnchor.constraint(equalTo: userDescriptionLabel.bottomAnchor, constant: UserCardLayout.websiteButtonTop),
-            goToUserWebsiteButton.heightAnchor.constraint(equalToConstant: UserCardLayout.websiteButtonHeight),
+            goToUserWebsiteButton.leadingAnchor.constraint(equalTo: viewWithAllElements.leadingAnchor, constant: UserCardViewControllerLayout.websiteButtonLeading),
+            goToUserWebsiteButton.trailingAnchor.constraint(equalTo: viewWithAllElements.trailingAnchor, constant: UserCardViewControllerLayout.websiteButtonTrailing),
+            goToUserWebsiteButton.topAnchor.constraint(equalTo: userDescriptionLabel.bottomAnchor, constant: UserCardViewControllerLayout.websiteButtonTop),
+            goToUserWebsiteButton.heightAnchor.constraint(equalToConstant: UserCardViewControllerLayout.websiteButtonHeight),
             
             nftCollectionButton.leadingAnchor.constraint(equalTo: viewWithAllElements.leadingAnchor),
             nftCollectionButton.trailingAnchor.constraint(equalTo: viewWithAllElements.trailingAnchor),
-            nftCollectionButton.topAnchor.constraint(equalTo: goToUserWebsiteButton.bottomAnchor, constant: UserCardLayout.nftButtonTop),
-            nftCollectionButton.heightAnchor.constraint(greaterThanOrEqualToConstant: UserCardLayout.nftButtonMinHeight)
+            nftCollectionButton.topAnchor.constraint(equalTo: goToUserWebsiteButton.bottomAnchor, constant: UserCardViewControllerLayout.nftButtonTop),
+            nftCollectionButton.heightAnchor.constraint(greaterThanOrEqualToConstant: UserCardViewControllerLayout.nftButtonMinHeight)
         ])
     }
     
@@ -255,23 +243,23 @@ final class UserCardViewController: UIViewController, LoadingView, ErrorView {
         switch needToShowLoadingIndicator {
         case .showLoaderHideViews:
             showLoading()
-            viewWithAllElements.isHidden = true
+            self.viewWithAllElements.isHidden = true
         case .showViewsHideLoader:
             hideLoading()
-            viewWithAllElements.isHidden = false
+            self.viewWithAllElements.isHidden = false
         case .showBoth:
             showLoading()
-            viewWithAllElements.isHidden = false
+            self.viewWithAllElements.isHidden = false
         case .hideBoth:
             hideLoading()
-            viewWithAllElements.isHidden = true
+            self.viewWithAllElements.isHidden = true
         }
     }
     
     private func insertUserDataIntoFields(userData: UserCardViewData) {
-        let processor = RoundCornerImageProcessor(cornerRadius: UserCardLayout.avatarCornerRadius)
+        let processor = RoundCornerImageProcessor(cornerRadius: UserCardViewControllerLayout.avatarCornerRadius)
         let defaultImage = UIImage(systemName: "person.crop.circle.fill")?
-            .withTintColor(UIColor.forDefaultAvatarBackgound, renderingMode: .alwaysOriginal)
+            .withTintColor(UIColor.forDefaultAvatarBackground, renderingMode: .alwaysOriginal)
         guard let url = userData.avatarURL else  {
             return self.userAvatarImageView.image = defaultImage
         }
@@ -288,9 +276,9 @@ final class UserCardViewController: UIViewController, LoadingView, ErrorView {
             }
         }
         
-        userNameLabel.text = userData.name
-        userDescriptionLabel.text = userData.decription
-        countOfNftsLabel.text = "(\(userData.nfts.count))"
+        self.userNameLabel.text = userData.name
+        self.userDescriptionLabel.text = userData.decription
+        self.countOfNftsLabel.text = "(\(userData.nfts.count))"
     }
     
     private func bindViewModel() {
@@ -309,33 +297,17 @@ final class UserCardViewController: UIViewController, LoadingView, ErrorView {
                     insertUserDataIntoFields(userData: user)
                 case .error(_):
                     showNeedViewsInScreen(needToShowLoadingIndicator: .hideBoth)
-                    self.showErrorAlert()
+                    showErrorAlert()
                 }
             }
             .store(in: &cancellables)
     }
     
     private func showErrorAlert() {
-        let retryActionText = NSLocalizedString("Statistics.errorAlert.retryAction.text", comment: "")
-        let errorModel = ErrorModel(
-            message: "",
-            actionText: retryActionText,
-            action: {[weak self] in
-                guard let self,
-                      let userId = self.viewModel.userId else { return }
-                self.viewModel.fetchUserById(userId)
-            }
-        )
-        
-        let title = NSLocalizedString("Statistics.errorAlert.title", comment: "")
-        
-        let retryAction = UIAlertAction(title: errorModel.actionText, style: .default) {_ in
-            errorModel.action()
+        universalErrorAlert { [weak self] in
+            guard let self,
+                  let userId = self.viewModel.userId else { return }
+            self.viewModel.fetchUserById(userId)
         }
-        
-        let cancelActionText = NSLocalizedString("Statistics.errorAlert.cancelAction.text", comment: "")
-        let cancelAction = UIAlertAction(title: cancelActionText, style: .cancel)
-        
-        self.showErrorAlertWithTwoButtons(titleOfAlert: title, firstAction: cancelAction, secondAction: retryAction)
     }
 }

@@ -31,7 +31,7 @@ final class TabBarController: UITabBarController {
         setupTabBarAppearance()
         setupTabBarItems()
 
-        view.backgroundColor = .forViewBackgound
+        view.backgroundColor = .forViewBackground
     }
     
     // MARK: - Private Methods
@@ -47,7 +47,7 @@ final class TabBarController: UITabBarController {
     private func setupTabBarAppearance() {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = .forViewBackgound
+        appearance.backgroundColor = .forViewBackground
         
         tabBar.standardAppearance = appearance
         if #available(iOS 15.0, *) {
