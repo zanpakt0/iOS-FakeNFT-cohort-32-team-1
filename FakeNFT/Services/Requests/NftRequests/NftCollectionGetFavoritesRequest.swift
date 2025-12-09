@@ -7,3 +7,4 @@ struct NftCollectionGetFavoritesRequest: NetworkRequest {
     var httpMethod: HttpMethod { .get }
     var dto: Dto? { nil }
 }
+

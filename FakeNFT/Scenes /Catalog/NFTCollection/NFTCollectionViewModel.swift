@@ -13,18 +13,18 @@ final class NFTCollectionViewModel {
     private let provider: NftService
     private let nftIds: [String]
     private let favoriteProvider : FavoriteNftProvider
+    private let orderProvider: OrderNftProvider
     
     //MARK: - Init
-    init(provider: NftServiceImpl, nftIds: [String]) {
-        self.favoriteProvider = FavoriteNftProviderImpl(
-            networkClient: DefaultNetworkClient(),
-            storage: FavoriteNftStorageImpl()
-        )
+    init(provider: NftServiceImpl, favoriteProvider: FavoriteNftProvider, orderProvider: OrderNftProvider, nftIds: [String]) {
+        self.favoriteProvider = favoriteProvider
+        self.orderProvider = orderProvider
         self.provider = provider
         self.isLoading = true
         self.nftIds = nftIds
         self.loadData()
         self.fetchFavorites()
+        self.fetchOrders()
     }
     
     //MARK: - Methods
@@ -49,6 +49,7 @@ final class NFTCollectionViewModel {
         group.notify(queue: .main) { [weak self] in
             guard let self else { return }
             self.nfts = loadedNfts
+            self.nfts.sort(by: { $0.id < $1.id })
             self.isLoading = false
         }
     }
@@ -57,7 +58,15 @@ final class NFTCollectionViewModel {
         DispatchQueue.main.async {
             if !self.itemsInCart.contains(id) {
                 self.itemsInCart.append(id)
-                print(self.itemsInCart)
+                
+                self.putOrder(id: id) { success in
+                    if !success {
+                        if let index = self.itemsInCart.firstIndex(of: id) {
+                            self.itemsInCart.remove(at: index)
+                            print(self.itemsInCart)
+                        }
+                    }
+                }
             }
         }
     }
@@ -66,7 +75,14 @@ final class NFTCollectionViewModel {
         DispatchQueue.main.async {
             if let index = self.itemsInCart.firstIndex(of: id) {
                 self.itemsInCart.remove(at: index)
-                print(self.itemsInCart)
+                
+                self.putOrder(id: id) { success in
+                    if !success {
+                        if !self.itemsInCart.contains(id) {
+                            self.itemsInCart.append(id)
+                        }
+                    }
+                }
             }
         }
     }
@@ -133,4 +149,35 @@ final class NFTCollectionViewModel {
             }
         }
     }
+    
+    private func putOrder(id: String, completion: @escaping (Bool) -> Void) {
+        self.orderProvider.putOrder(id: id) { [weak self] result in
+            DispatchQueue.main.async {
+                guard let self else { return }
+                
+                switch result {
+                case .success(let orders):
+                    self.itemsInCart = orders
+                    completion(true)
+                case .failure(let error):
+                    print("Load failed", error)
+                    completion(false)
+                }
+            }
+        }
+    }
+    
+    private func fetchOrders() {
+        self.orderProvider.loadOrders { [weak self] result in
+            guard let self else { return }
+            
+            switch result {
+            case .success(let orders):
+                self.itemsInCart = orders
+            case .failure(let error):
+                print("Load failed", error)
+            }
+        }
+    }
+    
 }
