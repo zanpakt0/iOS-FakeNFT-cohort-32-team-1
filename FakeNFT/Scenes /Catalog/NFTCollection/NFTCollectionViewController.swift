@@ -277,6 +277,18 @@ final class NFTCollectionViewController: UIViewController {
         descriptionLabel.text = catalogItem.description
     }
     
+    private func showNft(id: String) {
+        let assembly = NftDetailAssembly(
+            servicesAssembler: ServicesAssembly(
+                networkClient: DefaultNetworkClient(),
+                nftStorage: NftStorageImpl()
+            )
+        )
+        let nftInput = NftDetailInput(id: id)
+        let nftViewController = assembly.build(with: nftInput)
+        present(nftViewController, animated: true)
+    }
+    
     //MARK: - Actions
     @objc private func backButtonAction() {
         dismiss(animated: true)
@@ -375,6 +387,14 @@ extension NFTCollectionViewController: UICollectionViewDataSource, UICollectionV
         insetForSectionAt section: Int
     ) -> UIEdgeInsets {
         UIEdgeInsets(top: 0, left: 0, bottom: CollectionLayout.collectionBottomInset, right: 0)
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        didSelectItemAt indexPath: IndexPath
+    ) {
+        let nftItem = viewModel.nfts[indexPath.item]
+        showNft(id: nftItem.id)
     }
 }
 
