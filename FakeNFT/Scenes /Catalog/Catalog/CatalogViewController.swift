@@ -203,12 +203,15 @@ extension CatalogViewController: UITableViewDelegate {
             orderProvider: orderProvider,
             nftIds: item.nfts
         )
+        
         let NFTvc = NFTCollectionViewController(
             viewModel: viewModel,
             catalogItem: item
         )
-        NFTvc.modalTransitionStyle = .crossDissolve
-        NFTvc.modalPresentationStyle = .fullScreen
-        present(NFTvc, animated: true)
+        
+        let nav = UINavigationController(rootViewController: NFTvc)
+        nav.modalPresentationStyle = .fullScreen
+        nav.modalTransitionStyle = .crossDissolve
+        present(nav, animated: true)
     }
 }

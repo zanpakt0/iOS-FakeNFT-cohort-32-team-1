@@ -45,14 +45,6 @@ final class NFTCollectionViewController: UIViewController, ErrorView {
     private let cancelAlertButton: String = NSLocalizedString("nftCollection.cancelAlertButton", comment: "Отмена")
     
     //MARK: - UI Elements
-    private lazy var backButton: UIButton = {
-        let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(resource: .collectionBackButton), for: .normal)
-        button.addTarget(self, action: #selector(backButtonAction), for: .touchUpInside)
-        return button
-    }()
-    
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -92,6 +84,9 @@ final class NFTCollectionViewController: UIViewController, ErrorView {
         label.textAlignment = .left
         label.text = "John Doe"
         label.textColor = .authorBlue
+        label.isUserInteractionEnabled = true
+        let tap = UITapGestureRecognizer(target: self, action: #selector(webLabelTapped))
+        label.addGestureRecognizer(tap)
         return label
     }()
     
@@ -162,6 +157,7 @@ final class NFTCollectionViewController: UIViewController, ErrorView {
         setupUI()
         applyCatalogData()
         bindViewModel()
+        setupNavigationBackButton()
     }
     
     //MARK: - Setup Methods
@@ -170,18 +166,6 @@ final class NFTCollectionViewController: UIViewController, ErrorView {
         setupScrollView()
         setupLoadingIndicator()
         setupUIInsideContent()
-        setupBackButton()
-    }
-    
-    private func setupBackButton() {
-        view.addSubview(backButton)
-        
-        NSLayoutConstraint.activate([
-            backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: CollectionLayout.backButtonTop),
-            backButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: CollectionLayout.backButtonLeading),
-            backButton.heightAnchor.constraint(equalToConstant: CollectionLayout.backButtonSize),
-            backButton.widthAnchor.constraint(equalToConstant: CollectionLayout.backButtonSize)
-        ])
     }
     
     private func setupScrollView() {
@@ -306,6 +290,13 @@ final class NFTCollectionViewController: UIViewController, ErrorView {
         )
     }
     
+    private func setupNavigationBackButton() {
+        let image = UIImage(resource: .collectionBackButton)
+        let barButton = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(backButtonAction))
+        navigationItem.leftBarButtonItem = barButton
+        navigationController?.navigationBar.tintColor = .closeButton
+    }
+    
     //MARK: - Actions
     @objc private func backButtonAction() {
         dismiss(animated: true)
@@ -315,6 +306,18 @@ final class NFTCollectionViewController: UIViewController, ErrorView {
         collectionView.reloadData()
         viewModel.loadData()
     }
+    
+    @objc private func webLabelTapped() {
+        let url = RequestConstants.practicumURL
+        let vc = WebViewViewController(urlString: url)
+        navigationItem.backButtonTitle = ""
+        let backImage = UIImage(resource: .collectionBackButton)
+        navigationController?.navigationBar.backIndicatorImage = backImage
+        navigationController?.navigationBar.backIndicatorTransitionMaskImage = backImage
+        navigationController?.navigationBar.tintColor = .closeButton
+        navigationController?.pushViewController(vc, animated: false)
+    }
+    
     //MARK: - Bind
     func bindViewModel() {
         viewModel.$nfts
