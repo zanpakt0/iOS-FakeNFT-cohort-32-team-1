@@ -13,6 +13,7 @@ enum UserCollectionViewControllerLayout {
     static let horizontlSpacingBetweenCells: CGFloat = 9
     static let verticalSpacingBetweenCells: CGFloat = 8
     static let cellHeight: CGFloat = 192
+    static let cellWidth: CGFloat = 108
     
     static let itemsPerRowInCollectionView: CGFloat = 3
     static let numberOfSectionsInCollectionView: Int = 1
@@ -215,15 +216,9 @@ extension UserCollectionViewController: UICollectionViewDelegate, UICollectionVi
 // MARK: - UICollectionViewDelegateFlowLayout
 extension UserCollectionViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let spacing: CGFloat = UserCollectionViewControllerLayout.horizontlSpacingBetweenCells
-        let itemsPerRow: CGFloat = UserCollectionViewControllerLayout.itemsPerRowInCollectionView
         
-        let totalSpacing = spacing * (itemsPerRow - 1)
-        let availableWidth = collectionView.frame.width - totalSpacing
-        let cellWidth = availableWidth / itemsPerRow
-        
-        return CGSize(width: cellWidth, height: UserCollectionViewControllerLayout.cellHeight)
-        }
+        return CGSize(width: UserCollectionViewControllerLayout.cellWidth, height: UserCollectionViewControllerLayout.cellHeight)
+    }
     
     func collectionView(_: UICollectionView, layout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt: Int) -> CGFloat {
         UserCollectionViewControllerLayout.horizontlSpacingBetweenCells

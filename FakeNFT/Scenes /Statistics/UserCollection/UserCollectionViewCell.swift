@@ -8,12 +8,8 @@ enum UserCollectionViewCellLayout {
     
     static let sizesOfButtons: CGFloat = 40
     
-    static let viewWithAdditionalInfoHeight: CGFloat = 56
-    static let viewWithAdditionalInfoWidth: CGFloat = 68
-    static let viewWithAdditionalInfoTop: CGFloat = 8
-    static let viewWithAdditionalInfoBottom: CGFloat = -20
-    
     static let spacingInStackViewOfStars: CGFloat = 2
+    static let stackViewOfStarsTop: CGFloat = 8
     
     static let sizeOfStars: CGFloat = 12
     
@@ -26,7 +22,7 @@ enum UserCollectionViewCellLayout {
     static let nftPriceLabelHeight: CGFloat = 12
     static let nftPriceLabelTop: CGFloat = 4
     
-    static let cartButtonTop: CGFloat = 16
+    static let cartButtonTop: CGFloat = 24
 }
 
 final class UserCollectionViewCell: UICollectionViewCell {
@@ -65,18 +61,6 @@ final class UserCollectionViewCell: UICollectionViewCell {
         ])
         
         return favouritesButton
-    }()
-    private lazy var viewWithAdditionalInfo: UIView = {
-        let viewWithAdditionalInfo = UIView()
-        viewWithAdditionalInfo.backgroundColor = .forViewBackground
-        viewWithAdditionalInfo.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            viewWithAdditionalInfo.widthAnchor.constraint(equalToConstant: UserCollectionViewCellLayout.viewWithAdditionalInfoWidth),
-            viewWithAdditionalInfo.heightAnchor.constraint(equalToConstant: UserCollectionViewCellLayout.viewWithAdditionalInfoHeight)
-        ])
-        
-        return viewWithAdditionalInfo
     }()
     private lazy var firstStar: UIImageView = createDefaultStar()
     private lazy var secondStar: UIImageView = createDefaultStar()
@@ -171,11 +155,7 @@ final class UserCollectionViewCell: UICollectionViewCell {
     }
     
     private func addSubviews() {
-        [stackViewOfStars, nftNameLabel, nftPriceLabel].forEach {
-            viewWithAdditionalInfo.addSubview($0)
-        }
-        
-        [nftImageView, favouritesButton, viewWithAdditionalInfo, cartButton].forEach {
+        [nftImageView, favouritesButton, stackViewOfStars, nftNameLabel, nftPriceLabel, cartButton].forEach {
             contentView.addSubview($0)
         }
     }
@@ -184,17 +164,13 @@ final class UserCollectionViewCell: UICollectionViewCell {
         NSLayoutConstraint.activate([
             nftImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
             nftImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            nftImageView.widthAnchor.constraint(equalToConstant: UserCollectionViewCellLayout.nftImageSizes),
+            nftImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             nftImageView.heightAnchor.constraint(equalToConstant: UserCollectionViewCellLayout.nftImageSizes),
             
             favouritesButton.topAnchor.constraint(equalTo: nftImageView.topAnchor),
             favouritesButton.trailingAnchor.constraint(equalTo: nftImageView.trailingAnchor),
             
-            viewWithAdditionalInfo.leadingAnchor.constraint(equalTo: nftImageView.leadingAnchor),
-            viewWithAdditionalInfo.topAnchor.constraint(equalTo: nftImageView.bottomAnchor, constant: UserCollectionViewCellLayout.viewWithAdditionalInfoTop),
-            viewWithAdditionalInfo.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: UserCollectionViewCellLayout.viewWithAdditionalInfoBottom),
-            
-            stackViewOfStars.topAnchor.constraint(equalTo: viewWithAdditionalInfo.topAnchor),
+            stackViewOfStars.topAnchor.constraint(equalTo: nftImageView.bottomAnchor, constant: UserCollectionViewCellLayout.stackViewOfStarsTop),
             stackViewOfStars.leadingAnchor.constraint(equalTo: nftImageView.leadingAnchor),
             
             nftNameLabel.leadingAnchor.constraint(equalTo: nftImageView.leadingAnchor),
@@ -203,7 +179,7 @@ final class UserCollectionViewCell: UICollectionViewCell {
             nftPriceLabel.leadingAnchor.constraint(equalTo: nftImageView.leadingAnchor),
             nftPriceLabel.topAnchor.constraint(equalTo: nftNameLabel.bottomAnchor, constant: UserCollectionViewCellLayout.nftPriceLabelTop),
             
-            cartButton.topAnchor.constraint(equalTo: viewWithAdditionalInfo.topAnchor, constant: UserCollectionViewCellLayout.cartButtonTop),
+            cartButton.topAnchor.constraint(equalTo: nftImageView.bottomAnchor, constant: UserCollectionViewCellLayout.cartButtonTop),
             cartButton.trailingAnchor.constraint(equalTo: nftImageView.trailingAnchor)
         ])
     }

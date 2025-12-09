@@ -40,20 +40,32 @@ final class UserCollectionViewModel {
     // MARK: - Public Methods
     func loadEverything(listOfNfts: [String]) {
         state = .loading
-        let group = DispatchGroup()
         
-        group.enter()
-        fetchFavouritesNftsList { group.leave() }
+        let group1 = DispatchGroup()
         
-        group.enter()
-        fetchOrderedNftsList { group.leave() }
+        group1.enter()
+        fetchFavouritesNftsList {
+            group1.leave()
+        }
         
-        group.enter()
-        fetchNftsCollectionOfUser(listOfNfts: listOfNfts) { group.leave() }
+        group1.enter()
+        fetchOrderedNftsList {
+            group1.leave()
+        }
         
-        group.notify(queue: .main) {
-            self.nftList.sort(by: {$0.nft.name < $1.nft.name})
-            self.state = .loaded(self.nftList)
+        group1.notify(queue: .main) {
+            
+            let group2 = DispatchGroup()
+            
+            group2.enter()
+            self.fetchNftsCollectionOfUser(listOfNfts: listOfNfts) {
+                group2.leave()
+            }
+            
+            group2.notify(queue: .main) {
+                self.nftList.sort(by: {$0.nft.name < $1.nft.name})
+                self.state = .loaded(self.nftList)
+            }
         }
     }
     
