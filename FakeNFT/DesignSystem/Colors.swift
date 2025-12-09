@@ -52,31 +52,31 @@ extension UIColor {
     private static let yaGrayForLoader = UIColor.yaLightGrayLight.withAlphaComponent(0.2)
 
     static let segmentActive = UIColor { traits in
-        return traits.userInterfaceStyle == .dark
+        traits.userInterfaceStyle == .dark
         ? .yaBlackDark
         : .yaBlackLight
     }
 
     static let segmentInactive = UIColor { traits in
-        return traits.userInterfaceStyle == .dark
+        traits.userInterfaceStyle == .dark
         ? .yaLightGrayDark
         : .yaLightGrayLight
     }
 
     static let closeButton = UIColor { traits in
-        return traits.userInterfaceStyle == .dark
+        traits.userInterfaceStyle == .dark
         ? .yaBlackDark
         : .yaBlackLight
     }
     
     static let forViewBackground = UIColor { traits in
-        return traits.userInterfaceStyle == .light
+        traits.userInterfaceStyle == .light
         ? .yaBlackDark
         : .yaBlackLight
     }
 
     static let forDefaultAvatarBackground = UIColor { traits in
-        return traits.userInterfaceStyle == .light
+        traits.userInterfaceStyle == .light
         ? .yaGrayUniversal
         : .yaGrayUniversal
     }
@@ -84,11 +84,11 @@ extension UIColor {
     static let forActivityIndicatorBackground = UIColor { traits in
         switch traits.userInterfaceStyle {
         case .light:
-            return .yaLightGrayLight
+            .yaLightGrayLight
         case .dark:
-            return UIColor(patternImage: createDarkGradientImage())
+            UIColor(patternImage: createDarkGradientImage())
         default:
-            return .yaLightGrayLight
+            .yaLightGrayLight
         }
     }
     

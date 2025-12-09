@@ -73,7 +73,7 @@ final class UserCollectionViewModel {
         let likes = configureNeedRequestBodyToPutRequests(
             nftId: nftId,
             isFavourite: isItLike,
-            needNftList: self.listOfFavouriteNfts)
+            needNftList: listOfFavouriteNfts)
         
         print("Дошло до лайка nft")
         
@@ -121,7 +121,7 @@ final class UserCollectionViewModel {
         let nfts = configureNeedRequestBodyToPutRequests(
             nftId: nftId,
             isFavourite: isInCart,
-            needNftList: self.listOfNftsInShoppingCart)
+            needNftList: listOfNftsInShoppingCart)
         
         print("Дошло до добавления в корзину nft")
         
@@ -172,7 +172,7 @@ final class UserCollectionViewModel {
         guard !isLoadingCollection else { return }
         
         isLoadingCollection = true
-        self.nftIdsList = listOfNfts
+        nftIdsList = listOfNfts
         
         let group = DispatchGroup()
         

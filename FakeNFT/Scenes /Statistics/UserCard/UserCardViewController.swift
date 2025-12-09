@@ -156,7 +156,7 @@ final class UserCardViewController: UIViewController, LoadingView {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        nil
     }
     
     // MARK: - View Life Cycles
@@ -178,14 +178,14 @@ final class UserCardViewController: UIViewController, LoadingView {
     
     // MARK: - Private Methods
     @objc private func goToUserWebsiteButtonClicked() {
-        guard let webSiteURL = self.viewModel.userInfo?.website else { return }
+        guard let webSiteURL = viewModel.userInfo?.website else { return }
         let webView = WebViewViewController(urlString: webSiteURL.absoluteString)
         
         universalOpenPage(viewController: webView)
     }
     
     @objc private func nftCollectionButtonClicked() {
-        let userCollectionViewModel = UserCollectionViewModel(servicesAssembly: self.viewModel.servicesAssembly)
+        let userCollectionViewModel = UserCollectionViewModel(servicesAssembly: viewModel.servicesAssembly)
         let userCollectionViewController = UserCollectionViewController(viewModel: userCollectionViewModel)
         
         universalOpenPage(viewController: userCollectionViewController)
@@ -243,16 +243,16 @@ final class UserCardViewController: UIViewController, LoadingView {
         switch needToShowLoadingIndicator {
         case .showLoaderHideViews:
             showLoading()
-            viewWithAllElements.isHidden = true
+            self.viewWithAllElements.isHidden = true
         case .showViewsHideLoader:
             hideLoading()
-            viewWithAllElements.isHidden = false
+            self.viewWithAllElements.isHidden = false
         case .showBoth:
             showLoading()
-            viewWithAllElements.isHidden = false
+            self.viewWithAllElements.isHidden = false
         case .hideBoth:
             hideLoading()
-            viewWithAllElements.isHidden = true
+            self.viewWithAllElements.isHidden = true
         }
     }
     
@@ -276,9 +276,9 @@ final class UserCardViewController: UIViewController, LoadingView {
             }
         }
         
-        userNameLabel.text = userData.name
-        userDescriptionLabel.text = userData.decription
-        countOfNftsLabel.text = "(\(userData.nfts.count))"
+        self.userNameLabel.text = userData.name
+        self.userDescriptionLabel.text = userData.decription
+        self.countOfNftsLabel.text = "(\(userData.nfts.count))"
     }
     
     private func bindViewModel() {
@@ -304,7 +304,7 @@ final class UserCardViewController: UIViewController, LoadingView {
     }
     
     private func showErrorAlert() {
-        self.universalErrorAlert {[weak self] in
+        universalErrorAlert { [weak self] in
             guard let self,
                   let userId = self.viewModel.userId else { return }
             self.viewModel.fetchUserById(userId)

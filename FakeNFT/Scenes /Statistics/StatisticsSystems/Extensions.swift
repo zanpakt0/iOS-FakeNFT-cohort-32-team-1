@@ -17,7 +17,7 @@ extension UIViewController: ErrorView {
         let cancelActionText = NSLocalizedString("Statistics.errorAlert.cancelAction.text", comment: "")
         let cancelAction = UIAlertAction(title: cancelActionText, style: .cancel)
         
-        self.showErrorAlertWithTwoButtons(titleOfAlert: title, firstAction: cancelAction, secondAction: retryAction)
+        showErrorAlertWithTwoButtons(titleOfAlert: title, firstAction: cancelAction, secondAction: retryAction)
     }
 }
 

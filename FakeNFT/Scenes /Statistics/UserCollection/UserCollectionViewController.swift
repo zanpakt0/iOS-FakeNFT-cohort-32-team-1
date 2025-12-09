@@ -70,7 +70,7 @@ final class UserCollectionViewController: UIViewController, LoadingView {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        nil
     }
     
     // MARK: - View Life Cycles
@@ -119,25 +119,25 @@ final class UserCollectionViewController: UIViewController, LoadingView {
         switch needToShowLoadingIndicator {
         case .showLoaderHideViews:
             self.containerForActivityIndicator.isHidden = false
-            self.showLoading()
+            showLoading()
             self.collectionViewWithNfts.isHidden = true
         case .showViewsHideLoader:
             self.containerForActivityIndicator.isHidden = true
-            self.hideLoading()
+            hideLoading()
             self.collectionViewWithNfts.isHidden = false
         case .showBoth:
             self.containerForActivityIndicator.isHidden = false
-            self.showLoading()
+            showLoading()
             self.collectionViewWithNfts.isHidden = false
         case .hideBoth:
             self.containerForActivityIndicator.isHidden = true
-            self.hideLoading()
+            hideLoading()
             self.collectionViewWithNfts.isHidden = true
         }
     }
     
     private func bindViewModel() {
-        self.viewModel.$state
+        viewModel.$state
             .receive(on: RunLoop.main)
             .sink { [weak self] state in
                 guard let self else { return }
@@ -166,7 +166,7 @@ final class UserCollectionViewController: UIViewController, LoadingView {
     }
     
     private func showErrorAlertWhenLoadingEverything() {
-        self.universalErrorAlert { [weak self] in
+        universalErrorAlert { [weak self] in
             guard let self,
             let nftIdsList = self.viewModel.nftIdsList else { return }
             self.viewModel.loadEverything(listOfNfts: nftIdsList)
@@ -180,7 +180,7 @@ final class UserCollectionViewController: UIViewController, LoadingView {
         let errorModel = ErrorModel(message: message,
                                     actionText: actionText) { return }
         
-        self.showError(errorModel)
+        showError(errorModel)
     }
 }
 

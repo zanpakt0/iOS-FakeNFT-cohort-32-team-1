@@ -62,7 +62,7 @@ final class StatisticsViewController: UIViewController, LoadingView {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        nil
     }
     
     // MARK: - View Life Cycles
@@ -81,7 +81,7 @@ final class StatisticsViewController: UIViewController, LoadingView {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        if self.viewModel.usersList.isEmpty {
+        if viewModel.usersList.isEmpty {
             viewModel.fetchUsers()
         }
     }
@@ -91,13 +91,13 @@ final class StatisticsViewController: UIViewController, LoadingView {
         let textOfByNameButton = NSLocalizedString("Statistics.actionSheet.byNameAction.text", comment: "")
         let textOfByRatingButton = NSLocalizedString("Statistics.actionSheet.byRatingAction.text", comment: "")
         
-        let byNameAction = UIAlertAction(title: textOfByNameButton, style: .default) {[weak self] _ in
+        let byNameAction = UIAlertAction(title: textOfByNameButton, style: .default) { [weak self] _ in
             self?.viewModel.setFilterTypeToStorage(FilterType.byName.rawValue)
             self?.viewModel.sortByNeedFilterType()
             self?.tableViewWithUsers.reloadData()
         }
         
-        let byRatingAction = UIAlertAction(title: textOfByRatingButton, style: .default) {[weak self] _ in
+        let byRatingAction = UIAlertAction(title: textOfByRatingButton, style: .default) { [weak self] _ in
             self?.viewModel.setFilterTypeToStorage(FilterType.byRating.rawValue)
             self?.viewModel.sortByNeedFilterType()
             self?.tableViewWithUsers.reloadData()
@@ -126,16 +126,16 @@ final class StatisticsViewController: UIViewController, LoadingView {
     private func showNeedViewsInScreen(needToShowLoadingIndicator: UIStateForLoader) {
         switch needToShowLoadingIndicator {
         case .showLoaderHideViews:
-            self.showLoading()
+            showLoading()
             self.tableViewWithUsers.isHidden = true
         case .showViewsHideLoader:
-            self.hideLoading()
+            hideLoading()
             self.tableViewWithUsers.isHidden = false
         case .showBoth:
-            self.showLoading()
+            showLoading()
             self.tableViewWithUsers.isHidden = false
         case .hideBoth:
-            self.hideLoading()
+            hideLoading()
             self.tableViewWithUsers.isHidden = true
         }
     }
@@ -179,7 +179,7 @@ final class StatisticsViewController: UIViewController, LoadingView {
     }
     
     private func showErrorAlert() {
-        self.universalErrorAlert {[weak self] in
+        universalErrorAlert { [weak self] in
             guard let self else { return }
             self.viewModel.fetchUsers()
         }
@@ -189,7 +189,7 @@ final class StatisticsViewController: UIViewController, LoadingView {
 // MARK: - UITableViewDataSource, UITableViewDelegate
 extension StatisticsViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        self.viewModel.usersList.count
+        viewModel.usersList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -197,14 +197,14 @@ extension StatisticsViewController: UITableViewDataSource, UITableViewDelegate {
             return UITableViewCell()
         }
         
-        let userInfo = self.viewModel.usersList[indexPath.row]
+        let userInfo = viewModel.usersList[indexPath.row]
         cell.configure(numberingOfCell: indexPath.row + 1, with: userInfo)
         
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let userCardViewModel = UserCardViewModel(servicesAssembly: self.viewModel.servicesAssembly)
+        let userCardViewModel = UserCardViewModel(servicesAssembly: viewModel.servicesAssembly)
         let userCardViewController = UserCardViewController(viewModel: userCardViewModel)
         
         universalOpenPage(viewController: userCardViewController)
@@ -217,8 +217,8 @@ extension StatisticsViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if self.viewModel.usersList.count - 1 == indexPath.row {
-            self.viewModel.fetchUsers()
+        if viewModel.usersList.count - 1 == indexPath.row {
+            viewModel.fetchUsers()
         }
     }
 }

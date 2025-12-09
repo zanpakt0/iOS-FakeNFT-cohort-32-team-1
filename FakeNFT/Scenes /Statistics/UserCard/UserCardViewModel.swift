@@ -32,10 +32,10 @@ final class UserCardViewModel {
         guard !isLoading else { return }
         
         isLoading = true
-        self.userId = id
+        userId = id
         state = .loading
         
-        currentTask = servicesAssembly.nftService.getUserCard(id: id) {[weak self] result in
+        currentTask = servicesAssembly.nftService.getUserCard(id: id) { [weak self] result in
             DispatchQueue.main.async {
                 guard let self else { return }
                 

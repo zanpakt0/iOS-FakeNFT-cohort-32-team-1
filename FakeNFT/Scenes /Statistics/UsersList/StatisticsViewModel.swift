@@ -36,7 +36,7 @@ final class StatisticsViewModel {
         isLoadingPage = true
         state = .loading
         
-        currentTask = servicesAssembly.nftService.getUsers(page: self.pageNumber, size: size) { [weak self] result in
+        currentTask = servicesAssembly.nftService.getUsers(page: pageNumber, size: size) { [weak self] result in
             DispatchQueue.main.async {
                 guard let self else { return }
                 
@@ -67,12 +67,12 @@ final class StatisticsViewModel {
     }
     
     func sortByNeedFilterType() {
-        let filterType = self.getFilterTypeFromStorage()
+        let filterType = getFilterTypeFromStorage()
         switch filterType {
         case FilterType.byName.rawValue:
-            self.sortCellViewModelByName()
+            sortCellViewModelByName()
         default:
-            self.sortCellViewModelByRating()
+            sortCellViewModelByRating()
         }
     }
     
@@ -82,11 +82,11 @@ final class StatisticsViewModel {
     
     // MARK: - Private Methods
     private func sortCellViewModelByName() {
-        self.usersList.sort { $0.name < $1.name }
+        usersList.sort { $0.name < $1.name }
     }
     
     private func sortCellViewModelByRating() {
-        self.usersList.sort { $0.nfts.count > $1.nfts.count }
+        usersList.sort { $0.nfts.count > $1.nfts.count }
     }
     
     private func getFilterTypeFromStorage() -> String {
@@ -100,6 +100,6 @@ final class StatisticsViewModel {
         let uniqueUsers = newUsers.filter { newUser in
             !usersList.contains(newUser)
         }
-        self.usersList.append(contentsOf: uniqueUsers)
+        usersList.append(contentsOf: uniqueUsers)
     }
 }

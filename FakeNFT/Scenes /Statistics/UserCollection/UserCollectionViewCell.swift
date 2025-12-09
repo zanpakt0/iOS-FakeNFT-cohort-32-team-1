@@ -127,7 +127,7 @@ final class UserCollectionViewCell: UICollectionViewCell {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        nil
     }
     
     // MARK: - Public Methods
@@ -141,8 +141,8 @@ final class UserCollectionViewCell: UICollectionViewCell {
         
         visualizeFavouritesAndCartButtons(isFavourtie: nftData.isFavourite, isInCart: nftData.isInCart)
         visualizeStars(rating: nftData.nft.rating)
-        nftNameLabel.text = nftData.nft.name
-        nftPriceLabel.text = replaceDotsWithCommas(price: nftData.nft.price)
+        self.nftNameLabel.text = nftData.nft.name
+        self.nftPriceLabel.text = replaceDotsWithCommas(price: nftData.nft.price)
     }
     
     // MARK: - Private Methods
