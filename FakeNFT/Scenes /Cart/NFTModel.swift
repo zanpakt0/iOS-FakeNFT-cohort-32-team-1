@@ -1,7 +1,7 @@
 import UIKit
 
 struct NFTItem {
-    let id: UUID = UUID()
+    let id: String
     let image: UIImage?
     let title: String
     var rating: Int

@@ -1,4 +1,5 @@
 import UIKit
+import ProgressHUD
 
 final class CartViewController: UIViewController, ErrorView {
     
@@ -46,6 +47,9 @@ final class CartViewController: UIViewController, ErrorView {
         setupTable()
         setupBindings()
         
+        ProgressHUD.show()
+        viewModel.loadCart()
+        
         viewModel.updateTotal()
     }
     
@@ -68,6 +72,11 @@ final class CartViewController: UIViewController, ErrorView {
             guard let self else { return }
             self.tableView.reloadData()
             self.emptyLabel.isHidden = !self.viewModel.items.isEmpty
+            ProgressHUD.dismiss()
+        }
+        viewModel.onLoadError = { error in
+            ProgressHUD.dismiss()
+            ProgressHUD.showError("Ошибка загрузки")
         }
         viewModel.onTotalUpdated = { [weak self] count, total in
             self?.countLabel.text = count
@@ -225,6 +234,3 @@ extension CartViewController: UITableViewDataSource, UITableViewDelegate, CartTa
     }
 }
 
-#Preview {
-    CartViewController(viewModel: CartViewModel())
-}
