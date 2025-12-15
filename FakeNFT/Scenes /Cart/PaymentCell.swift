@@ -50,14 +50,21 @@ final class PaymentCell: UICollectionViewCell {
         iconView.contentMode = .scaleAspectFit
     }
     
-    func configure(with item: CryptoPayment) {
-        iconView.image = UIImage(named: item.iconName)
-        iconView.contentMode = .scaleAspectFit
-        iconView.widthAnchor.constraint(equalToConstant: 36).isActive = true
-        iconView.heightAnchor.constraint(equalToConstant: 36).isActive = true
+    func configure(with item: PaymentMethod) {
+        if let url = URL(string: item.image) {
+            URLSession.shared.dataTask(with: url) { data, _, _ in
+                if let data = data, let image = UIImage(data: data) {
+                    DispatchQueue.main.async {
+                        self.iconView.image = image
+                    }
+                }
+            }.resume()
+        } else {
+            iconView.image = nil
+        }
         
         titleLabel.text = item.title
-        tickerLabel.text = item.ticker
+        tickerLabel.text = item.name
     }
     
     override var isSelected: Bool {

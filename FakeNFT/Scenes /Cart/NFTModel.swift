@@ -2,7 +2,7 @@ import UIKit
 
 struct NFTItem {
     let id: String
-    let image: UIImage?
+    let imageUrl: URL? 
     let title: String
     var rating: Int
     let price: Double

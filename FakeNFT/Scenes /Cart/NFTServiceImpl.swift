@@ -21,11 +21,10 @@ struct NFT: Decodable {
     let rating: Int?
     
     private enum CodingKeys: String, CodingKey {
-        case id, name, price
+        case id, name, price, rating
         case images
-        case rating
     }
-
+    
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
@@ -33,8 +32,8 @@ struct NFT: Decodable {
         price = try container.decode(Double.self, forKey: .price)
         rating = try container.decodeIfPresent(Int.self, forKey: .rating) ?? 0
         
-        if let urls = try? container.decode([URL].self, forKey: .images) {
-            imageUrl = urls.first
+        if let urls = try container.decodeIfPresent([String].self, forKey: .images) {
+            imageUrl = URL(string: urls.first ?? "")
         } else {
             imageUrl = nil
         }
@@ -49,51 +48,51 @@ final class NFTServiceImpl: NFTService {
             return
         }
         
-        var nfts: [NFT] = []
-        let group = DispatchGroup()
-        var fetchError: Error?
-        
-        for id in ids {
-            group.enter()
-            let urlString = "\(RequestConstants.baseURL)/api/v1/nft/\(id)"
-            guard let url = URL(string: urlString) else {
-                fetchError = NSError(domain: "NFTService", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])
-                group.leave()
-                continue
-            }
-            
-            var request = URLRequest(url: url)
-            request.httpMethod = "GET"
-            request.addValue(RequestConstants.token, forHTTPHeaderField: "X-Practicum-Mobile-Token")
-            
-            URLSession.shared.dataTask(with: request) { data, response, error in
-                defer { group.leave() }
-                
-                if let error = error {
-                    fetchError = error
-                    return
-                }
-                
-                guard let data = data else {
-                    fetchError = NSError(domain: "NFTService", code: 0, userInfo: [NSLocalizedDescriptionKey: "No data"])
-                    return
-                }
-                
-                do {
-                    let nft = try JSONDecoder().decode(NFT.self, from: data)
-                    nfts.append(nft)
-                } catch {
-                    fetchError = error
-                }
-            }.resume()
+        let idsQuery = ids.joined(separator: ",")
+        let urlString = "\(RequestConstants.baseURL)/api/v1/nft?ids=\(idsQuery)"
+        guard let url = URL(string: urlString) else {
+            completion(.failure(NSError(domain: "NFTService", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
+            return
         }
         
-        group.notify(queue: .main) {
-            if let error = fetchError {
-                completion(.failure(error))
-            } else {
-                completion(.success(nfts))
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.addValue(RequestConstants.token, forHTTPHeaderField: "X-Practicum-Mobile-Token")
+        
+        print("FETCH NFTS")
+        print("URL: \(request.url?.absoluteString ?? "nil")")
+        print("Method: \(request.httpMethod ?? "nil")")
+        
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                print("NETWORK ERROR: \(error)")
+                DispatchQueue.main.async { completion(.failure(error)) }
+                return
             }
-        }
+            
+            if let httpResponse = response as? HTTPURLResponse {
+                print("HTTP STATUS: \(httpResponse.statusCode)")
+            }
+            
+            guard let data = data else {
+                let err = NSError(domain: "NFTService", code: 0, userInfo: [NSLocalizedDescriptionKey: "No data"])
+                print("ERROR: No data")
+                DispatchQueue.main.async { completion(.failure(err)) }
+                return
+            }
+            
+            if let raw = String(data: data, encoding: .utf8) {
+                print("RAW RESPONSE: \(raw)")
+            }
+            
+            do {
+                let nfts = try JSONDecoder().decode([NFT].self, from: data)
+                print("JSON decoded: \(nfts.count) NFT(s)")
+                DispatchQueue.main.async { completion(.success(nfts)) }
+            } catch {
+                print("DECODING ERROR: \(error)")
+                DispatchQueue.main.async { completion(.failure(error)) }
+            }
+        }.resume()
     }
 }

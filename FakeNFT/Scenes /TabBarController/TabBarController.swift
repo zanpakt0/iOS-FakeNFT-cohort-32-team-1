@@ -19,8 +19,18 @@ final class TabBarController: UITabBarController {
     private lazy var cartNav: UINavigationController = {
         let cartService = CartServiceImpl(client: DefaultNetworkClient())
         let nftService = NFTServiceImpl()
-        let viewModel = CartViewModel(nftService: nftService, cartService: cartService)
-        let cartVC = CartViewController(viewModel: viewModel)
+        let cartViewModel = CartViewModel(nftService: nftService, cartService: cartService)
+        
+        let paymentService = PaymentServiceImpl(
+            client: DefaultNetworkClient(),
+            baseURL: RequestConstants.baseURL
+        )
+        
+        let cartVC = CartViewController(
+            cartViewModel: cartViewModel,
+            paymentService: paymentService
+        )
+        
         cartVC.tabBarItem = cartTabBarItem
         return UINavigationController(rootViewController: cartVC)
     }()
