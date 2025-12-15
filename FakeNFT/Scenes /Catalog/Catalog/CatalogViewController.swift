@@ -9,13 +9,16 @@ final class CatalogViewController: UIViewController, ErrorView {
         static let tableViewTrailing: CGFloat = -16
         static let tableViewCornerRadius: CGFloat = 12
     }
-
+    
     //MARK: - Constants
     private let viewModel: CatalogViewModel
     private var subscribes = Set<AnyCancellable>()
     
     private let sortByNameTitle: String = NSLocalizedString("catalog.sortByNameTitle", comment: "Sort by name")
     private let sortByCountTitle: String = NSLocalizedString("catalog.sortByCountTitle", comment: "Sort by count of nfts")
+    private let alertTitle: String = NSLocalizedString("catalog.alertTitle", comment: "Не удалось загрузить данные")
+    private let repeatAlertButton: String = NSLocalizedString("catalog.repeatAlertButton", comment: "Повторить")
+    private let cancelAlertButton: String = NSLocalizedString("catalog.cancelAlertButton", comment: "Отмена")
     
     //MARK: - UI Elements
     private lazy var tableView: UITableView = {
@@ -46,7 +49,7 @@ final class CatalogViewController: UIViewController, ErrorView {
     }()
     
     private let refreshControl = UIRefreshControl()
-
+    
     //MARK: - Init
     init(viewModel: CatalogViewModel) {
         self.viewModel = viewModel
@@ -107,6 +110,19 @@ final class CatalogViewController: UIViewController, ErrorView {
         loadingIndicator.constraintCenters(to: view)
     }
     
+    private func showError() {
+        let repeatAction = UIAlertAction(title: repeatAlertButton, style: .default) { _ in
+            self.viewModel.loadData()
+        }
+        let cancelAction = UIAlertAction(title: cancelAlertButton, style: .cancel)
+        
+        self.showErrorAlertWithTwoButtons(
+            titleOfAlert: alertTitle,
+            firstAction: repeatAction,
+            secondAction: cancelAction
+        )
+    }
+    
     //MARK: - Actions
     @objc func sortButtonTapped() {
         let sortByNameTitleAction = UIAlertAction(title: sortByNameTitle, style: .default) { [weak self] _ in
@@ -121,7 +137,7 @@ final class CatalogViewController: UIViewController, ErrorView {
     @objc private func refreshData() {
         viewModel.loadData()
     }
-
+    
     //MARK: - Bind
     func bindViewModel() {
         viewModel.$catalog
@@ -137,6 +153,15 @@ final class CatalogViewController: UIViewController, ErrorView {
             .sink { [weak self] isLoading in
                 guard let self else { return }
                 isLoading ? self.loadingIndicator.startAnimating() : self.loadingIndicator.stopAnimating()
+            }
+            .store(in: &subscribes)
+        
+        viewModel.$loadError
+            .compactMap { $0 }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] error in
+                guard let self else { return }
+                self.showError()
             }
             .store(in: &subscribes)
     }
@@ -159,12 +184,36 @@ extension CatalogViewController: UITableViewDataSource {
 extension CatalogViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let item = viewModel.catalog[indexPath.row]
-        let provider = NftServiceImpl(networkClient: DefaultNetworkClient(),
-                                     storage: NftStorageImpl())
-        let viewModel = NFTCollectionViewModel(provider: provider, nftIds: item.nfts)
-        let NFTvc = NFTCollectionViewController(viewModel: viewModel, catalogItem: item)
-        NFTvc.modalTransitionStyle = .crossDissolve
-        NFTvc.modalPresentationStyle = .fullScreen
-        present(NFTvc, animated: true)
+        let provider = NftServiceImpl(
+            networkClient: DefaultNetworkClient(),
+            storage: NftStorageImpl()
+        )
+        
+        let favoriteProvider = FavoriteNftProviderImpl(
+            networkClient: DefaultNetworkClient(),
+            storage: FavoriteNftStorageImpl()
+        )
+        
+        let orderProvider = OrderNftProviderImpl(
+            networkClient: DefaultNetworkClient(),
+            storage: OrdersNftStorageImpl()
+        )
+        
+        let viewModel = NFTCollectionViewModel(
+            provider: provider,
+            favoriteProvider: favoriteProvider,
+            orderProvider: orderProvider,
+            nftIds: item.nfts
+        )
+        
+        let NFTvc = NFTCollectionViewController(
+            viewModel: viewModel,
+            catalogItem: item
+        )
+        
+        let nav = UINavigationController(rootViewController: NFTvc)
+        nav.modalPresentationStyle = .fullScreen
+        nav.modalTransitionStyle = .crossDissolve
+        present(nav, animated: true)
     }
 }

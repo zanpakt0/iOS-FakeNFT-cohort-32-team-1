@@ -1,4 +1,4 @@
-import UIKit
+import Foundation
 
 typealias CatalogCompletion = (Result<[Catalog], Error>) -> Void
 
@@ -7,15 +7,17 @@ protocol CatalogProviderProtocol {
 }
 
 final class CatalogProvider: CatalogProviderProtocol {
-    
+    //MARK: - Constants
     private let networkClient: NetworkClient
     private let storage: CatalogStorage
     
+    //MARK: - Init
     init(networkClient: NetworkClient, storage: CatalogStorage) {
         self.storage = storage
         self.networkClient = networkClient
     }
     
+    //MARK: - Methods
     func loadCatalog(completion: @escaping CatalogCompletion) {
         let request = NFTCatalogRequest()
         

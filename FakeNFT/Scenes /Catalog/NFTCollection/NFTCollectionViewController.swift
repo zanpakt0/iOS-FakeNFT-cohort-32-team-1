@@ -1,7 +1,7 @@
 import UIKit
 import Combine
 
-final class NFTCollectionViewController: UIViewController {
+final class NFTCollectionViewController: UIViewController, ErrorView {
     private enum CollectionLayout {
         static let backButtonTop: CGFloat = 11
         static let backButtonLeading: CGFloat = 9
@@ -40,15 +40,11 @@ final class NFTCollectionViewController: UIViewController {
     private var collectionViewHeightConstraint: NSLayoutConstraint?
     private var subscribes = Set<AnyCancellable>()
     
-    //MARK: - UI Elements
-    private lazy var backButton: UIButton = {
-        let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(resource: .collectionBackButton), for: .normal)
-        button.addTarget(self, action: #selector(backButtonAction), for: .touchUpInside)
-        return button
-    }()
+    private let alertTitle: String = NSLocalizedString("nftCollection.alertTitle", comment: "Не удалось загрузить данные")
+    private let repeatAlertButton: String = NSLocalizedString("nftCollection.repeatAlertButton", comment: "Повторить")
+    private let cancelAlertButton: String = NSLocalizedString("nftCollection.cancelAlertButton", comment: "Отмена")
     
+    //MARK: - UI Elements
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -88,6 +84,9 @@ final class NFTCollectionViewController: UIViewController {
         label.textAlignment = .left
         label.text = "John Doe"
         label.textColor = .authorBlue
+        label.isUserInteractionEnabled = true
+        let tap = UITapGestureRecognizer(target: self, action: #selector(webLabelTapped))
+        label.addGestureRecognizer(tap)
         return label
     }()
     
@@ -134,6 +133,7 @@ final class NFTCollectionViewController: UIViewController {
     private lazy var loadingIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView()
         indicator.translatesAutoresizingMaskIntoConstraints = false
+        indicator.hidesWhenStopped = true
         return indicator
     }()
     
@@ -157,25 +157,15 @@ final class NFTCollectionViewController: UIViewController {
         setupUI()
         applyCatalogData()
         bindViewModel()
+        setupNavigationBackButton()
     }
     
     //MARK: - Setup Methods
     private func setupUI() {
         view.backgroundColor = .forViewBackgound
         setupScrollView()
+        setupLoadingIndicator()
         setupUIInsideContent()
-        setupBackButton()
-    }
-    
-    private func setupBackButton() {
-        view.addSubview(backButton)
-        
-        NSLayoutConstraint.activate([
-            backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: CollectionLayout.backButtonTop),
-            backButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: CollectionLayout.backButtonLeading),
-            backButton.heightAnchor.constraint(equalToConstant: CollectionLayout.backButtonSize),
-            backButton.widthAnchor.constraint(equalToConstant: CollectionLayout.backButtonSize)
-        ])
     }
     
     private func setupScrollView() {
@@ -258,7 +248,6 @@ final class NFTCollectionViewController: UIViewController {
             collectionViewHeightConstraint?.constant = totalHeight
         }
         
-        // Обновим layout
         collectionView.layoutIfNeeded()
         contentView.layoutIfNeeded()
     }
@@ -268,11 +257,45 @@ final class NFTCollectionViewController: UIViewController {
         loadingIndicator.constraintCenters(to: view)
     }
     
+    private func setupNavigationBackButton() {
+        let image = UIImage(resource: .collectionBackButton)
+        let barButton = UIBarButtonItem(image: image, style: .plain, target: self, action: #selector(backButtonAction))
+        navigationItem.leftBarButtonItem = barButton
+        navigationController?.navigationBar.tintColor = .closeButton
+    }
+    
+    //MARK: - Private Methods
     private func applyCatalogData() {
         coverImage.kf.setImage(with: catalogItem.cover)
         titleLabel.text = catalogItem.name.capitalized
         webLabel.text = catalogItem.author
         descriptionLabel.text = catalogItem.description
+    }
+    
+    private func showNft(id: String) {
+        let assembly = NftDetailAssembly(
+            servicesAssembler: ServicesAssembly(
+                networkClient: DefaultNetworkClient(),
+                nftStorage: NftStorageImpl()
+            )
+        )
+        let nftInput = NftDetailInput(id: id)
+        let nftViewController = assembly.build(with: nftInput)
+        present(nftViewController, animated: true)
+    }
+    
+    private func showError() {
+        let repeatAction = UIAlertAction(title: repeatAlertButton, style: .default) { [weak self] _ in
+            guard let self else { return }
+            self.viewModel.loadData()
+        }
+        let cancelAction = UIAlertAction(title: cancelAlertButton, style: .cancel)
+        
+        self.showErrorAlertWithTwoButtons(
+            titleOfAlert: alertTitle,
+            firstAction: repeatAction,
+            secondAction: cancelAction
+        )
     }
     
     //MARK: - Actions
@@ -284,6 +307,18 @@ final class NFTCollectionViewController: UIViewController {
         collectionView.reloadData()
         viewModel.loadData()
     }
+    
+    @objc private func webLabelTapped() {
+        let url = RequestConstants.practicumURL
+        let vc = WebViewViewController(urlString: url)
+        navigationItem.backButtonTitle = ""
+        let backImage = UIImage(resource: .collectionBackButton)
+        navigationController?.navigationBar.backIndicatorImage = backImage
+        navigationController?.navigationBar.backIndicatorTransitionMaskImage = backImage
+        navigationController?.navigationBar.tintColor = .closeButton
+        navigationController?.pushViewController(vc, animated: false)
+    }
+    
     //MARK: - Bind
     func bindViewModel() {
         viewModel.$nfts
@@ -315,6 +350,15 @@ final class NFTCollectionViewController: UIViewController {
             .sink(receiveValue: { [weak self] _ in
                 self?.collectionView.reloadData()
             })
+            .store(in: &subscribes)
+        
+        viewModel.$loadError
+            .compactMap { $0 }
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] error in
+                guard let self else { return }
+                self.showError()
+            }
             .store(in: &subscribes)
     }
 }
@@ -374,6 +418,14 @@ extension NFTCollectionViewController: UICollectionViewDataSource, UICollectionV
     ) -> UIEdgeInsets {
         UIEdgeInsets(top: 0, left: 0, bottom: CollectionLayout.collectionBottomInset, right: 0)
     }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        didSelectItemAt indexPath: IndexPath
+    ) {
+        let nftItem = viewModel.nfts[indexPath.item]
+        showNft(id: nftItem.id)
+    }
 }
 
 extension NFTCollectionViewController: NFTCellDelegate {
@@ -392,6 +444,5 @@ extension NFTCollectionViewController: NFTCellDelegate {
     func deleteLike(id: String, in cell: NFTCell) {
         viewModel.deleteLike(id: id)
     }
-    
     
 }
