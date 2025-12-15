@@ -285,7 +285,8 @@ final class NFTCollectionViewController: UIViewController, ErrorView {
     }
     
     private func showError() {
-        let repeatAction = UIAlertAction(title: repeatAlertButton, style: .default) { _ in
+        let repeatAction = UIAlertAction(title: repeatAlertButton, style: .default) { [weak self] _ in
+            guard let self else { return }
             self.viewModel.loadData()
         }
         let cancelAction = UIAlertAction(title: cancelAlertButton, style: .cancel)
