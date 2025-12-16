@@ -1,16 +1,17 @@
 import UIKit
+import ProgressHUD
 
 final class CartViewController: UIViewController, ErrorView {
+    private let cartViewModel: CartViewModel
+    private let paymentService: PaymentService
     
-    private let viewModel: CartViewModel
-    
-    init(viewModel: CartViewModel) {
-        self.viewModel = viewModel
+    init(cartViewModel: CartViewModel, paymentService: PaymentService) {
+        self.cartViewModel = cartViewModel
+        self.paymentService = paymentService
         super.init(nibName: nil, bundle: nil)
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    required init?(coder: NSCoder) { fatalError()
     }
     
     private let tableView = UITableView()
@@ -46,12 +47,13 @@ final class CartViewController: UIViewController, ErrorView {
         setupTable()
         setupBindings()
         
-        viewModel.updateTotal()
+        ProgressHUD.show()
+        cartViewModel.loadCart()
+        cartViewModel.updateTotal()
     }
     
     // MARK: - Setup Navigation Bar
     private func setupNavigationBar() {
-        
         let sortButtonItem = UIBarButtonItem(
             image: UIImage(resource: .sortButton),
             style: .plain,
@@ -64,12 +66,17 @@ final class CartViewController: UIViewController, ErrorView {
     
     // MARK: - Setup bindings
     private func setupBindings() {
-        viewModel.onItemsUpdated = { [weak self] in
+        cartViewModel.onItemsUpdated = { [weak self] in
             guard let self else { return }
             self.tableView.reloadData()
-            self.emptyLabel.isHidden = !self.viewModel.items.isEmpty
+            self.emptyLabel.isHidden = !self.cartViewModel.items.isEmpty
+            ProgressHUD.dismiss()
         }
-        viewModel.onTotalUpdated = { [weak self] count, total in
+        cartViewModel.onLoadError = { error in
+            ProgressHUD.dismiss()
+            ProgressHUD.showError("Ошибка загрузки")
+        }
+        cartViewModel.onTotalUpdated = { [weak self] count, total in
             self?.countLabel.text = count
             self?.totalLabel.text = total
         }
@@ -77,19 +84,15 @@ final class CartViewController: UIViewController, ErrorView {
     
     @objc private func sortButtonTapped() {
         let priceAction = UIAlertAction(title: "По цене", style: .default) { [weak self] _ in
-            self?.viewModel.sortByPrice()
+            self?.cartViewModel.sortByPrice()
         }
         let ratingAction = UIAlertAction(title: "По рейтингу", style: .default) { [weak self] _ in
-            self?.viewModel.sortByRating()
+            self?.cartViewModel.sortByRating()
         }
         let titleAction = UIAlertAction(title: "По названию", style: .default) { [weak self] _ in
-            self?.viewModel.sortByTitle()
+            self?.cartViewModel.sortByTitle()
         }
-        showFilterActionSheet(
-            firstAction: priceAction,
-            secondAction: ratingAction,
-            thirdAction: titleAction
-        )
+        showFilterActionSheet(firstAction: priceAction, secondAction: ratingAction, thirdAction: titleAction)
     }
     
     // MARK: - Setup Table
@@ -153,13 +156,15 @@ final class CartViewController: UIViewController, ErrorView {
     }
     
     @objc private func payButtonTapped() {
-        let nextVC = PaymentViewController()
-        nextVC.hidesBottomBarWhenPushed = true
-        navigationController?.pushViewController(nextVC, animated: true)
+        let paymentVC = PaymentViewController(
+            paymentService: paymentService,
+            nftIds: cartViewModel.items.map { $0.id }
+        )
+        navigationController?.pushViewController(paymentVC, animated: true)
     }
     
     func clearCart() {
-        viewModel.removeAllItems()
+        cartViewModel.removeAllItems()
     }
     
     func updateEmptyStateUI() {
@@ -174,7 +179,7 @@ final class CartViewController: UIViewController, ErrorView {
 extension CartViewController: UITableViewDataSource, UITableViewDelegate, CartTableViewCellDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.numberOfItems()
+        cartViewModel.numberOfItems()
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -182,7 +187,6 @@ extension CartViewController: UITableViewDataSource, UITableViewDelegate, CartTa
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         guard let cell = tableView.dequeueReusableCell(
             withIdentifier: CartTableViewCell.reuseIdentifier,
             for: indexPath
@@ -190,41 +194,33 @@ extension CartViewController: UITableViewDataSource, UITableViewDelegate, CartTa
             return UITableViewCell()
         }
         
-        let item = viewModel.item(at: indexPath.row)
+        let item = cartViewModel.item(at: indexPath.row)
         cell.configure(with: item)
         cell.delegate = self
-        
         return cell
     }
     
-    // MARK: - CartTableViewCellDelegate
     func cartCell(_ cell: CartTableViewCell, didChangeRating rating: Int) {
         guard let indexPath = tableView.indexPath(for: cell) else { return }
-        viewModel.updateRating(at: indexPath.row, rating: rating)
+        cartViewModel.updateRating(at: indexPath.row, rating: rating)
     }
     
     func cartCellDidTapDelete(_ cell: CartTableViewCell) {
         guard let indexPath = tableView.indexPath(for: cell) else { return }
-        
-        let item = viewModel.item(at: indexPath.row)
+        let item = cartViewModel.item(at: indexPath.row)
         
         let vc = DeleteModalViewController(
-            image: item.image,
+            imageURL: item.imageUrl,
             title: item.title,
             onDelete: { [weak self] in
                 guard let self = self else { return }
-                self.viewModel.removeItem(at: indexPath.row)
+                self.cartViewModel.removeItem(at: indexPath.row)
                 self.tableView.reloadData()
             }
         )
         
         vc.modalPresentationStyle = .overFullScreen
         vc.modalTransitionStyle = .crossDissolve
-        
         present(vc, animated: true)
     }
-}
-
-#Preview {
-    CartViewController(viewModel: CartViewModel())
 }

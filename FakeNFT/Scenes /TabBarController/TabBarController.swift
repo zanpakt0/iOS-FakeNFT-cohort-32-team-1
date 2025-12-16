@@ -12,16 +12,27 @@ final class TabBarController: UITabBarController {
     
     private let cartTabBarItem = UITabBarItem(
         title: NSLocalizedString("Tab.cart", comment: ""),
-        image: UIImage(named: "Cart"),
+        image: UIImage(named: "Cart.stack.fill"),
         tag: 2
     )
     
     private lazy var cartNav: UINavigationController = {
-        let viewModel = CartViewModel()
-        let cartVc = CartViewController(viewModel: viewModel)
-        cartVc.tabBarItem = cartTabBarItem
+        let cartService = CartServiceImpl(client: DefaultNetworkClient())
+        let nftService = NFTServiceImpl()
+        let cartViewModel = CartViewModel(nftService: nftService, cartService: cartService)
         
-        return UINavigationController(rootViewController: cartVc)
+        let paymentService = PaymentServiceImpl(
+            client: DefaultNetworkClient(),
+            baseURL: RequestConstants.baseURL
+        )
+        
+        let cartVC = CartViewController(
+            cartViewModel: cartViewModel,
+            paymentService: paymentService
+        )
+        
+        cartVC.tabBarItem = cartTabBarItem
+        return UINavigationController(rootViewController: cartVC)
     }()
     
     override func viewDidLoad() {

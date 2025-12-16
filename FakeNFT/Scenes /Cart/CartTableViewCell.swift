@@ -1,4 +1,5 @@
 import UIKit
+import Kingfisher
 
 protocol CartTableViewCellDelegate: AnyObject {
     func cartCell(_ cell: CartTableViewCell, didChangeRating rating: Int)
@@ -9,66 +10,58 @@ final class CartTableViewCell: UITableViewCell {
     
     static let reuseIdentifier = "CartTableViewCell"
     
-    // MARK: - Delegate
-    weak var delegate: CartTableViewCellDelegate?
-    
-    // MARK: - UI
-    
-    private let nftImageView: UIImageView = {
-        let iv = UIImageView()
-        iv.contentMode = .scaleAspectFill
-        iv.layer.cornerRadius = 12
-        iv.clipsToBounds = true
-        return iv
-    }()
-    
+    private let nftImageView = UIImageView()
+    private let titleLabel = UILabel()
+    private let priceTitleLabel = UILabel()
+    private let priceValueLabel = UILabel()
     private let ratingStackView = UIStackView()
     private var starButtons: [UIButton] = []
+    private let deleteButton = UIButton(type: .system)
     
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont(name: "SFProText-Bold", size: 17) ?? UIFont.boldSystemFont(ofSize: 17)
-        label.numberOfLines = 0
-        return label
-    }()
-    
-    private let priceTitleLabel: UILabel = {
-        let label = UILabel()
-        label.text = NSLocalizedString("price", comment: "")
-        label.font = UIFont(name: "SFProText-Regular", size: 13) ?? UIFont.systemFont(ofSize: 13)
-        label.textColor = .secondaryLabel
-        return label
-    }()
-    
-    private let priceValueLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont(name: "SFProText-Bold", size: 17) ?? UIFont.boldSystemFont(ofSize: 17)
-        label.textColor = .label
-        return label
-    }()
-    
-    let deleteButton: UIButton = {
-        let btn = UIButton(type: .system)
-        btn.setImage(UIImage(resource: .delete), for: .normal)
-        btn.tintColor = UIColor.segmentButtonBackground
-        return btn
-    }()
-    
-    // MARK: - Properties
     private var rating: Int = 0 {
         didSet { updateStars() }
     }
     
-    // MARK: - Init
+    private var currentImageUrl: URL?
+    
+    weak var delegate: CartTableViewCellDelegate?
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupUI()
     }
     
-    required init?(coder: NSCoder) { fatalError("init(coder:) not implemented") }
+    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     
-    // MARK: - Setup UI
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        nftImageView.image = nil
+        rating = 0
+        currentImageUrl = nil
+    }
+    
+    func configure(with item: NFTUIItem) {
+        titleLabel.text = item.title
+        priceValueLabel.text = "\(item.price) ETH"
+        rating = item.rating
+        
+        guard let url = item.imageUrl else { return }
+        currentImageUrl = url
+        nftImageView.kf.setImage(with: url, placeholder: nil, options: nil, progressBlock: nil) { [weak self] result in
+            guard let self = self else { return }
+            if self.currentImageUrl == url {
+                switch result {
+                case .success(let value):
+                    self.nftImageView.image = value.image
+                case .failure(let error):
+                    print("❌ Failed to load image: \(error)")
+                }
+            }
+        }
+    }
+    
     private func setupUI() {
+        selectionStyle = .none
         contentView.addSubview(nftImageView)
         contentView.addSubview(titleLabel)
         contentView.addSubview(ratingStackView)
@@ -83,8 +76,21 @@ final class CartTableViewCell: UITableViewCell {
         priceValueLabel.translatesAutoresizingMaskIntoConstraints = false
         deleteButton.translatesAutoresizingMaskIntoConstraints = false
         
+        nftImageView.contentMode = .scaleAspectFill
+        nftImageView.layer.cornerRadius = 12
+        nftImageView.clipsToBounds = true
+        
+        titleLabel.font = .boldSystemFont(ofSize: 16)
+        
+        priceTitleLabel.text = NSLocalizedString("price", comment: "")
+        priceTitleLabel.font = UIFont.systemFont(ofSize: 13)
+        priceTitleLabel.textColor = .secondaryLabel
+        
+        priceValueLabel.font = UIFont.boldSystemFont(ofSize: 17)
+        priceValueLabel.textColor = .label
+        
         ratingStackView.axis = .horizontal
-        ratingStackView.spacing = 0
+        ratingStackView.spacing = 2
         ratingStackView.distribution = .fillEqually
         
         for i in 1...5 {
@@ -93,17 +99,14 @@ final class CartTableViewCell: UITableViewCell {
             button.setImage(UIImage(named: "star_empty"), for: .normal)
             button.setImage(UIImage(named: "star_filled"), for: .selected)
             button.addTarget(self, action: #selector(starTapped(_:)), for: .touchUpInside)
-            
-            button.widthAnchor.constraint(equalToConstant: 12).isActive = true
-            button.heightAnchor.constraint(equalToConstant: 12).isActive = true
-            
-            ratingStackView.addArrangedSubview(button)
             starButtons.append(button)
+            ratingStackView.addArrangedSubview(button)
         }
         
+        deleteButton.setImage(UIImage(resource: .delete), for: .normal)
+        deleteButton.tintColor = .segmentButtonBackground
         deleteButton.addTarget(self, action: #selector(deleteTapped), for: .touchUpInside)
         
-        // MARK: - Constraints
         NSLayoutConstraint.activate([
             nftImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             nftImageView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
@@ -131,15 +134,6 @@ final class CartTableViewCell: UITableViewCell {
         ])
     }
     
-    // MARK: - Configure
-    func configure(with item: NFTItem) {
-        nftImageView.image = item.image
-        titleLabel.text = item.title
-        priceValueLabel.text = "\(item.price) ETH"
-        rating = item.rating
-    }
-    
-    // MARK: - Actions
     @objc private func starTapped(_ sender: UIButton) {
         rating = sender.tag
         delegate?.cartCell(self, didChangeRating: rating)
@@ -155,4 +149,3 @@ final class CartTableViewCell: UITableViewCell {
         }
     }
 }
-

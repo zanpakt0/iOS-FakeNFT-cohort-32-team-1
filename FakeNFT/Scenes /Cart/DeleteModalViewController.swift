@@ -1,8 +1,9 @@
 import UIKit
+import Kingfisher
 
 final class DeleteModalViewController: UIViewController {
     
-    private let nftImage: UIImage?
+    private let nftImageURL: URL?
     private let nftTitle: String
     private let onDelete: () -> Void
     
@@ -15,8 +16,8 @@ final class DeleteModalViewController: UIViewController {
     private let deleteButton = UIButton(type: .system)
     private let cancelButton = UIButton(type: .system)
     
-    init(image: UIImage?, title: String, onDelete: @escaping () -> Void) {
-        self.nftImage = image
+    init(imageURL: URL?, title: String, onDelete: @escaping () -> Void) {
+        self.nftImageURL = imageURL
         self.nftTitle = title
         self.onDelete = onDelete
         super.init(nibName: nil, bundle: nil)
@@ -31,15 +32,13 @@ final class DeleteModalViewController: UIViewController {
         
         setupBlur()
         setupUI()
+        loadImage()
     }
     
     private func setupBlur() {
-
         view.backgroundColor = UIColor.white.withAlphaComponent(0.05)
-        
         blurView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(blurView)
-        
         NSLayoutConstraint.activate([
             blurView.topAnchor.constraint(equalTo: view.topAnchor),
             blurView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
@@ -50,17 +49,15 @@ final class DeleteModalViewController: UIViewController {
     
     private func setupUI() {
         containerView.backgroundColor = .clear
-        containerView.layer.cornerRadius = 0
         containerView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(containerView)
         
-        imageView.image = nftImage
         imageView.layer.cornerRadius = 12
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
-
-        titleLabel.text = NSLocalizedString("Are you sure you want to\n remove the item from the cart?", comment: "")
+        
+        titleLabel.text = nftTitle
         titleLabel.textAlignment = .center
         titleLabel.numberOfLines = 2
         titleLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
@@ -92,7 +89,7 @@ final class DeleteModalViewController: UIViewController {
             containerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 56),
             containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -57),
             
-            imageView.topAnchor.constraint(equalTo: containerView.topAnchor, constant: 0),
+            imageView.topAnchor.constraint(equalTo: containerView.topAnchor),
             imageView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
             imageView.heightAnchor.constraint(equalToConstant: 108),
             imageView.widthAnchor.constraint(equalToConstant: 108),
@@ -115,6 +112,11 @@ final class DeleteModalViewController: UIViewController {
         ])
     }
     
+    private func loadImage() {
+        guard let url = nftImageURL else { return }
+        imageView.kf.setImage(with: url, placeholder: UIImage(named: "placeholder"))
+    }
+    
     @objc private func deleteTapped() {
         dismiss(animated: true) { [weak self] in
             self?.onDelete()
@@ -125,5 +127,3 @@ final class DeleteModalViewController: UIViewController {
         dismiss(animated: true)
     }
 }
-
-
