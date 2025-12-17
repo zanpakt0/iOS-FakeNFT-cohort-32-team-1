@@ -9,6 +9,17 @@
 //Filter actionSheet
 "Filter.actionSheet.title" = "Сортировка";
 "Filter.actionSheet.closeButton.text" = "Закрыть";
+//Catalog
+"catalog.sortByNameTitle" = "По названию";
+"catalog.sortByCountTitle" = "По количеству NFT";
+"catalog.alertTitle" = "Не удалось загрузить данные";
+"catalog.repeatAlertButton" = "Повторить";
+"catalog.cancelAlertButton" = "Отмена";
+//NftCollection
+"nftCollection.authorLabel.text" = "Автор коллекции:";
+"nftCollection.alertTitle" = "Не удалось загрузить данные";
+"nftCollection.repeatAlertButton" = "Повторить";
+"nftCollection.cancelAlertButton" = "Отмена";
 
 // Statistics page
 "Tab.statistics" = "Статистика";

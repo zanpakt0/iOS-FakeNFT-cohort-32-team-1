@@ -91,7 +91,7 @@ final class UserCollectionViewCell: UICollectionViewCell {
     }()
     private lazy var nftPriceLabel: UILabel = {
         let nftPriceLabel = UILabel()
-        nftPriceLabel.font = .caption3
+        nftPriceLabel.font = .caption4
         nftPriceLabel.textColor = .segmentActive
         nftPriceLabel.numberOfLines = UserCollectionViewCellLayout.numberOfLinesInLabels
         nftPriceLabel.translatesAutoresizingMaskIntoConstraints = false

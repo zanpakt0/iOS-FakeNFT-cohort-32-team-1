@@ -29,7 +29,7 @@ final class StatisticsViewController: UIViewController, LoadingView {
     }()
     private lazy var filterButton: UIButton = {
         let filterButton = UIButton(type: .system)
-        let imageForButton = UIImage(resource: .sortButton)
+        let imageForButton = UIImage(resource: .sortCatalogButton)
         filterButton.setImage(imageForButton, for: .normal)
         filterButton.addTarget(self, action: #selector(filterButtonClicked), for: .touchUpInside)
         filterButton.tintColor = .segmentActive

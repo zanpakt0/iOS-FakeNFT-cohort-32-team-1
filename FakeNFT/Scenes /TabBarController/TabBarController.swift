@@ -8,9 +8,10 @@ final class TabBarController: UITabBarController {
     // MARK: - Private Properties
     private let catalogTabBarItem = UITabBarItem(
         title: NSLocalizedString("Tab.catalog", comment: ""),
-        image: UIImage(systemName: "square.stack.3d.up.fill"),
+        image: UIImage(systemName: "square.stack.fill"),
         tag: 0
     )
+
     private let statisticsTabBarItem = UITabBarItem(
         title: NSLocalizedString("Tab.statistics", comment: ""),
         image: UIImage(systemName: "flag.2.crossed.fill"),
@@ -30,18 +31,21 @@ final class TabBarController: UITabBarController {
         
         setupTabBarAppearance()
         setupTabBarItems()
-
-        view.backgroundColor = .forViewBackground
     }
     
     // MARK: - Private Methods
     private func setupTabBarItems() {
-        let catalogController = TestCatalogViewController(
-            servicesAssembly: servicesAssembly
-        )
-        catalogController.tabBarItem = catalogTabBarItem
+        let catalogViewController = CatalogViewController(
+            viewModel: CatalogViewModel(
+                catalogProvider: CatalogProvider(
+                    networkClient: DefaultNetworkClient(),
+                    storage: CatalogStorageImpl())
+            ))
+        catalogViewController.tabBarItem = catalogTabBarItem
 
-        viewControllers = [catalogController, statisticsNav]
+        viewControllers = [catalogViewController, statisticsNav]
+        
+        view.backgroundColor = .systemBackground
     }
     
     private func setupTabBarAppearance() {
