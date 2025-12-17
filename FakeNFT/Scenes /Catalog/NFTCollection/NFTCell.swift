@@ -69,7 +69,7 @@ final class NFTCell: UICollectionViewCell, ReuseIdentifying {
     
     private lazy var nftPriceLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.caption3
+        label.font = UIFont.caption4
         label.textColor = .textColor
         label.textAlignment = .left
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -109,7 +109,7 @@ final class NFTCell: UICollectionViewCell, ReuseIdentifying {
     
     //MARK: - Setup UI
     private func setupUI() {
-        contentView.backgroundColor = .forViewBackgound
+        contentView.backgroundColor = .forViewBackground
         contentView.addSubview(nftImageView)
         contentView.addSubview(nftLikeButton)
         contentView.addSubview(ratingView)

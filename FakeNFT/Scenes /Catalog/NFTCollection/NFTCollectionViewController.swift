@@ -1,7 +1,7 @@
 import UIKit
 import Combine
 
-final class NFTCollectionViewController: UIViewController, ErrorView {
+final class NFTCollectionViewController: UIViewController {
     private enum CollectionLayout {
         static let backButtonTop: CGFloat = 11
         static let backButtonLeading: CGFloat = 9
@@ -162,7 +162,7 @@ final class NFTCollectionViewController: UIViewController, ErrorView {
     
     //MARK: - Setup Methods
     private func setupUI() {
-        view.backgroundColor = .forViewBackgound
+        view.backgroundColor = .forViewBackground
         setupScrollView()
         setupLoadingIndicator()
         setupUIInsideContent()

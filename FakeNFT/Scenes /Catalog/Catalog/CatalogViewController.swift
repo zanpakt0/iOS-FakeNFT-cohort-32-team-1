@@ -1,7 +1,7 @@
 import UIKit
 import Combine
 
-final class CatalogViewController: UIViewController, ErrorView {
+final class CatalogViewController: UIViewController {
     private enum CatalogLayout {
         static let sortButtonTrailing: CGFloat = -9
         static let sortButtonSize: CGFloat = 42
@@ -27,7 +27,7 @@ final class CatalogViewController: UIViewController, ErrorView {
         tableView.layer.cornerRadius = CatalogLayout.tableViewCornerRadius
         tableView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         tableView.layer.masksToBounds = true
-        tableView.backgroundColor = .forViewBackgound
+        tableView.backgroundColor = .forViewBackground
         tableView.separatorStyle = .none
         return tableView
     }()
@@ -69,7 +69,7 @@ final class CatalogViewController: UIViewController, ErrorView {
     
     //MARK: - Setup UI
     private func setupUI() {
-        view.backgroundColor = .forViewBackgound
+        view.backgroundColor = .forViewBackground
         setupSortButton()
         setupTableView()
         setupLoadingIndicator()
