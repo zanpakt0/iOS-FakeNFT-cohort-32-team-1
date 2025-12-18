@@ -69,6 +69,7 @@
 		3FC8C39329D246BA0081F015 /* DateFormatters+Presets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FC8C39229D246BA0081F015 /* DateFormatters+Presets.swift */; };
 		558E39E72C68CE0A00FB86AC /* NftService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 558E39E62C68CE0900FB86AC /* NftService.swift */; };
 		920DB0992EDFFFE2001A2606 /* NFT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 920DB0982EDFFFDF001A2606 /* NFT.swift */; };
+		921675E32EF48CFB0070153D /* statistics_Nurmukhanov.md in Resources */ = {isa = PBXBuildFile; fileRef = 921675E22EF48CFB0070153D /* statistics_Nurmukhanov.md */; };
 		927058CF2ED48C1500AF2DB9 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 927058CE2ED48C1300AF2DB9 /* User.swift */; };
 		92F606792EE56119008C3C53 /* Order.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92F606782EE56101008C3C53 /* Order.swift */; };
 		92F6067B2EE56121008C3C53 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92F6067A2EE5611E008C3C53 /* Profile.swift */; };
@@ -159,6 +160,7 @@
 		3FC8C39229D246BA0081F015 /* DateFormatters+Presets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateFormatters+Presets.swift"; sourceTree = "<group>"; };
 		558E39E62C68CE0900FB86AC /* NftService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NftService.swift; sourceTree = "<group>"; };
 		920DB0982EDFFFDF001A2606 /* NFT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFT.swift; sourceTree = "<group>"; };
+		921675E22EF48CFB0070153D /* statistics_Nurmukhanov.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = statistics_Nurmukhanov.md; sourceTree = "<group>"; };
 		927058CE2ED48C1300AF2DB9 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		92F606782EE56101008C3C53 /* Order.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Order.swift; sourceTree = "<group>"; };
 		92F6067A2EE5611E008C3C53 /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
@@ -169,22 +171,11 @@
 		E1CD40DB2A96BECC00BE7FE8 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		927058DF2ED4C30A00AF2DB9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				statistics_Nurmukhanov.md,
-			);
-			target = 3F68069229CBBAF100B4F915 /* FakeNFT */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		920DB0C42EE162CA001A2606 /* StatisticsSystems */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = StatisticsSystems; sourceTree = "<group>"; };
 		921D2BF22EDC08CA00AE3E97 /* UserCollection */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = UserCollection; sourceTree = "<group>"; };
 		924AF0782ED6D1FA007E5F0A /* UsersList */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = UsersList; sourceTree = "<group>"; };
 		924AF08E2ED73029007E5F0A /* UserCard */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = UserCard; sourceTree = "<group>"; };
-		927058DC2ED4C2D500AF2DB9 /* Docs */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (927058DF2ED4C30A00AF2DB9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Docs; sourceTree = "<group>"; };
 		92F606712EE558B2008C3C53 /* ViewData */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ViewData; sourceTree = "<group>"; };
 		92F6068A2EE59E00008C3C53 /* ForGetRequests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ForGetRequests; sourceTree = "<group>"; };
 		92F6068B2EE59E2D008C3C53 /* ForPutRequests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ForPutRequests; sourceTree = "<group>"; };
@@ -299,6 +290,7 @@
 			isa = PBXGroup;
 			children = (
 				0990C3CB2ED60E9D008072D2 /* Catalog_ShcherbakovIlya.md */,
+				921675E22EF48CFB0070153D /* statistics_Nurmukhanov.md */,
 			);
 			path = Docs;
 			sourceTree = "<group>";
@@ -715,6 +707,7 @@
 				0990C3CC2ED60E9D008072D2 /* Catalog_ShcherbakovIlya.md in Resources */,
 				3F6806A029CBBAF200B4F915 /* Assets.xcassets in Resources */,
 				09DFECFA2EDB55C2006F5A5C /* Peach.png in Resources */,
+				921675E32EF48CFB0070153D /* statistics_Nurmukhanov.md in Resources */,
 				3F68069E29CBBAF100B4F915 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

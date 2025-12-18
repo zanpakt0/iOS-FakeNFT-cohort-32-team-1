@@ -1,6 +1,15 @@
 # ТЗ мобильного приложения FakeNFT
 
+## Архитектура
+
+- **Фреймворк для верстки:** UIKit;
+- **Архитектурный паттерн:** MVVM
+
 ## Ссылки
+
+[Скринкаст Каталог](https://disk.yandex.ru/i/GeUX_ArjtxW2AA)
+
+[Скринкаст Статистика](https://disk.yandex.ru/i/rOjHx3teiRKnTA)
 
 [Дизайн Figma](https://www.figma.com/design/Uz5G39wRRCr2mRE4SbnNla/FakeNFT--YP-)
 
