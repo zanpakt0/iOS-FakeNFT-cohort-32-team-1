@@ -1,13 +1,15 @@
 import UIKit
 import ProgressHUD
 
-final class CartViewController: UIViewController, ErrorView {
-    private let cartViewModel: CartViewModel
+final class CartViewController: UIViewController {
+    let cartViewModel: CartViewModel
     private let paymentService: PaymentService
+    private let paymentViewModel: PaymentViewModel
     
-    init(cartViewModel: CartViewModel, paymentService: PaymentService) {
+    init(cartViewModel: CartViewModel, paymentService: PaymentService, paymentViewModel: PaymentViewModel) {
         self.cartViewModel = cartViewModel
         self.paymentService = paymentService
+        self.paymentViewModel = paymentViewModel
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -52,10 +54,23 @@ final class CartViewController: UIViewController, ErrorView {
         cartViewModel.updateTotal()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.prefersLargeTitles = true
+        
+        ProgressHUD.show()
+        setupNavigationBar()
+        setupBottom()
+        setupTable()
+        setupBindings()
+        cartViewModel.loadCart()
+        cartViewModel.updateTotal()
+    }
+    
     // MARK: - Setup Navigation Bar
     private func setupNavigationBar() {
         let sortButtonItem = UIBarButtonItem(
-            image: UIImage(resource: .sortButton),
+            image: UIImage(resource: .sortCatalogButton),
             style: .plain,
             target: self,
             action: #selector(sortButtonTapped)
@@ -68,14 +83,21 @@ final class CartViewController: UIViewController, ErrorView {
     private func setupBindings() {
         cartViewModel.onItemsUpdated = { [weak self] in
             guard let self else { return }
+            
             self.tableView.reloadData()
-            self.emptyLabel.isHidden = !self.cartViewModel.items.isEmpty
+            let isEmpty = self.cartViewModel.items.isEmpty
+            self.emptyLabel.isHidden = !isEmpty
+            self.tableView.isHidden = isEmpty
+            self.bottomView.isHidden = isEmpty
+            
             ProgressHUD.dismiss()
         }
+        
         cartViewModel.onLoadError = { error in
             ProgressHUD.dismiss()
             ProgressHUD.showError("Ошибка загрузки")
         }
+        
         cartViewModel.onTotalUpdated = { [weak self] count, total in
             self?.countLabel.text = count
             self?.totalLabel.text = total
@@ -164,7 +186,8 @@ final class CartViewController: UIViewController, ErrorView {
     }
     
     func clearCart() {
-        cartViewModel.removeAllItems()
+        self.cartViewModel.removeItemAll()
+        self.cartViewModel.onItemsUpdated?()
     }
     
     func updateEmptyStateUI() {
@@ -208,16 +231,33 @@ extension CartViewController: UITableViewDataSource, UITableViewDelegate, CartTa
     func cartCellDidTapDelete(_ cell: CartTableViewCell) {
         guard let indexPath = tableView.indexPath(for: cell) else { return }
         let item = cartViewModel.item(at: indexPath.row)
+        let itemId = item.id
         
         let vc = DeleteModalViewController(
             imageURL: item.imageUrl,
-            title: item.title,
-            onDelete: { [weak self] in
-                guard let self = self else { return }
-                self.cartViewModel.removeItem(at: indexPath.row)
-                self.tableView.reloadData()
+            title: item.title
+        ) { [weak self] finish in
+            guard let self else { return }
+            
+            cartViewModel.deleteNFT(id: itemId) { success in
+                if success {
+                    self.cartViewModel.removeItem(id: itemId)
+                    finish(true)
+                    if self.cartViewModel.numberOfItems() == 0 {
+                        self.updateEmptyStateUI()
+                    }
+                } else {
+                    self.showError(
+                        ErrorModel(
+                            message: NSLocalizedString("Не удалось удалить NFT", comment: ""),
+                            actionText: NSLocalizedString("Ок", comment: ""),
+                            action: {}
+                        )
+                    )
+                    finish(false)
+                }
             }
-        )
+        }
         
         vc.modalPresentationStyle = .overFullScreen
         vc.modalTransitionStyle = .crossDissolve

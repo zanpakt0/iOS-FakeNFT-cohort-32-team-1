@@ -5,7 +5,7 @@ final class DeleteModalViewController: UIViewController {
     
     private let nftImageURL: URL?
     private let nftTitle: String
-    private let onDelete: () -> Void
+    private let onDelete: (@escaping (Bool) -> Void) -> Void
     
     private let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterial))
     
@@ -16,7 +16,7 @@ final class DeleteModalViewController: UIViewController {
     private let deleteButton = UIButton(type: .system)
     private let cancelButton = UIButton(type: .system)
     
-    init(imageURL: URL?, title: String, onDelete: @escaping () -> Void) {
+    init(imageURL: URL?, title: String, onDelete: @escaping (@escaping (Bool) -> Void) -> Void) {
         self.nftImageURL = imageURL
         self.nftTitle = title
         self.onDelete = onDelete
@@ -118,8 +118,18 @@ final class DeleteModalViewController: UIViewController {
     }
     
     @objc private func deleteTapped() {
-        dismiss(animated: true) { [weak self] in
-            self?.onDelete()
+        deleteButton.isEnabled = false
+        cancelButton.isEnabled = false
+        
+        onDelete { [weak self] success in
+            guard let self else { return }
+            
+            if success {
+                self.dismiss(animated: true)
+            } else {
+                self.deleteButton.isEnabled = true
+                self.cancelButton.isEnabled = true
+            }
         }
     }
     

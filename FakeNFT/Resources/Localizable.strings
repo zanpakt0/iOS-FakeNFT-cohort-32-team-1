@@ -24,3 +24,33 @@
 "Are you sure you want to\n remove the item from the cart?" = "Вы уверены, что хотите\n удалить объект из корзины?";
 "button.Delete" = "Удалить";
 "button.GoBack" = "Вернуться";
+//Catalog
+"catalog.sortByNameTitle" = "По названию";
+"catalog.sortByCountTitle" = "По количеству NFT";
+"catalog.alertTitle" = "Не удалось загрузить данные";
+"catalog.repeatAlertButton" = "Повторить";
+"catalog.cancelAlertButton" = "Отмена";
+//NftCollection
+"nftCollection.authorLabel.text" = "Автор коллекции:";
+"nftCollection.alertTitle" = "Не удалось загрузить данные";
+"nftCollection.repeatAlertButton" = "Повторить";
+"nftCollection.cancelAlertButton" = "Отмена";
+
+// Statistics page
+"Tab.statistics" = "Статистика";
+"Statistics.errorAlert.title" = "Не удалось получить данные";
+"Statistics.errorAlert.retryAction.text" = "Повторить";
+"Statistics.errorAlert.cancelAction.text" = "Отмена";
+"Statistics.actionSheet.byNameAction.text" = "По имени";
+"Statistics.actionSheet.byRatingAction.text" = "По рейтингу";
+
+// User card page
+"UserCard.goToUserWebsiteButton.title" = "Перейти на сайт пользователя";
+"UserCard.nftCollectionButton.title" = "Коллекция NFT";
+
+
+// User collection page
+"UserCollection.tite" = "Коллекция NFT";
+"UserCollection.errorAlert.message" = "Что-то пошло не так";
+"UserCollection.errorAlert.actionText" = "Ок";
+

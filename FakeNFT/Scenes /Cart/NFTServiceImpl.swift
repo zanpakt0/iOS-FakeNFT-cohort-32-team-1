@@ -1,7 +1,7 @@
 import UIKit
 
 protocol NFTService {
-    func fetchNFTs(with ids: [String], completion: @escaping (Result<[NFT], Error>) -> Void)
+    func fetchNFTs(with ids: [String], completion: @escaping (Result<[NFTCart], Error>) -> Void)
 }
 
 struct NFTUIItem {
@@ -13,7 +13,7 @@ struct NFTUIItem {
     let price: Double
 }
 
-struct NFT: Decodable {
+struct NFTCart: Decodable {
     let id: String
     let name: String
     let price: Double
@@ -42,7 +42,7 @@ struct NFT: Decodable {
 
 final class NFTServiceImpl: NFTService {
     
-    func fetchNFTs(with ids: [String], completion: @escaping (Result<[NFT], Error>) -> Void) {
+    func fetchNFTs(with ids: [String], completion: @escaping (Result<[NFTCart], Error>) -> Void) {
         guard !ids.isEmpty else {
             completion(.success([]))
             return
@@ -86,12 +86,22 @@ final class NFTServiceImpl: NFTService {
             }
             
             do {
-                let nfts = try JSONDecoder().decode([NFT].self, from: data)
-                print("JSON decoded: \(nfts.count) NFT(s)")
-                DispatchQueue.main.async { completion(.success(nfts)) }
+                let allNFTs = try JSONDecoder().decode([NFTCart].self, from: data)
+                
+                let idsSet = Set(ids)
+                let filteredNFTs = allNFTs.filter {
+                    idsSet.contains($0.id)
+                }
+                
+                print("JSON decoded: \(filteredNFTs.count) NFT(s)")
+                DispatchQueue.main.async {
+                    completion(.success(filteredNFTs))
+                }
             } catch {
                 print("DECODING ERROR: \(error)")
-                DispatchQueue.main.async { completion(.failure(error)) }
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
             }
         }.resume()
     }

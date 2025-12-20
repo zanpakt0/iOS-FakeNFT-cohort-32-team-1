@@ -2,6 +2,7 @@ import UIKit
 import ProgressHUD
 
 final class PaymentViewController: UIViewController {
+    private let paymentService: PaymentService
     
     private let viewModel: PaymentViewModel
     private let collectionView: UICollectionView
@@ -24,6 +25,7 @@ final class PaymentViewController: UIViewController {
         layout.minimumInteritemSpacing = 7
         layout.minimumLineSpacing = 7
         self.collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        self.paymentService = paymentService
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -156,7 +158,9 @@ final class PaymentViewController: UIViewController {
         viewModel.onSuccess = { [weak self] in
             DispatchQueue.main.async {
                 ProgressHUD.dismiss()
-                self?.navigationController?.pushViewController(SuccessViewController(), animated: true)
+                guard let self else { return }
+                let successVC = SuccessViewController(paymentService: self.paymentService)
+                self.navigationController?.pushViewController(successVC, animated: true)
             }
         }
         

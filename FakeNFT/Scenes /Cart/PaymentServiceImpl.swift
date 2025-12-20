@@ -70,4 +70,21 @@ final class PaymentServiceImpl: PaymentService {
             }
         }
     }
+    
+    func deleteAllNFT(
+        id: String,
+        completion: @escaping (Result<Void, Error>) -> Void
+    ) {
+        let request = DeleteNFTFromCartRequest(nftId: id)
+        
+        client.send(request: request) { result in
+            switch result {
+            case .success:
+                completion(.success(()))
+                
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
 }

@@ -19,6 +19,15 @@ enum SuccessViewStyle {
 
 final class SuccessViewController: UIViewController {
     
+    private let paymentService: PaymentService
+    init(paymentService: PaymentService) {
+        self.paymentService = paymentService
+        super.init(nibName: nil, bundle: nil)
+    }
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     private let imageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(named: "56_digital_art_x4"))
         imageView.tintColor = .clear
@@ -87,14 +96,23 @@ final class SuccessViewController: UIViewController {
         tabBarController?.selectedIndex = 1
         if let nav = tabBarController?.viewControllers?[1] as? UINavigationController,
            let cartVC = nav.viewControllers.first as? CartViewController {
-            cartVC.clearCart()
-            cartVC.updateEmptyStateUI()
-            nav.popToRootViewController(animated: true)
+            
+            let allIds = cartVC.cartViewModel.items.map { $0.id }
+            
+            let group = DispatchGroup()
+            
+            for id in allIds {
+                group.enter()
+                paymentService.deleteAllNFT(id: id) { _ in
+                    group.leave()
+                }
+            }
+            
+            group.notify(queue: .main) {
+                cartVC.clearCart()
+                cartVC.updateEmptyStateUI()
+                nav.popToRootViewController(animated: true)
+            }
         }
-        navigationController?.popViewController(animated: true)
     }
-}
-
-#Preview {
-    SuccessViewController()
 }

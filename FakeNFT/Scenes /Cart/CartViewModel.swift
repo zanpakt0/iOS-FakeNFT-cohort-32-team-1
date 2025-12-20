@@ -21,10 +21,10 @@ final class CartViewModel {
     
     // MARK: - Load Cart
     func loadCart() {
-
+        
         cartService.fetchCart { [weak self] result in
             guard let self else { return }
-
+            
             switch result {
             case .success(let order):
                 let ids = order.nfts
@@ -46,7 +46,7 @@ final class CartViewModel {
                         self.onLoadError?(error)
                     }
                 }
-
+                
             case .failure(let error):
                 self.onLoadError?(error)
             }
@@ -54,15 +54,16 @@ final class CartViewModel {
     }
     
     // MARK: - CRUD
-    func removeItem(at index: Int) {
-        guard items.indices.contains(index) else { return }
-        items.remove(at: index)
-        notifyUpdates()
+    func removeItem(id: String) {
+        items.removeAll { $0.id == id }
+        onItemsUpdated?()
+        updateTotal()
     }
     
-    func removeAllItems() {
+    func removeItemAll() {
         items.removeAll()
-        notifyUpdates()
+        onItemsUpdated?()
+        updateTotal()
     }
     
     func updateRating(at index: Int, rating: Int) {
@@ -102,5 +103,18 @@ final class CartViewModel {
         let totalText = String(format: "%.2f ETH", sum).replacingOccurrences(of: ".", with: ",")
         onTotalUpdated?(countText, totalText)
     }
+    
+    func deleteNFT(
+        id: String,
+        completion: @escaping (Bool) -> Void
+    ) {
+        cartService.deleteNFT(id: id) { result in
+            switch result {
+            case .success:
+                completion(true)
+            case .failure:
+                completion(false)
+            }
+        }
+    }
 }
-

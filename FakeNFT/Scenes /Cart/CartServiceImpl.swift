@@ -6,7 +6,7 @@ struct OrderFetchRequest: NetworkRequest {
     let dto: Dto? = nil
     
     init(orderId: String) {
-        self.endpoint = URL(string: "https://d5dn3j2ouj72b0ejucbl.apigw.yandexcloud.net/api/v1/orders/\(orderId)")
+        self.endpoint = URL(string: "\(RequestConstants.baseURL)/api/v1/orders/1")
     }
 }
 
@@ -24,7 +24,7 @@ struct OrderUpdateRequest: NetworkRequest {
     let dto: Dto?
     
     init(orderId: String, nfts: [String]) {
-        self.endpoint = URL(string: "https://d5dn3j2ouj72b0ejucbl.apigw.yandexcloud.net/api/v1/orders/\(orderId)")
+        self.endpoint = URL(string: "\(RequestConstants.baseURL)/api/v1/orders/1")
         self.dto = OrderUpdateDTO(nfts: nfts)
     }
 }
@@ -39,6 +39,10 @@ struct OrderResponse: Decodable {
 protocol CartService {
     func fetchCart(completion: @escaping (Result<OrderResponse, Error>) -> Void)
     func updateCart(nftIds: [String], completion: @escaping (Result<OrderResponse, Error>) -> Void)
+    func deleteNFT(
+        id: String,
+        completion: @escaping (Result<Void, Error>) -> Void
+    )
 }
 
 final class CartServiceImpl: CartService {
@@ -62,6 +66,36 @@ final class CartServiceImpl: CartService {
                     completion(.success(decoded))
                 } catch {
                     completion(.failure(error))
+                }
+                
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    func deleteNFT(
+        id: String,
+        completion: @escaping (Result<Void, Error>) -> Void
+    ) {
+        
+        fetchCart { [weak self] result in
+            guard let self else { return }
+            
+            switch result {
+            case .success(let order):
+                
+                let updatedIds = order.nfts.filter { $0 != id }
+                
+                let request = OrderUpdateRequest(orderId: self.orderId, nfts: updatedIds)
+                
+                self.client.send(request: request, completionQueue: .main) { result in
+                    switch result {
+                    case .success:
+                        completion(.success(()))
+                    case .failure(let error):
+                        completion(.failure(error))
+                    }
                 }
                 
             case .failure(let error):

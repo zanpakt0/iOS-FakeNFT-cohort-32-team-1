@@ -121,3 +121,26 @@ struct ChangeOrderDto: Dto {
         ["nfts": nfts.joined(separator: ",")]
     }
 }
+
+struct DeleteNFTFromCartRequest: NetworkRequest {
+    var dto: (any Dto)?
+    
+    
+    let nftId: String
+    
+    var endpoint: URL? {
+        var components = URLComponents(string: RequestConstants.baseURL)
+        components?.path = "/api/v1/orders/1"
+        return components?.url
+    }
+    
+    var httpMethod: HttpMethod { .put }
+    
+    var headers: [String: String]? {
+        [
+            "Authorization": "Bearer \(RequestConstants.token)"
+        ]
+    }
+    
+    var body: Data? { nil }
+}
