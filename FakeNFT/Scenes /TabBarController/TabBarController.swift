@@ -11,7 +11,7 @@ final class TabBarController: UITabBarController {
         image: UIImage(systemName: "square.stack.fill"),
         tag: 0
     )
-
+    
     private let statisticsTabBarItem = UITabBarItem(
         title: NSLocalizedString("Tab.statistics", comment: ""),
         image: UIImage(systemName: "flag.2.crossed.fill"),
@@ -25,6 +25,38 @@ final class TabBarController: UITabBarController {
         return UINavigationController(rootViewController: statisticsVc)
     }()
     
+    private let cartTabBarItem = UITabBarItem(
+        title: NSLocalizedString("Tab.cart", comment: ""),
+        image: UIImage(named: "Cart.stack.fill"),
+        tag: 2
+    )
+    
+    private lazy var cartNav: UINavigationController = {
+        let cartService = CartServiceImpl(client: DefaultNetworkClient())
+        let nftService = NFTServiceImpl()
+        let cartViewModel = CartViewModel(
+            nftService: nftService,
+            cartService: cartService
+        )
+
+        let paymentService = PaymentServiceImpl(
+            client: DefaultNetworkClient(),
+            baseURL: RequestConstants.baseURL
+        )
+
+        let paymentViewModel = PaymentViewModel(
+            paymentService: paymentService, nftIds: []
+        )
+
+        let cartVC = CartViewController(
+            cartViewModel: cartViewModel,
+            paymentService: paymentService,
+            paymentViewModel: paymentViewModel
+        )
+
+        cartVC.tabBarItem = cartTabBarItem
+        return UINavigationController(rootViewController: cartVC)
+    }()
     // MARK: - View Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -42,8 +74,8 @@ final class TabBarController: UITabBarController {
                     storage: CatalogStorageImpl())
             ))
         catalogViewController.tabBarItem = catalogTabBarItem
-
-        viewControllers = [catalogViewController, statisticsNav]
+        
+        viewControllers = [catalogViewController, cartNav, statisticsNav]
         
         view.backgroundColor = .systemBackground
     }
