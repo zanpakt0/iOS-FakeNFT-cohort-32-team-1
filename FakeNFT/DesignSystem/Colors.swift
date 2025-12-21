@@ -24,44 +24,129 @@ extension UIColor {
             alpha: CGFloat(alpha) / 255
         )
     }
-
+    
     // Ниже приведены примеры цветов, настоящие цвета надо взять из фигмы
-
+    
     // Primary Colors
     static let primary = UIColor(red: 0 / 255, green: 122 / 255, blue: 255 / 255, alpha: 1.0)
-
+    
     // Secondary Colors
     static let secondary = UIColor(red: 255 / 255, green: 193 / 255, blue: 7 / 255, alpha: 1.0)
-
+    static let redForFavouritesButton = UIColor(red: 245 / 255, green: 107 / 255, blue: 108 / 255, alpha: 1.0)
+    static let yellowForStars = UIColor(hexString: "#FEEF0D")
+    
     // Background Colors
     static let background = UIColor.white
-
+    
     // Text Colors
     static let textPrimary = UIColor.black
     static let textSecondary = UIColor.gray
     static let textOnPrimary = UIColor.white
     static let textOnSecondary = UIColor.black
-
+    static let greenUniversal = UIColor(hexString: "#1C9F00")
+    static let redUniversal = UIColor(hexString: "#F56B6C")
+    
+    private static let lightGrayDay = UIColor(hexString: "#F7F7F8")
+    private static let lightGrayNight = UIColor(hexString: "#2C2C2E")
+    
+    private static let blackDay = UIColor(hexString: "#1A1B22")
+    private static let blackNight = UIColor(hexString: "#FFFFFF")
+    
+    static let segmentButtonBackground = UIColor { traits in
+        traits.userInterfaceStyle == .dark
+        ? .blackNight
+        : .blackDay
+    }
+    
+    static let segmentButtonText = UIColor { traits in
+        traits.userInterfaceStyle == .dark
+        ? .blackDay
+        : .blackNight
+    }
+    
+    static let segmentPayCellBackground = UIColor { traits in
+        traits.userInterfaceStyle == .dark
+        ? .lightGrayNight
+        : .lightGrayDay
+    }
+    static let starsRatingYellow = UIColor(hexString: "#FEEF0D")
+    static let authorBlue = UIColor(hexString: "#0A84FF")
+    
     private static let yaBlackLight = UIColor(hexString: "1A1B22")
     private static let yaBlackDark = UIColor.white
     private static let yaLightGrayLight = UIColor(hexString: "#F7F7F8")
     private static let yaLightGrayDark = UIColor(hexString: "#2C2C2E")
-
+    
+    private static let yaGrayUniversal = UIColor(hexString: "#625C5C")
+    private static let yaGrayForLoader = UIColor.yaLightGrayLight.withAlphaComponent(0.2)
+    
     static let segmentActive = UIColor { traits in
-        return traits.userInterfaceStyle == .dark
+        traits.userInterfaceStyle == .dark
         ? .yaBlackDark
         : .yaBlackLight
     }
-
+    
     static let segmentInactive = UIColor { traits in
-        return traits.userInterfaceStyle == .dark
+        traits.userInterfaceStyle == .dark
         ? .yaLightGrayDark
         : .yaLightGrayLight
     }
-
+    
     static let closeButton = UIColor { traits in
-        return traits.userInterfaceStyle == .dark
+        traits.userInterfaceStyle == .dark
         ? .yaBlackDark
         : .yaBlackLight
     }
+    
+    static let forViewBackground = UIColor { traits in
+        traits.userInterfaceStyle == .light
+        ? .yaBlackDark
+        : .yaBlackLight
+    }
+    
+    static let textColor = UIColor { traits in
+        return traits.userInterfaceStyle == .dark
+        ? .textOnPrimary
+        : .textPrimary
+    }
+    
+    static let forDefaultAvatarBackground = UIColor { traits in
+        traits.userInterfaceStyle == .light
+        ? .yaGrayUniversal
+        : .yaGrayUniversal
+    }
+    
+    static let forActivityIndicatorBackground = UIColor { traits in
+        switch traits.userInterfaceStyle {
+        case .light:
+                .yaLightGrayLight
+        case .dark:
+            UIColor(patternImage: createDarkGradientImage())
+        default:
+                .yaLightGrayLight
+        }
+    }
+    
+    
+    
+    private static func createDarkGradientImage() -> UIImage {
+        let bottom = UIColor.white
+        let overlay = UIColor.black.withAlphaComponent(0.2)
+        
+        let size = CGSize(width: 1, height: 100)
+        let renderer = UIGraphicsImageRenderer(size: size)
+        
+        return renderer.image { context in
+            let cg = context.cgContext
+            
+            // Нижний слой — белый
+            cg.setFillColor(bottom.cgColor)
+            cg.fill(CGRect(origin: .zero, size: size))
+            
+            // Верхний слой — чёрный 20%
+            cg.setFillColor(overlay.cgColor)
+            cg.fill(CGRect(origin: .zero, size: size))
+        }
+    }
 }
+

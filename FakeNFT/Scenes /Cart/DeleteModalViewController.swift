@@ -1,0 +1,139 @@
+import UIKit
+import Kingfisher
+
+final class DeleteModalViewController: UIViewController {
+    
+    private let nftImageURL: URL?
+    private let nftTitle: String
+    private let onDelete: (@escaping (Bool) -> Void) -> Void
+    
+    private let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .systemUltraThinMaterial))
+    
+    private let containerView = UIView()
+    
+    private let imageView = UIImageView()
+    private let titleLabel = UILabel()
+    private let deleteButton = UIButton(type: .system)
+    private let cancelButton = UIButton(type: .system)
+    
+    init(imageURL: URL?, title: String, onDelete: @escaping (@escaping (Bool) -> Void) -> Void) {
+        self.nftImageURL = imageURL
+        self.nftTitle = title
+        self.onDelete = onDelete
+        super.init(nibName: nil, bundle: nil)
+        modalPresentationStyle = .overFullScreen
+        modalTransitionStyle = .crossDissolve
+    }
+    
+    required init?(coder: NSCoder) { fatalError() }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        setupBlur()
+        setupUI()
+        loadImage()
+    }
+    
+    private func setupBlur() {
+        view.backgroundColor = UIColor.white.withAlphaComponent(0.05)
+        blurView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(blurView)
+        NSLayoutConstraint.activate([
+            blurView.topAnchor.constraint(equalTo: view.topAnchor),
+            blurView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            blurView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            blurView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+    }
+    
+    private func setupUI() {
+        containerView.backgroundColor = .clear
+        containerView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(containerView)
+        
+        imageView.layer.cornerRadius = 12
+        imageView.clipsToBounds = true
+        imageView.contentMode = .scaleAspectFill
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        titleLabel.text = nftTitle
+        titleLabel.textAlignment = .center
+        titleLabel.numberOfLines = 2
+        titleLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        deleteButton.setTitle(NSLocalizedString("button.Delete", comment: ""), for: .normal)
+        deleteButton.backgroundColor = UIColor.segmentButtonBackground
+        deleteButton.layer.cornerRadius = 12
+        deleteButton.setTitleColor(UIColor.redUniversal, for: .normal)
+        deleteButton.titleLabel?.font = .systemFont(ofSize: 17, weight: .medium)
+        deleteButton.translatesAutoresizingMaskIntoConstraints = false
+        deleteButton.addTarget(self, action: #selector(deleteTapped), for: .touchUpInside)
+        
+        cancelButton.setTitle(NSLocalizedString("button.GoBack", comment: ""), for: .normal)
+        cancelButton.backgroundColor = UIColor.segmentButtonBackground
+        cancelButton.layer.cornerRadius = 12
+        cancelButton.setTitleColor(UIColor.segmentButtonText, for: .normal)
+        cancelButton.titleLabel?.font = .systemFont(ofSize: 17, weight: .medium)
+        cancelButton.translatesAutoresizingMaskIntoConstraints = false
+        cancelButton.addTarget(self, action: #selector(cancelTapped), for: .touchUpInside)
+        
+        containerView.addSubview(imageView)
+        containerView.addSubview(titleLabel)
+        containerView.addSubview(deleteButton)
+        containerView.addSubview(cancelButton)
+        
+        NSLayoutConstraint.activate([
+            containerView.topAnchor.constraint(equalTo: view.topAnchor, constant: 244),
+            containerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 56),
+            containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -57),
+            
+            imageView.topAnchor.constraint(equalTo: containerView.topAnchor),
+            imageView.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+            imageView.heightAnchor.constraint(equalToConstant: 108),
+            imageView.widthAnchor.constraint(equalToConstant: 108),
+            
+            titleLabel.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 12),
+            titleLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 41),
+            titleLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -41),
+            
+            deleteButton.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
+            deleteButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            deleteButton.heightAnchor.constraint(equalToConstant: 44),
+            
+            cancelButton.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
+            cancelButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            cancelButton.leadingAnchor.constraint(equalTo: deleteButton.trailingAnchor, constant: 12),
+            cancelButton.widthAnchor.constraint(equalTo: deleteButton.widthAnchor),
+            cancelButton.heightAnchor.constraint(equalToConstant: 44),
+            
+            cancelButton.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -20)
+        ])
+    }
+    
+    private func loadImage() {
+        guard let url = nftImageURL else { return }
+        imageView.kf.setImage(with: url, placeholder: UIImage(named: "placeholder"))
+    }
+    
+    @objc private func deleteTapped() {
+        deleteButton.isEnabled = false
+        cancelButton.isEnabled = false
+        
+        onDelete { [weak self] success in
+            guard let self else { return }
+            
+            if success {
+                self.dismiss(animated: true)
+            } else {
+                self.deleteButton.isEnabled = true
+                self.cancelButton.isEnabled = true
+            }
+        }
+    }
+    
+    @objc private func cancelTapped() {
+        dismiss(animated: true)
+    }
+}
