@@ -25,13 +25,13 @@ final class ProfileViewController: UIViewController {
                 guard let self else { return }
                 
                 switch state {
-                case .idle:
+                case .idle: break
                     
-                case .loading:
+                case .loading: break
                     
-                case .loaded(let profile):
+                case .loaded(let profile): break
                     
-                case .error(_):
+                case .error(_): break
                     
                 }
             }

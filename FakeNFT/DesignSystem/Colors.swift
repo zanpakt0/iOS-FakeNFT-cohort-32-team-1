@@ -127,8 +127,6 @@ extension UIColor {
         }
     }
     
-    
-    
     private static func createDarkGradientImage() -> UIImage {
         let bottom = UIColor.white
         let overlay = UIColor.black.withAlphaComponent(0.2)
