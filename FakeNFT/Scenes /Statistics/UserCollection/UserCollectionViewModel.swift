@@ -1,5 +1,6 @@
 import Foundation
 
+// MARK: - Need enums
 enum UserCollectionState {
     case idle
     case loading
