@@ -23,4 +23,34 @@ final class ProfileViewModel {
     init(servicesAssembly: ServicesAssembly) {
         self.servicesAssembly = servicesAssembly
     }
+    
+    // MARK: - Public Methods
+    func fetchProfileInfo() {
+        print("Дошло")
+    
+        guard !isLoading else { return }
+        
+        isLoading = true
+        state = .loading
+        
+        currentTask = servicesAssembly.nftService.getProfile { [weak self] result in
+            DispatchQueue.main.async {
+                guard let self else { return }
+                
+                self.isLoading = false
+                
+                switch result {
+                case .success(let profile):
+                    
+                    let profileInfo = ProfileViewData(profile: profile)
+                    
+                    self.state = .loaded(profileInfo)
+                    print("Данные для профиля загружены: \(profileInfo.name)")
+                case .failure(let error):
+                    print("Ошибка во время загрузки данных для профиля")
+                    self.state = .error(error)
+                }
+            }
+        }
+    }
 }

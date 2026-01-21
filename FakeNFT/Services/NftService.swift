@@ -6,10 +6,11 @@ protocol NftService {
     func loadNft(id: String, completion: @escaping NftCompletion)
     
     func getUsers(page: Int, size: Int, completion: @escaping (Result<[User], Error>) -> Void) -> NetworkTask?
-    func getUserCard(id: String, completion: @escaping (Result<User, any Error>) -> Void) -> NetworkTask?
+    func getUserCard(id: String, completion: @escaping (Result<User, Error>) -> Void) -> NetworkTask?
     func getNft(id: String, completion: @escaping (Result<NFT, Error>) -> Void) -> NetworkTask?
     func getFavouritesNft(completion: @escaping (Result<Profile, Error>) -> Void) -> NetworkTask?
     func getOrderedNft(completion: @escaping (Result<Order, Error>) -> Void) -> NetworkTask?
+    func getProfile(completion: @escaping (Result<Profile, Error>) -> Void) -> NetworkTask?
     
     func putToFavoritesNft(likes: String, completion: @escaping (Result<Profile, Error>) -> Void) -> NetworkTask?
     func putToOrderedNft(nfts: String, completion: @escaping (Result<Order, Error>) -> Void) -> NetworkTask?
@@ -79,6 +80,14 @@ final class NftServiceImpl: NftService {
     func getOrderedNft(completion: @escaping (Result<Order, any Error>) -> Void) -> (any NetworkTask)? {
         let request = GetOrderedNftsRequest()
         return networkClient.send(request: request, type: Order.self) { result in
+            completion(result)
+        }
+    }
+    
+    @discardableResult
+    func getProfile(completion: @escaping (Result<Profile, any Error>) -> Void) -> (any NetworkTask)? {
+        let request = GetProfileRequest()
+        return networkClient.send(request: request, type: Profile.self) { result in
             completion(result)
         }
     }

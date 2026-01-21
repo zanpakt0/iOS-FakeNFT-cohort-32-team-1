@@ -17,6 +17,16 @@ final class ProfileViewController: UIViewController {
         nil
     }
     
+    // MARK: - View Life Cycles
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .forViewBackground
+        
+        bindViewModel()
+        
+        viewModel.fetchProfileInfo()
+    }
+    
     // MARK: - Private Methods
     private func bindViewModel() {
         viewModel.$state
