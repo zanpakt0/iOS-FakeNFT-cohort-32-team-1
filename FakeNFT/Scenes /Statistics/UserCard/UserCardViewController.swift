@@ -13,7 +13,7 @@ enum UserCardViewControllerLayout {
     static let userNameTrailing: CGFloat = -16
 
     static let descriptionLeading: CGFloat = 16
-    static let descriptionTrailing: CGFloat = -16
+    static let descriptionTrailing: CGFloat = -18
     static let descriptionTop: CGFloat = 20
     static let descriptionHeight: CGFloat = 72
     static let descriptionNumberOfLines: Int = 4
@@ -65,7 +65,7 @@ final class UserCardViewController: UIViewController, LoadingView {
     }()
     private lazy var userNameLabel: UILabel = {
         let userNameLabel = UILabel()
-        userNameLabel.font = UIFont.headline3
+        userNameLabel.font = .headline3
         userNameLabel.textColor = .segmentActive
         userNameLabel.backgroundColor = .forViewBackground
         userNameLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -74,7 +74,7 @@ final class UserCardViewController: UIViewController, LoadingView {
     }()
     private lazy var userDescriptionLabel: UILabel = {
         let userDescriptionLabel = UILabel()
-        userDescriptionLabel.font = UIFont.caption2
+        userDescriptionLabel.font = .caption2
         userDescriptionLabel.textColor = .segmentActive
         userDescriptionLabel.backgroundColor = .forViewBackground
         userDescriptionLabel.numberOfLines = UserCardViewControllerLayout.descriptionNumberOfLines
@@ -87,7 +87,7 @@ final class UserCardViewController: UIViewController, LoadingView {
         let titleOfGoToUserWebsiteButton = NSLocalizedString("UserCard.goToUserWebsiteButton.title", comment: "")
         
         goToUserWebsiteButton.setTitle(titleOfGoToUserWebsiteButton, for: .normal)
-        goToUserWebsiteButton.titleLabel?.font = UIFont.caption1
+        goToUserWebsiteButton.titleLabel?.font = .caption1
         goToUserWebsiteButton.setTitleColor(.segmentActive, for: .normal)
         goToUserWebsiteButton.contentHorizontalAlignment = .center
         goToUserWebsiteButton.contentVerticalAlignment = .center
@@ -109,11 +109,11 @@ final class UserCardViewController: UIViewController, LoadingView {
         
         let leftLabel = UILabel()
         leftLabel.text = titleOfNftCollection
-        leftLabel.font = UIFont.bodyBold
+        leftLabel.font = .bodyBold
         leftLabel.textColor = .segmentActive
         
         countOfNftsLabel.text = ""
-        countOfNftsLabel.font = UIFont.bodyBold
+        countOfNftsLabel.font = .bodyBold
         countOfNftsLabel.textColor = .segmentActive
         
         let stack = UIStackView(arrangedSubviews: [leftLabel, countOfNftsLabel])

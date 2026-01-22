@@ -1,4 +1,5 @@
 import UIKit
+import Kingfisher
 import Combine
 
 final class ProfileViewController: UIViewController {
@@ -6,6 +7,162 @@ final class ProfileViewController: UIViewController {
     // MARK: - Private Properties
     private let viewModel: ProfileViewModel
     private var cancellables = Set<AnyCancellable>()
+    
+    // MARK: - Views (elements)
+    private lazy var viewWithAllElements: UIView = {
+        let viewWithAllElements = UIView()
+        viewWithAllElements.backgroundColor = .forViewBackground
+        viewWithAllElements.translatesAutoresizingMaskIntoConstraints = false
+        
+        return viewWithAllElements
+    }()
+    private lazy var editProfileButton: UIButton = {
+        let editProfileButton = UIButton(type: .system)
+        let imageForButton = UIImage(resource: .editProfile)
+        editProfileButton.setImage(imageForButton, for: .normal)
+        editProfileButton.tintColor = .segmentActive
+        editProfileButton.addTarget(self, action: #selector(editProfileButtonTapped), for: .touchUpInside)
+        editProfileButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            editProfileButton.widthAnchor.constraint(equalToConstant: 42),
+            editProfileButton.heightAnchor.constraint(equalToConstant: 42)
+        ])
+        
+        return editProfileButton
+    }()
+    private lazy var avatarImageView: UIImageView = {
+        let exampleImage = UIImage(systemName: "person.crop.circle.fill")
+        let avatarImageView = UIImageView(image: exampleImage)
+        avatarImageView.clipsToBounds = true
+        avatarImageView.layer.cornerRadius = 35
+        avatarImageView.clipsToBounds = true
+        avatarImageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return avatarImageView
+    }()
+    private lazy var nameLabel: UILabel = {
+        let nameLabel = UILabel()
+        nameLabel.font = .headline3
+        nameLabel.textColor = .segmentActive
+        nameLabel.backgroundColor = .forViewBackground
+        nameLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        return nameLabel
+    }()
+    private lazy var descriptionLabel: UILabel = {
+        let descriptionLabel = UILabel()
+        descriptionLabel.textColor = . segmentActive
+        descriptionLabel.font = .caption2
+        descriptionLabel.numberOfLines = 4
+        descriptionLabel.backgroundColor = .forViewBackground
+        descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        return descriptionLabel
+    }()
+    private lazy var websiteButton: UIButton = {
+        let websiteButton = UIButton(type: .system)
+        websiteButton.setTitleColor(.authorBlue, for: .normal)
+        websiteButton.titleLabel?.font = .caption1
+        websiteButton.backgroundColor = .forViewBackground
+        websiteButton.contentHorizontalAlignment = .left
+        websiteButton.addTarget(self, action: #selector(websiteButtonTapped), for: .touchUpInside)
+        websiteButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        return websiteButton
+    }()
+    private lazy var countOfMyNftLabel: UILabel = UILabel()
+    private lazy var myNftButton: UIButton = {
+        let myNftButton = UIButton(type: .system)
+        let titleOfMyNft = NSLocalizedString("Profile.myNft.title", comment: "")
+        
+        let leftLabel = UILabel()
+        leftLabel.text = titleOfMyNft
+        leftLabel.font = .bodyBold
+        leftLabel.textColor = .segmentActive
+        
+        countOfMyNftLabel.text = ""
+        countOfMyNftLabel.font = .bodyBold
+        countOfMyNftLabel.textColor = .segmentActive
+        
+        let stackView = UIStackView(arrangedSubviews: [leftLabel, countOfMyNftLabel])
+        stackView.axis = .horizontal
+        stackView.spacing = 8
+        stackView.alignment = .center
+        
+        myNftButton.addSubview(stackView)
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let config = UIImage.SymbolConfiguration(weight: .bold)
+        let arrowImage = UIImageView(image: UIImage(systemName: "chevron.right", withConfiguration: config))
+        arrowImage.tintColor = .segmentActive
+        myNftButton.addSubview(arrowImage)
+        arrowImage.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            stackView.leadingAnchor.constraint(equalTo: myNftButton.leadingAnchor, constant: 16),
+            stackView.centerYAnchor.constraint(equalTo: myNftButton.centerYAnchor),
+            
+            arrowImage.trailingAnchor.constraint(equalTo: myNftButton.trailingAnchor, constant: -16),
+            arrowImage.centerYAnchor.constraint(equalTo: myNftButton.centerYAnchor)
+        ])
+        
+        leftLabel.isUserInteractionEnabled = false
+        countOfMyNftLabel.isUserInteractionEnabled = false
+        stackView.isUserInteractionEnabled = false
+        arrowImage.isUserInteractionEnabled = false
+        
+        myNftButton.addTarget(self, action: #selector(myNftButtonTapped), for: .touchUpInside)
+        myNftButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        return myNftButton
+    }()
+    private lazy var countOfFavouriteNftLabel: UILabel = UILabel()
+    private lazy var favouriteNftButton: UIButton = {
+        let favouriteNftButton = UIButton(type: .system)
+        let favouriteNftTitle = NSLocalizedString("Profile.favouriteNft.title", comment: "")
+        
+        let leftLabel = UILabel()
+        leftLabel.text = favouriteNftTitle
+        leftLabel.font = .bodyBold
+        leftLabel.textColor = .segmentActive
+        
+        countOfFavouriteNftLabel.text = ""
+        countOfFavouriteNftLabel.font = .bodyBold
+        countOfFavouriteNftLabel.textColor = .segmentActive
+        
+        let stackView = UIStackView(arrangedSubviews: [leftLabel, countOfFavouriteNftLabel])
+        stackView.axis = .horizontal
+        stackView.spacing = 8
+        stackView.alignment = .center
+        
+        favouriteNftButton.addSubview(stackView)
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let config = UIImage.SymbolConfiguration(weight: .bold)
+        let arrowImage = UIImageView(image: UIImage(systemName: "chevron.right", withConfiguration: config))
+        arrowImage.tintColor = .segmentActive
+        favouriteNftButton.addSubview(arrowImage)
+        arrowImage.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            stackView.leadingAnchor.constraint(equalTo: favouriteNftButton.leadingAnchor, constant: 16),
+            stackView.centerYAnchor.constraint(equalTo: favouriteNftButton.centerYAnchor),
+            
+            arrowImage.trailingAnchor.constraint(equalTo: favouriteNftButton.trailingAnchor, constant: -16),
+            arrowImage.centerYAnchor.constraint(equalTo: favouriteNftButton.centerYAnchor)
+        ])
+        
+        leftLabel.isUserInteractionEnabled = false
+        countOfFavouriteNftLabel.isUserInteractionEnabled = false
+        stackView.isUserInteractionEnabled = false
+        arrowImage.isUserInteractionEnabled = false
+        
+        favouriteNftButton.addTarget(self, action: #selector(favouriteNftButtonTapped), for: .touchUpInside)
+        favouriteNftButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        return favouriteNftButton
+    }()
     
     // MARK: - Initializers
     init(viewModel: ProfileViewModel) {
@@ -21,13 +178,113 @@ final class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .forViewBackground
+        navigationController?.navigationBar.tintColor = .closeButton
         
+        setupNavBar()
+        addSubviews()
+        setupConstraints()
         bindViewModel()
         
         viewModel.fetchProfileInfo()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        viewModel.fetchProfileInfo()
+    }
+    
     // MARK: - Private Methods
+    
+    @objc private func editProfileButtonTapped() {
+        
+    }
+    
+    @objc private func websiteButtonTapped() {
+        
+    }
+    
+    @objc private func myNftButtonTapped() {
+        
+    }
+    
+    @objc private func favouriteNftButtonTapped() {
+        
+    }
+    
+    private func addSubviews() {
+        view.addSubview(viewWithAllElements)
+        
+        [avatarImageView, nameLabel, descriptionLabel, websiteButton, myNftButton, favouriteNftButton].forEach {
+            viewWithAllElements.addSubview($0)
+        }
+    }
+    
+    private func setupConstraints() {
+        NSLayoutConstraint.activate([
+            viewWithAllElements.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            viewWithAllElements.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            viewWithAllElements.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            viewWithAllElements.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            
+            avatarImageView.heightAnchor.constraint(equalToConstant: 70),
+            avatarImageView.widthAnchor.constraint(equalToConstant: 70),
+            avatarImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            avatarImageView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            
+            nameLabel.leadingAnchor.constraint(equalTo: avatarImageView.trailingAnchor, constant: 16),
+            nameLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            nameLabel.centerYAnchor.constraint(equalTo: avatarImageView.centerYAnchor),
+            
+            descriptionLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            descriptionLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -18),
+            descriptionLabel.topAnchor.constraint(equalTo: avatarImageView.bottomAnchor, constant: 20),
+            descriptionLabel.heightAnchor.constraint(equalToConstant: 72),
+            
+            websiteButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            websiteButton.topAnchor.constraint(equalTo: descriptionLabel.bottomAnchor, constant: 8),
+            websiteButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -18),
+            websiteButton.heightAnchor.constraint(equalToConstant: 28),
+            
+            myNftButton.leadingAnchor.constraint(equalTo: viewWithAllElements.leadingAnchor),
+            myNftButton.trailingAnchor.constraint(equalTo: viewWithAllElements.trailingAnchor),
+            myNftButton.topAnchor.constraint(equalTo: websiteButton.bottomAnchor, constant: 40),
+            myNftButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 54),
+            
+            favouriteNftButton.leadingAnchor.constraint(equalTo: viewWithAllElements.leadingAnchor),
+            favouriteNftButton.trailingAnchor.constraint(equalTo: viewWithAllElements.trailingAnchor),
+            favouriteNftButton.topAnchor.constraint(equalTo: myNftButton.bottomAnchor),
+            favouriteNftButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 54)
+        ])
+    }
+    
+    private func insertDataIntoFields(profile: ProfileViewData) {
+        let processor = RoundCornerImageProcessor(cornerRadius: 35)
+        let defaultImage = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(UIColor.forDefaultAvatarBackground, renderingMode: .alwaysOriginal)
+        guard let url = profile.avatarURL else {
+            return self.avatarImageView.image = defaultImage
+        }
+
+        self.avatarImageView.kf.setImage(with: url,
+                                         placeholder: nil,
+                                         options: [.processor(processor)]) { result in
+            switch result {
+            case .success: 
+                // image loaded correctly
+                break
+            case .failure:
+                self.avatarImageView.image = defaultImage
+            }
+        }
+        
+        // TODO: Other fields to upgrade
+        nameLabel.text = profile.name
+        descriptionLabel.text = profile.description
+        websiteButton.setTitle("\(profile.name).com", for: .normal)
+        countOfMyNftLabel.text = "(\(profile.nfts.count))"
+        countOfFavouriteNftLabel.text = "(\(profile.likes.count))"
+    }
+    
     private func bindViewModel() {
         viewModel.$state
             .receive(on: RunLoop.main)
@@ -35,16 +292,21 @@ final class ProfileViewController: UIViewController {
                 guard let self else { return }
                 
                 switch state {
-                case .idle: break
-                    
-                case .loading: break
-                    
-                case .loaded(let profile): break
-                    
+                case .idle:
+                    viewWithAllElements.isHidden = true
+                case .loading:
+                    viewWithAllElements.isHidden = true
+                case .loaded(let profile):
+                    viewWithAllElements.isHidden = false
+                    insertDataIntoFields(profile: profile)
                 case .error(_): break
                     
                 }
             }
             .store(in: &cancellables)
+    }
+    
+    private func setupNavBar() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: editProfileButton)
     }
 }

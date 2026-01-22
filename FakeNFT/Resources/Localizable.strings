@@ -57,3 +57,5 @@
 
 // Profile page
 "Tab.profile" = "Профиль";
+"Profile.myNft.title" = "Мои NFT";
+"Profile.favouriteNft.title" = "Избранные NFT";
