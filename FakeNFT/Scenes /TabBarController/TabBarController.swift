@@ -8,25 +8,25 @@ final class TabBarController: UITabBarController {
     // MARK: - Private Properties
     private let profileTabBarItem = UITabBarItem(
         title: NSLocalizedString("Tab.profile", comment: ""),
-        image: UIImage(systemName: "person.crop.circle.fill"),
+        image: UIImage(resource: .profileTabBarIcon),
         tag: 0
     )
     
     private let catalogTabBarItem = UITabBarItem(
         title: NSLocalizedString("Tab.catalog", comment: ""),
-        image: UIImage(systemName: "square.stack.fill"),
+        image: UIImage(resource: .catalogTabBarIcon),
         tag: 1
     )
     
     private let cartTabBarItem = UITabBarItem(
         title: NSLocalizedString("Tab.cart", comment: ""),
-        image: UIImage(named: "Cart.stack.fill"),
+        image: UIImage(resource: .cartTabBarIcon),
         tag: 2
     )
     
     private let statisticsTabBarItem = UITabBarItem(
         title: NSLocalizedString("Tab.statistics", comment: ""),
-        image: UIImage(systemName: "flag.2.crossed.fill"),
+        image: UIImage(resource: .statisticsTabBarIcon),
         tag: 3
     )
     
