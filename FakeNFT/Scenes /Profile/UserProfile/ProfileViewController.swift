@@ -210,9 +210,11 @@ final class ProfileViewController: UIViewController, LoadingView {
     }
     
     // MARK: - Private Methods
-    
     @objc private func editProfileButtonTapped() {
+        let viewModel = EditProfileViewModel(servicesAssembly: viewModel.servicesAssembly)
+        let viewController = EditProfileViewController(viewModel: viewModel)
         
+        universalOpenPage(viewController: viewController)
     }
     
     @objc private func websiteButtonTapped() {
