@@ -83,7 +83,14 @@ final class StatisticsViewController: UIViewController, LoadingView {
         
         if viewModel.usersList.isEmpty {
             viewModel.fetchUsers()
-        }
+        } 
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        viewModel.stopTaskWhenClosed()
+        showNeedViewsInScreen(needToShowLoadingIndicator: .showViewsHideLoader)
     }
     
     // MARK: - Private Methods

@@ -44,6 +44,7 @@ final class CatalogViewController: UIViewController {
     
     private lazy var loadingIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .large)
+        indicator.color = .segmentActive
         indicator.translatesAutoresizingMaskIntoConstraints = false
         return indicator
     }()

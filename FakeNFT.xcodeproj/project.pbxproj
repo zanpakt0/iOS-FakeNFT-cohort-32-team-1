@@ -527,7 +527,6 @@
 				921D2BF22EDC08CA00AE3E97 /* UserCollection */,
 				924AF08E2ED73029007E5F0A /* UserCard */,
 				924AF0782ED6D1FA007E5F0A /* UsersList */,
-				927058D62ED4A37800AF2DB9 /* Requests */,
 				927058CD2ED48C0700AF2DB9 /* NeedStructures */,
 			);
 			path = Statistics;
@@ -540,6 +539,7 @@
 				920DB0982EDFFFDF001A2606 /* NFT.swift */,
 				927058CE2ED48C1300AF2DB9 /* User.swift */,
 				92F606782EE56101008C3C53 /* Order.swift */,
+				927058D62ED4A37800AF2DB9 /* Requests */,
 			);
 			path = NeedStructures;
 			sourceTree = "<group>";

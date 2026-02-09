@@ -28,6 +28,7 @@ final class StatisticsViewModel {
     
     // MARK: - Public Methods
     func fetchUsers(size: Int = ConstantsForStatistics.pageSize) {
+        currentTask?.cancel()
         print("Дошло")
         
         guard !isLoadingPage else { return }
@@ -41,6 +42,7 @@ final class StatisticsViewModel {
                 guard let self else { return }
                 
                 self.isLoadingPage = false
+                self.currentTask = nil
                 
                 switch result {
                 case .success(let users):
@@ -58,12 +60,22 @@ final class StatisticsViewModel {
                     self.state = .loaded(self.usersList)
                     print(self.usersList.count)
                 case .failure(let error):
+                    if (error as NSError).code == NSURLErrorCancelled {
+                        return
+                    }
+                    
                     print("Ошибка")
                     self.state = .error(error)
                 }
             }
             
         }
+    }
+    
+    func stopTaskWhenClosed() {
+        currentTask?.cancel()
+        currentTask = nil
+        isLoadingPage = false
     }
     
     func sortByNeedFilterType() {

@@ -26,6 +26,7 @@ final class ProfileViewModel {
     
     // MARK: - Public Methods
     func fetchProfileInfo() {
+        currentTask?.cancel()
         print("Дошло")
     
         guard !isLoading else { return }
@@ -38,6 +39,7 @@ final class ProfileViewModel {
                 guard let self else { return }
                 
                 self.isLoading = false
+                self.currentTask = nil
                 
                 switch result {
                 case .success(let profile):
@@ -47,10 +49,20 @@ final class ProfileViewModel {
                     self.state = .loaded(profileInfo)
                     print("Данные для профиля загружены: \(profileInfo.name)")
                 case .failure(let error):
+                    if (error as NSError).code == NSURLErrorCancelled {
+                        return
+                    }
+                    
                     print("Ошибка во время загрузки данных для профиля")
                     self.state = .error(error)
                 }
             }
         }
+    }
+    
+    func stopTaskWhenClosed() {
+        currentTask?.cancel()
+        currentTask = nil
+        isLoading = false
     }
 }

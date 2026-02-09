@@ -2,13 +2,21 @@ import UIKit
 import Kingfisher
 import Combine
 
-final class ProfileViewController: UIViewController {
+final class ProfileViewController: UIViewController, LoadingView {
     
     // MARK: - Private Properties
     private let viewModel: ProfileViewModel
     private var cancellables = Set<AnyCancellable>()
     
     // MARK: - Views (elements)
+    lazy var activityIndicator: UIActivityIndicatorView = {
+        let activityIndicator = UIActivityIndicatorView(style: .large)
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.color = .segmentActive
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        
+        return activityIndicator
+    }()
     private lazy var viewWithAllElements: UIView = {
         let viewWithAllElements = UIView()
         viewWithAllElements.backgroundColor = .forViewBackground
@@ -194,6 +202,13 @@ final class ProfileViewController: UIViewController {
         viewModel.fetchProfileInfo()
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        viewModel.stopTaskWhenClosed()
+        showNeedViewsInScreen(needToShowLoadingIndicator: .hideBoth)
+    }
+    
     // MARK: - Private Methods
     
     @objc private func editProfileButtonTapped() {
@@ -205,14 +220,15 @@ final class ProfileViewController: UIViewController {
     }
     
     @objc private func myNftButtonTapped() {
-        
+        print("MyNft button tapped")
     }
     
     @objc private func favouriteNftButtonTapped() {
-        
+        print("FavouriteNft button tapped")
     }
     
     private func addSubviews() {
+        view.addSubview(activityIndicator)
         view.addSubview(viewWithAllElements)
         
         [avatarImageView, nameLabel, descriptionLabel, websiteButton, myNftButton, favouriteNftButton].forEach {
@@ -222,6 +238,9 @@ final class ProfileViewController: UIViewController {
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            
             viewWithAllElements.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             viewWithAllElements.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             viewWithAllElements.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -256,6 +275,23 @@ final class ProfileViewController: UIViewController {
             favouriteNftButton.topAnchor.constraint(equalTo: myNftButton.bottomAnchor),
             favouriteNftButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 54)
         ])
+    }
+    
+    private func showNeedViewsInScreen(needToShowLoadingIndicator: UIStateForLoader) {
+        switch needToShowLoadingIndicator {
+        case .showLoaderHideViews:
+            showLoading()
+            viewWithAllElements.isHidden = true
+        case .showViewsHideLoader:
+            hideLoading()
+            viewWithAllElements.isHidden = false
+        case .showBoth:
+            showLoading()
+            viewWithAllElements.isHidden = false
+        case .hideBoth:
+            hideLoading()
+            viewWithAllElements.isHidden = true
+        }
     }
     
     private func insertDataIntoFields(profile: ProfileViewData) {
@@ -293,14 +329,15 @@ final class ProfileViewController: UIViewController {
                 
                 switch state {
                 case .idle:
-                    viewWithAllElements.isHidden = true
+                    showNeedViewsInScreen(needToShowLoadingIndicator: .hideBoth)
                 case .loading:
-                    viewWithAllElements.isHidden = true
+                    showNeedViewsInScreen(needToShowLoadingIndicator: .showLoaderHideViews)
                 case .loaded(let profile):
-                    viewWithAllElements.isHidden = false
+                    showNeedViewsInScreen(needToShowLoadingIndicator: .showViewsHideLoader)
                     insertDataIntoFields(profile: profile)
-                case .error(_): break
-                    
+                case .error(_):
+                    showNeedViewsInScreen(needToShowLoadingIndicator: .hideBoth)
+                    showErrorAlert()
                 }
             }
             .store(in: &cancellables)
@@ -308,5 +345,12 @@ final class ProfileViewController: UIViewController {
     
     private func setupNavBar() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: editProfileButton)
+    }
+    
+    private func showErrorAlert() {
+        universalErrorAlert { [weak self] in
+            guard let self else { return }
+            self.viewModel.fetchProfileInfo()
+        }
     }
 }
