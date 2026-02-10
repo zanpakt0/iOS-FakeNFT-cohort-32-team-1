@@ -39,7 +39,7 @@ final class UserCardViewController: UIViewController, LoadingView {
     private var cancellables = Set<AnyCancellable>()
     
     // MARK: - Views (elements)
-    lazy var activityIndicator: UIActivityIndicatorView = {
+    let activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .large)
         indicator.hidesWhenStopped = true
         indicator.color = .segmentActive
@@ -47,14 +47,14 @@ final class UserCardViewController: UIViewController, LoadingView {
         
         return indicator
     }()
-    private lazy var viewWithAllElements: UIView = {
+    private let viewWithAllElements: UIView = {
         let viewWithAllElements = UIView()
         viewWithAllElements.backgroundColor = .forViewBackground
         viewWithAllElements.translatesAutoresizingMaskIntoConstraints = false
         
         return viewWithAllElements
     }()
-    private lazy var userAvatarImageView: UIImageView = {
+    private let userAvatarImageView: UIImageView = {
         let exampleImage = UIImage(systemName: "person.crop.circle.fill")
         let userAvatarImageView = UIImageView(image: exampleImage)
         userAvatarImageView.clipsToBounds = true
@@ -63,7 +63,7 @@ final class UserCardViewController: UIViewController, LoadingView {
         
         return userAvatarImageView
     }()
-    private lazy var userNameLabel: UILabel = {
+    private let userNameLabel: UILabel = {
         let userNameLabel = UILabel()
         userNameLabel.font = .headline3
         userNameLabel.textColor = .segmentActive
@@ -72,7 +72,7 @@ final class UserCardViewController: UIViewController, LoadingView {
         
         return userNameLabel
     }()
-    private lazy var userDescriptionLabel: UILabel = {
+    private let userDescriptionLabel: UILabel = {
         let userDescriptionLabel = UILabel()
         userDescriptionLabel.font = .caption2
         userDescriptionLabel.textColor = .segmentActive
@@ -82,7 +82,7 @@ final class UserCardViewController: UIViewController, LoadingView {
         
         return userDescriptionLabel
     }()
-    private lazy var goToUserWebsiteButton: UIButton = {
+    private let goToUserWebsiteButton: UIButton = {
         let goToUserWebsiteButton = UIButton(type: .custom)
         let titleOfGoToUserWebsiteButton = NSLocalizedString("UserCard.goToUserWebsiteButton.title", comment: "")
         
@@ -92,8 +92,6 @@ final class UserCardViewController: UIViewController, LoadingView {
         goToUserWebsiteButton.contentHorizontalAlignment = .center
         goToUserWebsiteButton.contentVerticalAlignment = .center
         
-        goToUserWebsiteButton.addTarget(self, action: #selector(goToUserWebsiteButtonClicked), for: .touchUpInside)
-        
         goToUserWebsiteButton.layer.borderWidth = UserCardViewControllerLayout.websiteBorderWidth
         goToUserWebsiteButton.layer.borderColor = UIColor.segmentActive.cgColor
         
@@ -102,7 +100,7 @@ final class UserCardViewController: UIViewController, LoadingView {
         
         return goToUserWebsiteButton
     }()
-    private lazy var countOfNftsLabel: UILabel = UILabel()
+    private let countOfNftsLabel: UILabel = UILabel()
     private lazy var nftCollectionButton: UIButton = {
         let nftCollectionButton = UIButton(type: .system)
         let titleOfNftCollection = NSLocalizedString("UserCard.nftCollectionButton.title", comment: "")
@@ -165,6 +163,7 @@ final class UserCardViewController: UIViewController, LoadingView {
         view.backgroundColor = .forViewBackground
         navigationController?.navigationBar.tintColor = .closeButton
         
+        addTargetsForButtons()
         addSubviews()
         setupConstraints()
         bindViewModel()
@@ -192,6 +191,10 @@ final class UserCardViewController: UIViewController, LoadingView {
 
         guard let nfts = viewModel.userInfo?.nfts else { return }
         userCollectionViewModel.loadEverything(listOfNfts: nfts)
+    }
+    
+    private func addTargetsForButtons() {
+        goToUserWebsiteButton.addTarget(self, action: #selector(goToUserWebsiteButtonClicked), for: .touchUpInside)
     }
     
     private func addSubviews() {

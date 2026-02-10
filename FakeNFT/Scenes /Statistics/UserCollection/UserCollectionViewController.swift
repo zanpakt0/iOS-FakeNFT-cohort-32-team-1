@@ -26,7 +26,7 @@ final class UserCollectionViewController: UIViewController, LoadingView {
     private var cancellables = Set<AnyCancellable>()
     
     // MARK: - Views (elements)
-    lazy var activityIndicator: UIActivityIndicatorView = {
+    let activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .large)
         indicator.hidesWhenStopped = true
         indicator.color = .black 
@@ -34,7 +34,7 @@ final class UserCollectionViewController: UIViewController, LoadingView {
         
         return indicator
     }()
-    private lazy var containerForActivityIndicator: UIView = {
+    private let containerForActivityIndicator: UIView = {
         let containerForActivityIndicator = UIView()
         containerForActivityIndicator.backgroundColor = .forActivityIndicatorBackground
         containerForActivityIndicator.layer.cornerRadius = UserCollectionViewControllerLayout.containerForActivityIndicatorCornerRadius
@@ -47,10 +47,8 @@ final class UserCollectionViewController: UIViewController, LoadingView {
         
         return containerForActivityIndicator
     }()
-    private lazy var collectionViewWithNfts: UICollectionView = {
+    private let collectionViewWithNfts: UICollectionView = {
         let collectionViewWithNfts = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
-        collectionViewWithNfts.delegate = self
-        collectionViewWithNfts.dataSource = self
         collectionViewWithNfts.alwaysBounceVertical = true
         collectionViewWithNfts.backgroundColor = .forViewBackground
         
@@ -80,6 +78,7 @@ final class UserCollectionViewController: UIViewController, LoadingView {
         view.backgroundColor = .forViewBackground
         navigationController?.navigationBar.tintColor = .closeButton
         
+        setupCollectionView()
         setupTitle()
         addSubviews()
         setupConstraints()
@@ -88,6 +87,11 @@ final class UserCollectionViewController: UIViewController, LoadingView {
     }
     
     // MARK: - Private Methods
+    private func setupCollectionView() {
+        collectionViewWithNfts.delegate = self
+        collectionViewWithNfts.dataSource = self
+    }
+    
     private func setupTitle() {
         let title = NSLocalizedString("UserCollection.tite", comment: "")
         navigationItem.title = title

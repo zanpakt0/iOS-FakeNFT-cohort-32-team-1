@@ -19,7 +19,7 @@ final class StatisticsViewController: UIViewController, LoadingView {
     private var cancellables = Set<AnyCancellable>()
     
     // MARK: - Views (elements)
-    lazy var activityIndicator: UIActivityIndicatorView = {
+    let activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .large)
         indicator.hidesWhenStopped = true
         indicator.color = .segmentActive
@@ -27,11 +27,10 @@ final class StatisticsViewController: UIViewController, LoadingView {
         
         return indicator
     }()
-    private lazy var filterButton: UIButton = {
+    private let filterButton: UIButton = {
         let filterButton = UIButton(type: .system)
         let imageForButton = UIImage(resource: .sortCatalogButton)
         filterButton.setImage(imageForButton, for: .normal)
-        filterButton.addTarget(self, action: #selector(filterButtonClicked), for: .touchUpInside)
         filterButton.tintColor = .segmentActive
         filterButton.imageView?.contentMode = .scaleAspectFit
         filterButton.translatesAutoresizingMaskIntoConstraints = false
@@ -43,11 +42,9 @@ final class StatisticsViewController: UIViewController, LoadingView {
         
         return filterButton
     }()
-    private lazy var tableViewWithUsers: UITableView = {
+    private let tableViewWithUsers: UITableView = {
         let tableViewWithUsers = UITableView()
         tableViewWithUsers.backgroundColor = .forViewBackground
-        tableViewWithUsers.dataSource = self
-        tableViewWithUsers.delegate = self
         tableViewWithUsers.register(StatisticsTableViewCell.self, forCellReuseIdentifier: StatisticsTableViewCell.reuseIdentifier)
         tableViewWithUsers.separatorStyle = .none
         tableViewWithUsers.translatesAutoresizingMaskIntoConstraints = false
@@ -70,6 +67,8 @@ final class StatisticsViewController: UIViewController, LoadingView {
         super.viewDidLoad()
         view.backgroundColor = .forViewBackground
         
+        addTargetsForButtons()
+        setupTableView()
         setupNavBar()
         addSubviews()
         setupConstraints()
@@ -111,6 +110,15 @@ final class StatisticsViewController: UIViewController, LoadingView {
         }
         
         showFilterActionSheet(firstAction: byNameAction, secondAction: byRatingAction, thirdAction: nil)
+    }
+    
+    private func setupTableView() {
+        tableViewWithUsers.delegate = self
+        tableViewWithUsers.dataSource = self
+    }
+    
+    private func addTargetsForButtons() {
+        filterButton.addTarget(self, action: #selector(filterButtonClicked), for: .touchUpInside)
     }
     
     private func addSubviews() {

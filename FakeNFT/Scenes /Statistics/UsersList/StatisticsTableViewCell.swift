@@ -35,14 +35,14 @@ final class StatisticsTableViewCell: UITableViewCell {
     static let reuseIdentifier = "StatisticsTableViewCell"
     
     // MARK: - Views (elements)
-    private lazy var containerView: UIView = {
+    private let containerView: UIView = {
         let containerview = UIView()
         containerview.layer.cornerRadius = StatisticsTableViewCellLayout.containerCornerRadius
         containerview.backgroundColor = .forViewBackground
         containerview.translatesAutoresizingMaskIntoConstraints = false
         return containerview
     }()
-    private lazy var numberingLabel: UILabel = {
+    private let numberingLabel: UILabel = {
         let numberingLabel = UILabel()
         numberingLabel.font = UIFont.caption1
         numberingLabel.textColor = .segmentActive
@@ -52,7 +52,7 @@ final class StatisticsTableViewCell: UITableViewCell {
         
         return numberingLabel
     }()
-    private lazy var usersInfoView: UIView = {
+    private let usersInfoView: UIView = {
         let usersInfoView = UIView()
         usersInfoView.backgroundColor = .segmentInactive
         usersInfoView.layer.cornerRadius = StatisticsTableViewCellLayout.usersInfoViewCornerRadius
@@ -60,7 +60,7 @@ final class StatisticsTableViewCell: UITableViewCell {
         
         return usersInfoView
     }()
-    private lazy var userAvatarImageView: UIImageView = {
+    private let userAvatarImageView: UIImageView = {
         let exampleImage = UIImage(systemName: "person.crop.circle.fill")
         let userAvatarImageView = UIImageView(image: exampleImage)
         userAvatarImageView.clipsToBounds = true
@@ -69,7 +69,7 @@ final class StatisticsTableViewCell: UITableViewCell {
         
         return userAvatarImageView
     }()
-    private lazy var userNameLabel: UILabel = {
+    private let userNameLabel: UILabel = {
         let userNameLabel = UILabel()
         userNameLabel.font = UIFont.headline3
         userNameLabel.textColor = .segmentActive
@@ -78,7 +78,7 @@ final class StatisticsTableViewCell: UITableViewCell {
         
         return userNameLabel
     }()
-    private lazy var countOfNftsLabel: UILabel = {
+    private let countOfNftsLabel: UILabel = {
         let countOfNftsLabel = UILabel()
         countOfNftsLabel.font = UIFont.headline3
         countOfNftsLabel.textColor = .segmentActive

@@ -40,7 +40,7 @@ final class UserCollectionViewCell: UICollectionViewCell {
     private let processor = RoundCornerImageProcessor(cornerRadius: UserCollectionViewCellLayout.nftImageCornerRadius)
     
     // MARK: - Views (elements)
-    private lazy var nftImageView: UIImageView = {
+    private let nftImageView: UIImageView = {
         let exampleImage = UIImage(systemName: "");
         let nftImageView = UIImageView(image: exampleImage)
         nftImageView.layer.cornerRadius = UserCollectionViewCellLayout.nftImageCornerRadius
@@ -49,10 +49,9 @@ final class UserCollectionViewCell: UICollectionViewCell {
         
         return nftImageView
     }()
-    private lazy var favouritesButton: UIButton = {
+    private let favouritesButton: UIButton = {
         let favouritesButton = UIButton(type: .system)
         favouritesButton.setImage(UIImage(systemName: "heart.fill"), for: .normal)
-        favouritesButton.addTarget(self, action: #selector(favouritesButtonClicked), for: .touchUpInside)
         favouritesButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -62,11 +61,11 @@ final class UserCollectionViewCell: UICollectionViewCell {
         
         return favouritesButton
     }()
-    private lazy var firstStar: UIImageView = createDefaultStar()
-    private lazy var secondStar: UIImageView = createDefaultStar()
-    private lazy var thirdStar: UIImageView = createDefaultStar()
-    private lazy var fourthStar: UIImageView = createDefaultStar()
-    private lazy var fifthStar: UIImageView = createDefaultStar()
+    private let firstStar: UIImageView = createDefaultStar()
+    private let secondStar: UIImageView = createDefaultStar()
+    private let thirdStar: UIImageView = createDefaultStar()
+    private let fourthStar: UIImageView = createDefaultStar()
+    private let fifthStar: UIImageView = createDefaultStar()
     private lazy var stackViewOfStars: UIStackView = {
         let stackViewOfStars = UIStackView(arrangedSubviews: [firstStar, secondStar, thirdStar, fourthStar, fifthStar])
         stackViewOfStars.axis = .horizontal
@@ -75,7 +74,7 @@ final class UserCollectionViewCell: UICollectionViewCell {
         
         return stackViewOfStars
     }()
-    private lazy var nftNameLabel: UILabel = {
+    private let nftNameLabel: UILabel = {
         let nftNameLabel = UILabel()
         nftNameLabel.font = .bodyBold
         nftNameLabel.textColor = .segmentActive
@@ -89,7 +88,7 @@ final class UserCollectionViewCell: UICollectionViewCell {
         
         return nftNameLabel
     }()
-    private lazy var nftPriceLabel: UILabel = {
+    private let nftPriceLabel: UILabel = {
         let nftPriceLabel = UILabel()
         nftPriceLabel.font = .caption4
         nftPriceLabel.textColor = .segmentActive
@@ -103,11 +102,10 @@ final class UserCollectionViewCell: UICollectionViewCell {
         
         return nftPriceLabel
     }()
-    private lazy var cartButton: UIButton = {
+    private let cartButton: UIButton = {
         let cartButton = UIButton(type: .system)
         cartButton.setImage(UIImage(resource: .addCartIcon), for: .normal)
         cartButton.translatesAutoresizingMaskIntoConstraints = false
-        cartButton.addTarget(self, action: #selector(cartButtonClicked), for: .touchUpInside)
         
         NSLayoutConstraint.activate([
             cartButton.widthAnchor.constraint(equalToConstant: UserCollectionViewCellLayout.sizesOfButtons),
@@ -122,6 +120,7 @@ final class UserCollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         contentView.backgroundColor = .forViewBackground
         
+        addTargetsForButtons()
         addSubviews()
         setupConstraints()
     }
@@ -152,6 +151,11 @@ final class UserCollectionViewCell: UICollectionViewCell {
     
     @objc private func cartButtonClicked() {
         onCartButtonTapped?(isInCart)
+    }
+    
+    private func addTargetsForButtons() {
+        favouritesButton.addTarget(self, action: #selector(favouritesButtonClicked), for: .touchUpInside)
+        cartButton.addTarget(self, action: #selector(cartButtonClicked), for: .touchUpInside)
     }
     
     private func addSubviews() {
@@ -207,7 +211,7 @@ final class UserCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    private func createDefaultStar() -> UIImageView {
+    private static func createDefaultStar() -> UIImageView {
         let exampleImage = UIImage(systemName: "star.fill")
         let star = UIImageView(image: exampleImage)
         star.translatesAutoresizingMaskIntoConstraints = false

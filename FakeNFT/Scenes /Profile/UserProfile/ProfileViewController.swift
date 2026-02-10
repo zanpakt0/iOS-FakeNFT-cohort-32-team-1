@@ -9,7 +9,7 @@ final class ProfileViewController: UIViewController, LoadingView {
     private var cancellables = Set<AnyCancellable>()
     
     // MARK: - Views (elements)
-    lazy var activityIndicator: UIActivityIndicatorView = {
+    let activityIndicator: UIActivityIndicatorView = {
         let activityIndicator = UIActivityIndicatorView(style: .large)
         activityIndicator.hidesWhenStopped = true
         activityIndicator.color = .segmentActive
@@ -17,19 +17,18 @@ final class ProfileViewController: UIViewController, LoadingView {
         
         return activityIndicator
     }()
-    private lazy var viewWithAllElements: UIView = {
+    private let viewWithAllElements: UIView = {
         let viewWithAllElements = UIView()
         viewWithAllElements.backgroundColor = .forViewBackground
         viewWithAllElements.translatesAutoresizingMaskIntoConstraints = false
         
         return viewWithAllElements
     }()
-    private lazy var editProfileButton: UIButton = {
+    private let editProfileButton: UIButton = {
         let editProfileButton = UIButton(type: .system)
         let imageForButton = UIImage(resource: .editProfile)
         editProfileButton.setImage(imageForButton, for: .normal)
         editProfileButton.tintColor = .segmentActive
-        editProfileButton.addTarget(self, action: #selector(editProfileButtonTapped), for: .touchUpInside)
         editProfileButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -39,7 +38,7 @@ final class ProfileViewController: UIViewController, LoadingView {
         
         return editProfileButton
     }()
-    private lazy var avatarImageView: UIImageView = {
+    private let avatarImageView: UIImageView = {
         let exampleImage = UIImage(systemName: "person.crop.circle.fill")
         let avatarImageView = UIImageView(image: exampleImage)
         avatarImageView.clipsToBounds = true
@@ -49,7 +48,7 @@ final class ProfileViewController: UIViewController, LoadingView {
         
         return avatarImageView
     }()
-    private lazy var nameLabel: UILabel = {
+    private let nameLabel: UILabel = {
         let nameLabel = UILabel()
         nameLabel.font = .headline3
         nameLabel.textColor = .segmentActive
@@ -58,7 +57,7 @@ final class ProfileViewController: UIViewController, LoadingView {
         
         return nameLabel
     }()
-    private lazy var descriptionLabel: UILabel = {
+    private let descriptionLabel: UILabel = {
         let descriptionLabel = UILabel()
         descriptionLabel.textColor = . segmentActive
         descriptionLabel.font = .caption2
@@ -68,18 +67,17 @@ final class ProfileViewController: UIViewController, LoadingView {
         
         return descriptionLabel
     }()
-    private lazy var websiteButton: UIButton = {
+    private let websiteButton: UIButton = {
         let websiteButton = UIButton(type: .system)
         websiteButton.setTitleColor(.authorBlue, for: .normal)
         websiteButton.titleLabel?.font = .caption1
         websiteButton.backgroundColor = .forViewBackground
         websiteButton.contentHorizontalAlignment = .left
-        websiteButton.addTarget(self, action: #selector(websiteButtonTapped), for: .touchUpInside)
         websiteButton.translatesAutoresizingMaskIntoConstraints = false
         
         return websiteButton
     }()
-    private lazy var countOfMyNftLabel: UILabel = UILabel()
+    private let countOfMyNftLabel: UILabel = UILabel()
     private lazy var myNftButton: UIButton = {
         let myNftButton = UIButton(type: .system)
         let titleOfMyNft = NSLocalizedString("Profile.myNft.title", comment: "")
@@ -125,7 +123,7 @@ final class ProfileViewController: UIViewController, LoadingView {
         
         return myNftButton
     }()
-    private lazy var countOfFavouriteNftLabel: UILabel = UILabel()
+    private let countOfFavouriteNftLabel: UILabel = UILabel()
     private lazy var favouriteNftButton: UIButton = {
         let favouriteNftButton = UIButton(type: .system)
         let favouriteNftTitle = NSLocalizedString("Profile.favouriteNft.title", comment: "")
@@ -188,6 +186,7 @@ final class ProfileViewController: UIViewController, LoadingView {
         view.backgroundColor = .forViewBackground
         navigationController?.navigationBar.tintColor = .closeButton
         
+        addTargetsForButtons()
         setupNavBar()
         addSubviews()
         setupConstraints()
@@ -227,6 +226,11 @@ final class ProfileViewController: UIViewController, LoadingView {
     
     @objc private func favouriteNftButtonTapped() {
         print("FavouriteNft button tapped")
+    }
+    
+    private func addTargetsForButtons() {
+        editProfileButton.addTarget(self, action: #selector(editProfileButtonTapped), for: .touchUpInside)
+        websiteButton.addTarget(self, action: #selector(websiteButtonTapped), for: .touchUpInside)
     }
     
     private func addSubviews() {
