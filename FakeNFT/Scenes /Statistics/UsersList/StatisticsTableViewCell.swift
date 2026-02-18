@@ -106,10 +106,8 @@ final class StatisticsTableViewCell: UITableViewCell {
     func configure(numberingOfCell: Int, with usersInfo: UserCellViewData) {
         self.numberingLabel.text = "\(numberingOfCell)"
         let processor = RoundCornerImageProcessor(cornerRadius: StatisticsTableViewCellLayout.avatarCornerRadius)
-        let defaultImage = UIImage(systemName: "person.crop.circle.fill")?
-            .withTintColor(UIColor.forDefaultAvatarBackground, renderingMode: .alwaysOriginal)
         guard let url = usersInfo.avatarURL else  {
-            return self.userAvatarImageView.image = defaultImage
+            return self.userAvatarImageView.image = Constants.defaultImage
         }
         
         self.userAvatarImageView.kf.setImage(with: url,
@@ -120,7 +118,7 @@ final class StatisticsTableViewCell: UITableViewCell {
                 // image loaded correctly
                 break
             case .failure:
-                self.userAvatarImageView.image = defaultImage
+                self.userAvatarImageView.image = Constants.defaultImage
             }
         }
         

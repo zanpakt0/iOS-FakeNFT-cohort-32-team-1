@@ -45,6 +45,7 @@ final class ProfileViewModel {
                 case .success(let profile):
                     
                     let profileInfo = ProfileViewData(profile: profile)
+                    self.profileInfo = profileInfo
                     
                     self.state = .loaded(profileInfo)
                     print("Данные для профиля загружены: \(profileInfo.name)")

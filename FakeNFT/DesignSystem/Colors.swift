@@ -116,6 +116,8 @@ extension UIColor {
         : .yaGrayUniversal
     }
     
+    
+    
     static let forActivityIndicatorBackground = UIColor { traits in
         switch traits.userInterfaceStyle {
         case .light:

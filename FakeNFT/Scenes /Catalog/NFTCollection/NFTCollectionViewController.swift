@@ -148,7 +148,7 @@ final class NFTCollectionViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    //MARK: - Lifecycle
+    //MARK: - View Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
         updateCollectionViewHeight()

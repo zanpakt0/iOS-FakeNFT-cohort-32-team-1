@@ -29,6 +29,7 @@ final class ProfileViewController: UIViewController, LoadingView {
         let imageForButton = UIImage(resource: .editProfile)
         editProfileButton.setImage(imageForButton, for: .normal)
         editProfileButton.tintColor = .segmentActive
+        editProfileButton.isUserInteractionEnabled = false
         editProfileButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -211,6 +212,7 @@ final class ProfileViewController: UIViewController, LoadingView {
     // MARK: - Private Methods
     @objc private func editProfileButtonTapped() {
         let viewModel = EditProfileViewModel(servicesAssembly: viewModel.servicesAssembly)
+        viewModel.profileData = self.viewModel.profileInfo
         let viewController = EditProfileViewController(viewModel: viewModel)
         
         universalOpenPage(viewController: viewController)
@@ -226,6 +228,10 @@ final class ProfileViewController: UIViewController, LoadingView {
     
     @objc private func favouriteNftButtonTapped() {
         print("FavouriteNft button tapped")
+    }
+    
+    private func makeEditProfileButtonClickable() {
+        editProfileButton.isUserInteractionEnabled = true
     }
     
     private func addTargetsForButtons() {
@@ -302,9 +308,8 @@ final class ProfileViewController: UIViewController, LoadingView {
     
     private func insertDataIntoFields(profile: ProfileViewData) {
         let processor = RoundCornerImageProcessor(cornerRadius: 35)
-        let defaultImage = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(UIColor.forDefaultAvatarBackground, renderingMode: .alwaysOriginal)
         guard let url = profile.avatarURL else {
-            return self.avatarImageView.image = defaultImage
+            return self.avatarImageView.image = Constants.defaultImage
         }
 
         self.avatarImageView.kf.setImage(with: url,
@@ -315,11 +320,10 @@ final class ProfileViewController: UIViewController, LoadingView {
                 // image loaded correctly
                 break
             case .failure:
-                self.avatarImageView.image = defaultImage
+                self.avatarImageView.image = Constants.defaultImage
             }
         }
         
-        // TODO: Other fields to upgrade
         nameLabel.text = profile.name
         descriptionLabel.text = profile.description
         websiteButton.setTitle("\(profile.name).com", for: .normal)
@@ -341,6 +345,7 @@ final class ProfileViewController: UIViewController, LoadingView {
                 case .loaded(let profile):
                     showNeedViewsInScreen(needToShowLoadingIndicator: .showViewsHideLoader)
                     insertDataIntoFields(profile: profile)
+                    makeEditProfileButtonClickable()
                 case .error(_):
                     showNeedViewsInScreen(needToShowLoadingIndicator: .hideBoth)
                     showErrorAlert()

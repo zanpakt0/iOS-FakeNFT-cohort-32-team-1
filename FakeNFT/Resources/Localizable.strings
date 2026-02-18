@@ -59,3 +59,8 @@
 "Tab.profile" = "Профиль";
 "Profile.myNft.title" = "Мои NFT";
 "Profile.favouriteNft.title" = "Избранные NFT";
+
+// Edit profile page
+"EditProfile.nameLabel.title" = "Имя";
+"EditProfile.descriptionLabel.title" = "Описание";
+"EditProfile.websiteLabel.title" = "Сайт";
