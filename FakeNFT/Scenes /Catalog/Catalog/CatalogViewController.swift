@@ -14,11 +14,11 @@ final class CatalogViewController: UIViewController {
     private let viewModel: CatalogViewModel
     private var subscribes = Set<AnyCancellable>()
     
-    private let sortByNameTitle: String = NSLocalizedString("catalog.sortByNameTitle", comment: "Sort by name")
-    private let sortByCountTitle: String = NSLocalizedString("catalog.sortByCountTitle", comment: "Sort by count of nfts")
-    private let alertTitle: String = NSLocalizedString("catalog.alertTitle", comment: "Не удалось загрузить данные")
-    private let repeatAlertButton: String = NSLocalizedString("catalog.repeatAlertButton", comment: "Повторить")
-    private let cancelAlertButton: String = NSLocalizedString("catalog.cancelAlertButton", comment: "Отмена")
+    private let sortByNameTitle: String = NSLocalizedString("catalog.sort.byName", comment: "Sort by name")
+    private let sortByCountTitle: String = NSLocalizedString("catalog.sort.byCount", comment: "Sort by count of nfts")
+    private let alertTitle: String = NSLocalizedString("catalog.error.title", comment: "Не удалось загрузить данные")
+    private let repeatAlertButton: String = NSLocalizedString("common.retry", comment: "Повторить")
+    private let cancelAlertButton: String = NSLocalizedString("common.cancel", comment: "Отмена")
     
     //MARK: - UI Elements
     private let tableView: UITableView = {

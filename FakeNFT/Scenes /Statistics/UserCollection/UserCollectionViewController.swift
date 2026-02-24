@@ -93,7 +93,7 @@ final class UserCollectionViewController: UIViewController, LoadingView {
     }
     
     private func setupTitle() {
-        let title = NSLocalizedString("UserCollection.tite", comment: "")
+        let title = NSLocalizedString("userCollection.title", comment: "")
         navigationItem.title = title
     }
     
@@ -178,8 +178,8 @@ final class UserCollectionViewController: UIViewController, LoadingView {
     }
     
     private func showErrorAlertWhenTappingButtonsInCell() {
-        let message = NSLocalizedString("UserCollection.errorAlert.message", comment: "")
-        let actionText = NSLocalizedString("UserCollection.errorAlert.actionText", comment: "")
+        let message = NSLocalizedString("userCollection.error.message", comment: "")
+        let actionText = NSLocalizedString("common.ok", comment: "")
         
         let errorModel = ErrorModel(message: message,
                                     actionText: actionText) { return }

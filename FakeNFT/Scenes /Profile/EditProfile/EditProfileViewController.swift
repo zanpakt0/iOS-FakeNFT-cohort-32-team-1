@@ -9,6 +9,7 @@ final class EditProfileViewController: UIViewController {
     private var cancellables = Set<AnyCancellable>()
     
     // MARK: - Views (elements)
+    private var okAction: UIAlertAction?
     private let userAvatarImageButton: UIButton = {
         let exampleImage = UIImage(systemName: "person.crop.circle.fill")
         let userAvatarImageButton = UIButton(type: .custom)
@@ -45,7 +46,7 @@ final class EditProfileViewController: UIViewController {
     }()
     private let userNameLabel: UILabel = {
         let userNameLabel = UILabel()
-        let userNameText = NSLocalizedString("EditProfile.nameLabel.title", comment: "")
+        let userNameText = NSLocalizedString("editProfile.name", comment: "")
         
         userNameLabel.text = userNameText
         userNameLabel.font = .headline3
@@ -66,7 +67,7 @@ final class EditProfileViewController: UIViewController {
     }()
     private let userDescriptionLabel: UILabel = {
         let userDescriptionLabel = UILabel()
-        let userDescriptionText = NSLocalizedString("EditProfile.descriptionLabel.title", comment: "")
+        let userDescriptionText = NSLocalizedString("editProfile.description", comment: "")
         
         userDescriptionLabel.text = userDescriptionText
         userDescriptionLabel.font = .headline3
@@ -95,7 +96,7 @@ final class EditProfileViewController: UIViewController {
     }()
     private let userWebsiteLabel: UILabel = {
         let userWebsiteLabel = UILabel()
-        let userWebsiteText = NSLocalizedString("EditProfile.websiteLabel.title", comment: "")
+        let userWebsiteText = NSLocalizedString("editProfile.website", comment: "")
         
         userWebsiteLabel.text = userWebsiteText
         userWebsiteLabel.font = .headline3
@@ -114,6 +115,24 @@ final class EditProfileViewController: UIViewController {
         
         return userWebsiteTextField
     }()
+    private let saveButton: UIButton = {
+        let saveButton = UIButton(type: .custom)
+        let titleOfSaveButton = NSLocalizedString("editProfile.photo.save", comment: "")
+        saveButton.backgroundColor = .segmentActive
+        saveButton.titleLabel?.font = .bodyBold
+        saveButton.setTitle(titleOfSaveButton, for: .normal)
+        saveButton.setTitleColor(.forViewBackground, for: .normal)
+        saveButton.layer.cornerRadius = 16
+        saveButton.clipsToBounds = true
+        saveButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            saveButton.heightAnchor.constraint(equalToConstant: 60),
+            saveButton.widthAnchor.constraint(equalToConstant: 343)
+        ])
+        
+        return saveButton
+    }()
     
     // MARK: - Initializers
     init(viewModel: EditProfileViewModel) {
@@ -129,7 +148,7 @@ final class EditProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        addTargetsForButtons()
+        addTargetsAndDelegates()
         addSubviews()
         bindViewModel()
         
@@ -137,41 +156,45 @@ final class EditProfileViewController: UIViewController {
     }
     
     // MARK: - Private Methods
-    @objc private func cameraButtonTapped() {
-        
+    @objc private func changePhoto() {
+        showActionSheetWhenClickingToPhoto()
+    }
+    
+    @objc private func textForAvatarURLDidChange(_ textField: UITextField) {
+        let text = textField.text ?? ""
+        okAction?.isEnabled = !text.trimmingCharacters(in: .whitespaces).isEmpty
+    }
+    
+    @objc private func textDidChange(_ textField: UITextField) {
+        switch textField {
+        case userNameTextField:
+            self.viewModel.updateName(textField.text)
+        case userWebsiteTextField:
+            self.viewModel.updateWebsite(textField.text)
+        default:
+            break
+        }
     }
     
     private func insertDataIntoFields(userInfo: ProfileViewData?) {
-        guard let url = userInfo?.avatarURL else {
-            return self.userAvatarImageButton.setImage(Constants.defaultImage, for: .normal)
-        }
-        
-        
-        self.userAvatarImageButton.kf.setImage(with: url,
-                                               for: .normal,
-                                               placeholder: nil,
-                                               options: nil, completionHandler:   { result in
-            switch result {
-            case .success:
-                // image loaded correctly
-                break
-            case .failure:
-                self.userAvatarImageButton.setImage(Constants.defaultImage, for: .normal)
-            }
-        })
-        
+        setImageToUserAvatar(avatarURL: userInfo?.avatarURL)
         userNameTextField.text = userInfo?.name
         userDescriptionTextView.text = userInfo?.description
         userWebsiteTextField.text = userInfo?.websiteURL?.absoluteString
     }
     
-    private func addTargetsForButtons() {
-        userAvatarImageButton.addTarget(self, action: #selector(cameraButtonTapped), for: .touchUpInside)
-        cameraButton.addTarget(self, action: #selector(cameraButtonTapped), for: .touchUpInside)
+    private func addTargetsAndDelegates() {
+        //Добавил делегат для текстового поля userDescriptionTextView
+        userDescriptionTextView.delegate = self
+        
+        userAvatarImageButton.addTarget(self, action: #selector(changePhoto), for: .touchUpInside)
+        cameraButton.addTarget(self, action: #selector(changePhoto), for: .touchUpInside)
+        userNameTextField.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
+        userWebsiteTextField.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
     }
     
     private func addSubviews() {
-        [userAvatarImageButton, cameraButton, userNameLabel, userNameTextField, userDescriptionLabel, userDescriptionTextView, userWebsiteLabel, userWebsiteTextField].forEach {
+        [userAvatarImageButton, cameraButton, userNameLabel, userNameTextField, userDescriptionLabel, userDescriptionTextView, userWebsiteLabel, userWebsiteTextField, saveButton].forEach {
             view.addSubview($0)
         }
         
@@ -210,8 +233,31 @@ final class EditProfileViewController: UIViewController {
             userWebsiteTextField.topAnchor.constraint(equalTo: userWebsiteLabel.bottomAnchor, constant: 8),
             userWebsiteTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             userWebsiteTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            userWebsiteTextField.heightAnchor.constraint(equalToConstant: 44)
+            userWebsiteTextField.heightAnchor.constraint(equalToConstant: 44),
+            
+            saveButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            saveButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16)
         ])
+    }
+    
+    private func setImageToUserAvatar(avatarURL: URL?) {
+        guard let url = avatarURL else {
+            return self.userAvatarImageButton.setImage(Constants.defaultImage, for: .normal)
+        }
+        
+        
+        self.userAvatarImageButton.kf.setImage(with: url,
+                                               for: .normal,
+                                               placeholder: nil,
+                                               options: nil, completionHandler:   { result in
+            switch result {
+            case .success:
+                // image loaded correctly
+                break
+            case .failure:
+                self.userAvatarImageButton.setImage(Constants.defaultImage, for: .normal)
+            }
+        })
     }
     
     private func bindViewModel() {
@@ -232,6 +278,87 @@ final class EditProfileViewController: UIViewController {
                 }
             }
             .store(in: &cancellables)
+        
+        viewModel.$isSaveButtonVisible
+            .receive(on: RunLoop.main)
+            .sink { [weak self] isVisible in
+                self?.saveButton.isHidden = !isVisible
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func showActionSheetWhenClickingToPhoto() {
+        let titleOfActionSheet = NSLocalizedString("editProfile.photo.title", comment: "")
+        let titleOfChangePhotoButton = NSLocalizedString("editProfile.photo.change", comment: "")
+        let titleOfDeletePhotoButton = NSLocalizedString("editProfile.photo.delete", comment: "")
+        let titleOfCancelButton = NSLocalizedString("common.cancel", comment: "")
+        
+        let actionSheet = UIAlertController(title: titleOfActionSheet, message: nil, preferredStyle: .actionSheet)
+        
+        let changePhotoAction = UIAlertAction(
+            title: titleOfChangePhotoButton,
+            style: .default,
+            handler: { _ in
+                self.showAlertWhenChangingURLOfProfileImage()
+        })
+        let deletePhotoAction = UIAlertAction(
+            title: titleOfDeletePhotoButton,
+            style: .destructive,
+            handler: { _ in
+                self.viewModel.updateAvatar(newAvatar: "")
+                self.userAvatarImageButton.setImage(Constants.defaultImage, for: .normal)
+        })
+        let cancelAction = UIAlertAction(
+            title: titleOfCancelButton,
+            style: .cancel
+        )
+        
+        [changePhotoAction, deletePhotoAction, cancelAction].forEach {
+            actionSheet.addAction($0)
+        }
+        present(actionSheet, animated: true)
+    }
+    
+    private func showAlertWhenChangingURLOfProfileImage() {
+        let titleOfCancelButton = NSLocalizedString("common.cancel", comment: "")
+        let titleOfSaveButton = NSLocalizedString("editProfile.photo.save", comment: "")
+        let titleOfAlert = NSLocalizedString("editProfile.photo.linkTitle", comment: "")
+        
+        let alert = UIAlertController(
+            title: titleOfAlert,
+            message: nil,
+            preferredStyle: .alert)
+        
+        alert.addTextField { textField in
+            textField.placeholder = "http://..."
+            
+            textField.addTarget(self, action: #selector(self.textForAvatarURLDidChange(_:)), for: .editingChanged)
+        }
+        
+        let cancelAction = UIAlertAction(
+            title: titleOfCancelButton,
+            style: .cancel)
+        let saveAction = UIAlertAction(
+            title: titleOfSaveButton,
+            style: .default,
+            handler: { _ in
+                guard let text = alert.textFields?.first?.text else { return }
+                
+                self.viewModel.updateAvatar(newAvatar: alert.textFields?.first?.text)
+                self.setImageToUserAvatar(avatarURL: URL(string: text))
+            })
+        saveAction.isEnabled = false
+        
+        alert.addAction(cancelAction)
+        alert.addAction(saveAction)
+        
+        self.okAction = saveAction
+        present(alert, animated: true)
     }
 }
 
+extension EditProfileViewController: UITextViewDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+        self.viewModel.updateDescription(textView.text)
+    }
+}

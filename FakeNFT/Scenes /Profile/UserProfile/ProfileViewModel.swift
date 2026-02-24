@@ -11,11 +11,11 @@ enum ProfileState {
 final class ProfileViewModel {
     
     // MARK: - Public Properties
-    var profileInfo: ProfileViewData?
     let servicesAssembly: ServicesAssembly
     
     // MARK: - Private Properties
     @Published private(set) var state: ProfileState = .idle
+    private(set) var profileInfo: ProfileViewData?
     private var currentTask: NetworkTask?
     private var isLoading = false
     

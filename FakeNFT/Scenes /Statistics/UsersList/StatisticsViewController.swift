@@ -94,8 +94,8 @@ final class StatisticsViewController: UIViewController, LoadingView {
     
     // MARK: - Private Methods
     @objc private func filterButtonClicked() {
-        let textOfByNameButton = NSLocalizedString("Statistics.actionSheet.byNameAction.text", comment: "")
-        let textOfByRatingButton = NSLocalizedString("Statistics.actionSheet.byRatingAction.text", comment: "")
+        let textOfByNameButton = NSLocalizedString("statistics.sort.byName", comment: "")
+        let textOfByRatingButton = NSLocalizedString("statistics.sort.byRating", comment: "")
         
         let byNameAction = UIAlertAction(title: textOfByNameButton, style: .default) { [weak self] _ in
             self?.viewModel.setFilterTypeToStorage(FilterType.byName.rawValue)

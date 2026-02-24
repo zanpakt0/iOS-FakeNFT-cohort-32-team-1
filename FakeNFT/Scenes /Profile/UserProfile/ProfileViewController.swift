@@ -81,7 +81,7 @@ final class ProfileViewController: UIViewController, LoadingView {
     private let countOfMyNftLabel: UILabel = UILabel()
     private lazy var myNftButton: UIButton = {
         let myNftButton = UIButton(type: .system)
-        let titleOfMyNft = NSLocalizedString("Profile.myNft.title", comment: "")
+        let titleOfMyNft = NSLocalizedString("profile.myNft", comment: "")
         
         let leftLabel = UILabel()
         leftLabel.text = titleOfMyNft
@@ -127,7 +127,7 @@ final class ProfileViewController: UIViewController, LoadingView {
     private let countOfFavouriteNftLabel: UILabel = UILabel()
     private lazy var favouriteNftButton: UIButton = {
         let favouriteNftButton = UIButton(type: .system)
-        let favouriteNftTitle = NSLocalizedString("Profile.favouriteNft.title", comment: "")
+        let favouriteNftTitle = NSLocalizedString("profile.favouriteNft", comment: "")
         
         let leftLabel = UILabel()
         leftLabel.text = favouriteNftTitle
@@ -211,8 +211,11 @@ final class ProfileViewController: UIViewController, LoadingView {
     
     // MARK: - Private Methods
     @objc private func editProfileButtonTapped() {
-        let viewModel = EditProfileViewModel(servicesAssembly: viewModel.servicesAssembly)
-        viewModel.profileData = self.viewModel.profileInfo
+        guard let profileInfo = viewModel.profileInfo else { return }
+        let viewModel = EditProfileViewModel(
+            servicesAssembly: viewModel.servicesAssembly,
+            profileData: profileInfo
+        )
         let viewController = EditProfileViewController(viewModel: viewModel)
         
         universalOpenPage(viewController: viewController)

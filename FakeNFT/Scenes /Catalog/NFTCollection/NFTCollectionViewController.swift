@@ -40,9 +40,9 @@ final class NFTCollectionViewController: UIViewController {
     private var collectionViewHeightConstraint: NSLayoutConstraint?
     private var subscribes = Set<AnyCancellable>()
     
-    private let alertTitle: String = NSLocalizedString("nftCollection.alertTitle", comment: "Не удалось загрузить данные")
-    private let repeatAlertButton: String = NSLocalizedString("nftCollection.repeatAlertButton", comment: "Повторить")
-    private let cancelAlertButton: String = NSLocalizedString("nftCollection.cancelAlertButton", comment: "Отмена")
+    private let alertTitle: String = NSLocalizedString("nftCollection.error.title", comment: "Не удалось загрузить данные")
+    private let repeatAlertButton: String = NSLocalizedString("common.retry", comment: "Повторить")
+    private let cancelAlertButton: String = NSLocalizedString("common.cancel", comment: "Отмена")
     
     //MARK: - UI Elements
     private let scrollView: UIScrollView = {
@@ -95,7 +95,7 @@ final class NFTCollectionViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .caption2
         label.textAlignment = .left
-        label.text = NSLocalizedString("nftCollection.authorLabel.text", comment: "Author of collection:")
+        label.text = NSLocalizedString("nftCollection.authorTitle", comment: "Author of collection:")
         return label
     }()
     

@@ -36,7 +36,7 @@ final class SuccessViewController: UIViewController {
     }()
     private let labelText: UILabel = {
         let label = UILabel()
-        label.text = NSLocalizedString("Success! Your payment has been completed. Congratulations on your purchase!", comment: "")
+        label.text = NSLocalizedString("cart.successMessage", comment: "")
         label.font = SuccessViewStyle.titleFont
         label.numberOfLines = 2
         label.textAlignment = .center
@@ -44,7 +44,7 @@ final class SuccessViewController: UIViewController {
     }()
     private let buttonToCart: UIButton = {
         let button = UIButton()
-        button.setTitle(NSLocalizedString("Return to Cart", comment: ""), for: .normal)
+        button.setTitle(NSLocalizedString("cart.returnButton", comment: ""), for: .normal)
         button.backgroundColor = .segmentButtonBackground
         button.layer.cornerRadius = SuccessViewStyle.buttonToCartCornerRadius
         button.setTitleColor(.segmentButtonText, for: .normal)

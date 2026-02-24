@@ -84,7 +84,7 @@ final class UserCardViewController: UIViewController, LoadingView {
     }()
     private let goToUserWebsiteButton: UIButton = {
         let goToUserWebsiteButton = UIButton(type: .custom)
-        let titleOfGoToUserWebsiteButton = NSLocalizedString("UserCard.goToUserWebsiteButton.title", comment: "")
+        let titleOfGoToUserWebsiteButton = NSLocalizedString("userCard.openWebsiteButton", comment: "")
         
         goToUserWebsiteButton.setTitle(titleOfGoToUserWebsiteButton, for: .normal)
         goToUserWebsiteButton.titleLabel?.font = .caption1
@@ -103,7 +103,7 @@ final class UserCardViewController: UIViewController, LoadingView {
     private let countOfNftsLabel: UILabel = UILabel()
     private lazy var nftCollectionButton: UIButton = {
         let nftCollectionButton = UIButton(type: .system)
-        let titleOfNftCollection = NSLocalizedString("UserCard.nftCollectionButton.title", comment: "")
+        let titleOfNftCollection = NSLocalizedString("userCard.collectionButton", comment: "")
         
         let leftLabel = UILabel()
         leftLabel.text = titleOfNftCollection

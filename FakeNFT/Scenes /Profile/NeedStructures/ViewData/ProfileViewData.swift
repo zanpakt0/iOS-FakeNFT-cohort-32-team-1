@@ -1,7 +1,7 @@
 import Foundation
 
 // MARK: - Structure of user's info (Need for user card page)
-struct ProfileViewData {
+struct ProfileViewData: Equatable {
     let avatarURL: URL?
     let name: String
     let description: String?

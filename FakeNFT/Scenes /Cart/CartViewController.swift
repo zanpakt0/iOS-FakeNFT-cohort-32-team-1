@@ -22,7 +22,7 @@ final class CartViewController: UIViewController {
     private let totalLabel = UILabel()
     private let payButton: UIButton = {
         let btn = UIButton(type: .system)
-        btn.setTitle(NSLocalizedString("Filter.actionSheet.title.toPay", comment: ""), for: .normal)
+        btn.setTitle(NSLocalizedString("filter.sort.toPay", comment: ""), for: .normal)
         btn.tintColor = UIColor.segmentButtonText
         btn.backgroundColor = UIColor.segmentButtonBackground
         btn.layer.cornerRadius = 18
@@ -31,7 +31,7 @@ final class CartViewController: UIViewController {
     }()
     private let emptyLabel: UILabel = {
         let label = UILabel()
-        label.text = NSLocalizedString("Your cart is empty", comment: "")
+        label.text = NSLocalizedString("cart.empty", comment: "")
         label.font = .systemFont(ofSize: 17, weight: .bold)
         label.textColor = .segmentButtonBackground
         label.textAlignment = .center
@@ -250,7 +250,7 @@ extension CartViewController: UITableViewDataSource, UITableViewDelegate, CartTa
                     self.showError(
                         ErrorModel(
                             message: NSLocalizedString("Не удалось удалить NFT", comment: ""),
-                            actionText: NSLocalizedString("Ок", comment: ""),
+                            actionText: NSLocalizedString("common.ok", comment: ""),
                             action: {}
                         )
                     )
