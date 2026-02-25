@@ -14,6 +14,7 @@ protocol NftService {
     
     func putToFavoritesNft(likes: String, completion: @escaping (Result<Profile, Error>) -> Void) -> NetworkTask?
     func putToOrderedNft(nfts: String, completion: @escaping (Result<Order, Error>) -> Void) -> NetworkTask?
+    func putProfile(profileFields: ProfileFields, completion: @escaping (Result<Profile, Error>) -> Void) -> NetworkTask?
 }
 
 final class NftServiceImpl: NftService {
@@ -104,6 +105,14 @@ final class NftServiceImpl: NftService {
     func putToOrderedNft(nfts: String, completion: @escaping (Result<Order, any Error>) -> Void) -> (any NetworkTask)? {
         let request = PutOrderedNftsRequest(nfts: nfts)
         return networkClient.send(request: request, type: Order.self) { result in
+            completion(result)
+        }
+    }
+    
+    @discardableResult
+    func putProfile(profileFields: ProfileFields, completion: @escaping (Result<Profile, Error>) -> Void) -> NetworkTask? {
+        let request = PutProfileRequest(profileFields: profileFields)
+        return networkClient.send(request: request, type: Profile.self) {result in
             completion(result)
         }
     }

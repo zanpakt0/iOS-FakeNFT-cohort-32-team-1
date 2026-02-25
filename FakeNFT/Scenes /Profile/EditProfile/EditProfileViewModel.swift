@@ -1,4 +1,4 @@
-import Combine
+import Foundation
 
 // MARK: - Need enums
 enum EditProfileState {
@@ -29,6 +29,50 @@ final class EditProfileViewModel {
     }
     
     // MARK: - Public Methods
+    func putProfileData() {
+        currentTask?.cancel()
+        print("Дошло")
+        
+        guard !isLoading else { return }
+        
+        isLoading = true
+        state = .loading
+        
+        let profileFields = ProfileFields(
+            name: profileData.name,
+            description: profileData.description,
+            avatar: profileData.avatarURL?.absoluteString,
+            website: profileData.websiteURL?.absoluteString
+        )
+        
+        currentTask = servicesAssembly.nftService.putProfile(profileFields: profileFields) { [weak self] result in
+            
+            DispatchQueue.main.async {
+                guard let self else { return }
+                
+                self.isLoading = false
+                self.currentTask = nil
+                
+                switch result {
+                case .success(let profileData):
+                    let updatedProfileData = ProfileViewData(profile: profileData)
+                    self.originalData = updatedProfileData
+                    
+                    self.state = .loaded(updatedProfileData)
+                    print("Данные в профиле успешно обновились")
+                case .failure(let error):
+                    if (error as NSError).code == NSURLErrorCancelled {
+                        return
+                    }
+                    
+                    print("Ошибка во время обновления данных в профиле")
+                    self.state = .error(error)
+                }
+            }
+        }
+        
+    }
+    
     func updateName(_ newName: String?) {
         guard let description = profileData.description,
               let websiteURL = profileData.websiteURL,

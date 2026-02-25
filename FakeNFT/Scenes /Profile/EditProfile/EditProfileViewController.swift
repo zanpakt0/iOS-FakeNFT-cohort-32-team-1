@@ -156,10 +156,6 @@ final class EditProfileViewController: UIViewController {
     }
     
     // MARK: - Private Methods
-    @objc private func changePhoto() {
-        showActionSheetWhenClickingToPhoto()
-    }
-    
     @objc private func textForAvatarURLDidChange(_ textField: UITextField) {
         let text = textField.text ?? ""
         okAction?.isEnabled = !text.trimmingCharacters(in: .whitespaces).isEmpty
@@ -176,6 +172,14 @@ final class EditProfileViewController: UIViewController {
         }
     }
     
+    @objc private func saveButtonClicked() {
+        viewModel.putProfileData()
+    }
+    
+    @objc private func changePhoto() {
+        showActionSheetWhenClickingToPhoto()
+    }
+    
     private func insertDataIntoFields(userInfo: ProfileViewData?) {
         setImageToUserAvatar(avatarURL: userInfo?.avatarURL)
         userNameTextField.text = userInfo?.name
@@ -189,6 +193,8 @@ final class EditProfileViewController: UIViewController {
         
         userAvatarImageButton.addTarget(self, action: #selector(changePhoto), for: .touchUpInside)
         cameraButton.addTarget(self, action: #selector(changePhoto), for: .touchUpInside)
+        saveButton.addTarget(self, action: #selector(saveButtonClicked), for: .touchUpInside)
+        
         userNameTextField.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
         userWebsiteTextField.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
     }
@@ -305,7 +311,7 @@ final class EditProfileViewController: UIViewController {
             title: titleOfDeletePhotoButton,
             style: .destructive,
             handler: { _ in
-                self.viewModel.updateAvatar(newAvatar: "")
+                self.viewModel.updateAvatar(newAvatar: "empty")
                 self.userAvatarImageButton.setImage(Constants.defaultImage, for: .normal)
         })
         let cancelAction = UIAlertAction(

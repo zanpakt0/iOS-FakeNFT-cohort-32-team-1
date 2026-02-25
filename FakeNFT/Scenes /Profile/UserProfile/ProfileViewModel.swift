@@ -43,7 +43,6 @@ final class ProfileViewModel {
                 
                 switch result {
                 case .success(let profile):
-                    
                     let profileInfo = ProfileViewData(profile: profile)
                     self.profileInfo = profileInfo
                     
