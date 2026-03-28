@@ -2,13 +2,34 @@ import UIKit
 import Kingfisher
 import Combine
 
-final class EditProfileViewController: UIViewController {
+final class EditProfileViewController: UIViewController, LoadingView {
     
     // MARK: - Private Properties
     private let viewModel: EditProfileViewModel
     private var cancellables = Set<AnyCancellable>()
     
     // MARK: - Views (elements)
+    let activityIndicator: UIActivityIndicatorView = {
+        let activiyIndicator = UIActivityIndicatorView(style: .large)
+        activiyIndicator.hidesWhenStopped = true
+        activiyIndicator.color = .black
+        activiyIndicator.translatesAutoresizingMaskIntoConstraints = false
+        
+        return activiyIndicator
+    }()
+    private let containerForActivityIndicator: UIView = {
+        let containerForActivityIndicator = UIView()
+        containerForActivityIndicator.backgroundColor = .forActivityIndicatorBackground
+        containerForActivityIndicator.layer.cornerRadius = 8
+        containerForActivityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            containerForActivityIndicator.widthAnchor.constraint(equalToConstant: 82),
+            containerForActivityIndicator.heightAnchor.constraint(equalToConstant: 82)
+        ])
+        
+        return containerForActivityIndicator
+    }()
     private var okAction: UIAlertAction?
     private let userAvatarImageButton: UIButton = {
         let exampleImage = UIImage(systemName: "person.crop.circle.fill")
@@ -133,6 +154,20 @@ final class EditProfileViewController: UIViewController {
         
         return saveButton
     }()
+    private let backButton: UIButton = {
+        let backButton = UIButton(type: .custom)
+        let exampleImage = UIImage(resource: .collectionBackButton)
+        
+        backButton.setImage(exampleImage, for: .normal)
+        backButton.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            backButton.heightAnchor.constraint(equalToConstant: 24),
+            backButton.widthAnchor.constraint(equalToConstant: 24)
+        ])
+         
+        return backButton
+    }()
     
     // MARK: - Initializers
     init(viewModel: EditProfileViewModel) {
@@ -147,7 +182,9 @@ final class EditProfileViewController: UIViewController {
     // MARK: View Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .forViewBackground
         
+        setupNavigationBar()
         addTargetsAndDelegates()
         addSubviews()
         bindViewModel()
@@ -180,6 +217,14 @@ final class EditProfileViewController: UIViewController {
         showActionSheetWhenClickingToPhoto()
     }
     
+    @objc private func backButtonClicked() {
+        if !saveButton.isHidden {
+            showExitAlert()
+        } else {
+            self.navigationController?.popViewController(animated: true)
+        }
+    }
+    
     private func insertDataIntoFields(userInfo: ProfileViewData?) {
         setImageToUserAvatar(avatarURL: userInfo?.avatarURL)
         userNameTextField.text = userInfo?.name
@@ -194,21 +239,37 @@ final class EditProfileViewController: UIViewController {
         userAvatarImageButton.addTarget(self, action: #selector(changePhoto), for: .touchUpInside)
         cameraButton.addTarget(self, action: #selector(changePhoto), for: .touchUpInside)
         saveButton.addTarget(self, action: #selector(saveButtonClicked), for: .touchUpInside)
+        backButton.addTarget(self, action: #selector(backButtonClicked), for: .touchUpInside)
         
         userNameTextField.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
         userWebsiteTextField.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
     }
     
     private func addSubviews() {
-        [userAvatarImageButton, cameraButton, userNameLabel, userNameTextField, userDescriptionLabel, userDescriptionTextView, userWebsiteLabel, userWebsiteTextField, saveButton].forEach {
+        [backButton, userAvatarImageButton, cameraButton, userNameLabel, userNameTextField, userDescriptionLabel, userDescriptionTextView, userWebsiteLabel, userWebsiteTextField, saveButton, containerForActivityIndicator].forEach {
             view.addSubview($0)
         }
+        
+        containerForActivityIndicator.addSubview(activityIndicator)
         
         setupConstraints()
     }
     
+    private func setupNavigationBar() {
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
+    }
+    
     private func setupConstraints() {
         NSLayoutConstraint.activate([
+            backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 9),
+            backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 11),
+            
+            containerForActivityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            containerForActivityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            
+            activityIndicator.centerXAnchor.constraint(equalTo: containerForActivityIndicator.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: containerForActivityIndicator.centerYAnchor),
+            
             userAvatarImageButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             userAvatarImageButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: -8),
             
@@ -266,6 +327,43 @@ final class EditProfileViewController: UIViewController {
         })
     }
     
+    private func disableEverything() {
+        backButton.isUserInteractionEnabled = false
+        userAvatarImageButton.isUserInteractionEnabled = false
+        cameraButton.isUserInteractionEnabled = false
+        userNameTextField.isUserInteractionEnabled = false
+        userDescriptionTextView.isUserInteractionEnabled = false
+        userWebsiteTextField.isUserInteractionEnabled = false
+        saveButton.isUserInteractionEnabled = false
+    }
+    
+    private func enableEverything() {
+        backButton.isUserInteractionEnabled = true
+        userAvatarImageButton.isUserInteractionEnabled = true
+        cameraButton.isUserInteractionEnabled = true
+        userNameTextField.isUserInteractionEnabled = true
+        userDescriptionTextView.isUserInteractionEnabled = true
+        userWebsiteTextField.isUserInteractionEnabled = true
+        saveButton.isUserInteractionEnabled = true
+    }
+    
+    private func showNeedViewsInScreen(whatShouldBeShown: UIStateForLoader) {
+        switch whatShouldBeShown {
+        case .hideBoth:
+            containerForActivityIndicator.isHidden = true
+            hideLoading()
+        case .showViewsHideLoader:
+            containerForActivityIndicator.isHidden = true
+            hideLoading()
+        case .showLoaderHideViews:
+            containerForActivityIndicator.isHidden = false
+            showLoading()
+        case .showBoth:
+            containerForActivityIndicator.isHidden = false
+            showLoading()
+        }
+    }
+    
     private func bindViewModel() {
         viewModel.$state
             .receive(on: RunLoop.main)
@@ -274,13 +372,17 @@ final class EditProfileViewController: UIViewController {
                 
                 switch state {
                 case .idle:
-                    break
+                    showNeedViewsInScreen(whatShouldBeShown: .showViewsHideLoader)
                 case .loading:
-                    break
+                    showNeedViewsInScreen(whatShouldBeShown: .showLoaderHideViews)
+                    disableEverything()
                 case .loaded(_):
-                    break
+                    showNeedViewsInScreen(whatShouldBeShown: .showViewsHideLoader)
+                    enableEverything()
                 case .error(_):
-                    break
+                    showNeedViewsInScreen(whatShouldBeShown: .showViewsHideLoader)
+                    showErrorAlert()
+                    enableEverything()
                 }
             }
             .store(in: &cancellables)
@@ -360,6 +462,26 @@ final class EditProfileViewController: UIViewController {
         
         self.okAction = saveAction
         present(alert, animated: true)
+    }
+    
+    private func showErrorAlert() {
+        universalErrorAlert { [weak self] in
+            guard let self else { return }
+            self.viewModel.putProfileData()
+        }
+    }
+    
+    private func showExitAlert() {
+        let titleOfExitAlert = NSLocalizedString("editProfile.exit.title", comment: "")
+        let titleOfStayButton = NSLocalizedString("editProfile.exit.stay", comment: "")
+        let titleOfQuitButton = NSLocalizedString("editProfile.exit.quit", comment: "")
+        
+        let stayAction = UIAlertAction(title: titleOfStayButton, style: .cancel)
+        let quitAction = UIAlertAction(title: titleOfQuitButton, style: .default) { _ in
+            self.navigationController?.popViewController(animated: true)
+        }
+        
+        showErrorAlertWithTwoButtons(titleOfAlert: titleOfExitAlert, firstAction: stayAction, secondAction: quitAction)
     }
 }
 

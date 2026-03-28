@@ -84,4 +84,8 @@
 "editProfile.photo.change" = "Изменить фото";
 "editProfile.photo.delete" = "Удалить фото";
 "editProfile.photo.save" = "Сохранить";
-"editProfile.photo.linkTitle" = "Ссылка на фото";      
+"editProfile.photo.linkTitle" = "Ссылка на фото";
+
+"editProfile.exit.title" = "Уверены, что хотите выйти?";
+"editProfile.exit.quit" = "Выйти";
+"editProfile.exit.stay" = "Остаться";

@@ -119,8 +119,8 @@ final class UserCollectionViewController: UIViewController, LoadingView {
         ])
     }
 
-    private func showNeedViewsInScreen(needToShowLoadingIndicator: UIStateForLoader) {
-        switch needToShowLoadingIndicator {
+    private func showNeedViewsInScreen(whatShouldBeShown: UIStateForLoader) {
+        switch whatShouldBeShown {
         case .showLoaderHideViews:
             self.containerForActivityIndicator.isHidden = false
             showLoading()
@@ -148,21 +148,21 @@ final class UserCollectionViewController: UIViewController, LoadingView {
                 
                 switch state {
                 case .idle:
-                    showNeedViewsInScreen(needToShowLoadingIndicator: .hideBoth)
+                    showNeedViewsInScreen(whatShouldBeShown: .hideBoth)
                 case .loading:
                     if viewModel.nftList.isEmpty {
-                        showNeedViewsInScreen(needToShowLoadingIndicator: .showLoaderHideViews)
+                        showNeedViewsInScreen(whatShouldBeShown: .showLoaderHideViews)
                     } else {
-                        showNeedViewsInScreen(needToShowLoadingIndicator: .showBoth)
+                        showNeedViewsInScreen(whatShouldBeShown: .showBoth)
                     }
                 case .loaded(_):
-                    showNeedViewsInScreen(needToShowLoadingIndicator: .showViewsHideLoader)
+                    showNeedViewsInScreen(whatShouldBeShown: .showViewsHideLoader)
                     collectionViewWithNfts.reloadData()
                 case .error(_):
-                    showNeedViewsInScreen(needToShowLoadingIndicator: .hideBoth)
+                    showNeedViewsInScreen(whatShouldBeShown: .hideBoth)
                     showErrorAlertWhenLoadingEverything()
                 case .errorWhenTapOnButtonsInCell(_):
-                    showNeedViewsInScreen(needToShowLoadingIndicator: .showViewsHideLoader)
+                    showNeedViewsInScreen(whatShouldBeShown: .showViewsHideLoader)
                     showErrorAlertWhenTappingButtonsInCell()
                 }
             }

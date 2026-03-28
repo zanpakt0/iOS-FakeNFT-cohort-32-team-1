@@ -206,7 +206,7 @@ final class ProfileViewController: UIViewController, LoadingView {
         super.viewWillDisappear(animated)
         
         viewModel.stopTaskWhenClosed()
-        showNeedViewsInScreen(needToShowLoadingIndicator: .hideBoth)
+        showNeedViewsInScreen(whatShouldBeShown: .hideBoth)
     }
     
     // MARK: - Private Methods
@@ -292,8 +292,8 @@ final class ProfileViewController: UIViewController, LoadingView {
         ])
     }
     
-    private func showNeedViewsInScreen(needToShowLoadingIndicator: UIStateForLoader) {
-        switch needToShowLoadingIndicator {
+    private func showNeedViewsInScreen(whatShouldBeShown: UIStateForLoader) {
+        switch whatShouldBeShown {
         case .showLoaderHideViews:
             showLoading()
             viewWithAllElements.isHidden = true
@@ -342,15 +342,15 @@ final class ProfileViewController: UIViewController, LoadingView {
                 
                 switch state {
                 case .idle:
-                    showNeedViewsInScreen(needToShowLoadingIndicator: .hideBoth)
+                    showNeedViewsInScreen(whatShouldBeShown: .hideBoth)
                 case .loading:
-                    showNeedViewsInScreen(needToShowLoadingIndicator: .showLoaderHideViews)
+                    showNeedViewsInScreen(whatShouldBeShown: .showLoaderHideViews)
                 case .loaded(let profile):
-                    showNeedViewsInScreen(needToShowLoadingIndicator: .showViewsHideLoader)
+                    showNeedViewsInScreen(whatShouldBeShown: .showViewsHideLoader)
                     insertDataIntoFields(profile: profile)
                     makeEditProfileButtonClickable()
                 case .error(_):
-                    showNeedViewsInScreen(needToShowLoadingIndicator: .hideBoth)
+                    showNeedViewsInScreen(whatShouldBeShown: .hideBoth)
                     showErrorAlert()
                 }
             }

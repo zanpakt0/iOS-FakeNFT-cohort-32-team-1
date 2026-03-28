@@ -89,7 +89,7 @@ final class StatisticsViewController: UIViewController, LoadingView {
         super.viewWillDisappear(animated)
         
         viewModel.stopTaskWhenClosed()
-        showNeedViewsInScreen(needToShowLoadingIndicator: .showViewsHideLoader)
+        showNeedViewsInScreen(whatShouldBeShown: .showViewsHideLoader)
     }
     
     // MARK: - Private Methods
@@ -138,8 +138,8 @@ final class StatisticsViewController: UIViewController, LoadingView {
         ])
     }
     
-    private func showNeedViewsInScreen(needToShowLoadingIndicator: UIStateForLoader) {
-        switch needToShowLoadingIndicator {
+    private func showNeedViewsInScreen(whatShouldBeShown: UIStateForLoader) {
+        switch whatShouldBeShown {
         case .showLoaderHideViews:
             showLoading()
             self.tableViewWithUsers.isHidden = true
@@ -163,25 +163,25 @@ final class StatisticsViewController: UIViewController, LoadingView {
                 
                 switch state {
                 case .idle:
-                    showNeedViewsInScreen(needToShowLoadingIndicator: .hideBoth)
+                    showNeedViewsInScreen(whatShouldBeShown: .hideBoth)
                     break
                 case .loading:
                     switch self.viewModel.usersList.count {
                     case 0:
-                        showNeedViewsInScreen(needToShowLoadingIndicator: .showLoaderHideViews)
+                        showNeedViewsInScreen(whatShouldBeShown: .showLoaderHideViews)
                     default:
-                        showNeedViewsInScreen(needToShowLoadingIndicator: .showBoth)
+                        showNeedViewsInScreen(whatShouldBeShown: .showBoth)
                     }
                 case .loaded(_):
-                    showNeedViewsInScreen(needToShowLoadingIndicator: .showViewsHideLoader)
+                    showNeedViewsInScreen(whatShouldBeShown: .showViewsHideLoader)
                     self.tableViewWithUsers.reloadData()
                 case .error(_):
                     switch self.viewModel.usersList.count {
                     case 0:
-                        showNeedViewsInScreen(needToShowLoadingIndicator: .hideBoth)
+                        showNeedViewsInScreen(whatShouldBeShown: .hideBoth)
                         showErrorAlert()
                     default:
-                        showNeedViewsInScreen(needToShowLoadingIndicator: .showViewsHideLoader)
+                        showNeedViewsInScreen(whatShouldBeShown: .showViewsHideLoader)
                         showErrorAlert()
                     }
                 }

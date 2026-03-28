@@ -59,6 +59,7 @@ final class EditProfileViewModel {
                     self.originalData = updatedProfileData
                     
                     self.state = .loaded(updatedProfileData)
+                    self.recalcSaveButton()
                     print("Данные в профиле успешно обновились")
                 case .failure(let error):
                     if (error as NSError).code == NSURLErrorCancelled {

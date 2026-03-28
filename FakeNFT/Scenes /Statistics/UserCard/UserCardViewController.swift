@@ -242,8 +242,8 @@ final class UserCardViewController: UIViewController, LoadingView {
         ])
     }
     
-    private func showNeedViewsInScreen(needToShowLoadingIndicator: UIStateForLoader) {
-        switch needToShowLoadingIndicator {
+    private func showNeedViewsInScreen(whatShouldBeShown: UIStateForLoader) {
+        switch whatShouldBeShown {
         case .showLoaderHideViews:
             showLoading()
             self.viewWithAllElements.isHidden = true
@@ -290,14 +290,14 @@ final class UserCardViewController: UIViewController, LoadingView {
                 
                 switch state {
                 case .idle:
-                    showNeedViewsInScreen(needToShowLoadingIndicator: .hideBoth)
+                    showNeedViewsInScreen(whatShouldBeShown: .hideBoth)
                 case .loading:
-                    showNeedViewsInScreen(needToShowLoadingIndicator: .showLoaderHideViews)
+                    showNeedViewsInScreen(whatShouldBeShown: .showLoaderHideViews)
                 case .loaded(let user):
-                    showNeedViewsInScreen(needToShowLoadingIndicator: .showViewsHideLoader)
+                    showNeedViewsInScreen(whatShouldBeShown: .showViewsHideLoader)
                     insertUserDataIntoFields(userData: user)
                 case .error(_):
-                    showNeedViewsInScreen(needToShowLoadingIndicator: .hideBoth)
+                    showNeedViewsInScreen(whatShouldBeShown: .hideBoth)
                     showErrorAlert()
                 }
             }
