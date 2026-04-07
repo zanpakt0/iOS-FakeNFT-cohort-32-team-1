@@ -61,11 +61,11 @@ final class UserCollectionViewCell: UICollectionViewCell {
         
         return favouritesButton
     }()
-    private let firstStar: UIImageView = createDefaultStar()
-    private let secondStar: UIImageView = createDefaultStar()
-    private let thirdStar: UIImageView = createDefaultStar()
-    private let fourthStar: UIImageView = createDefaultStar()
-    private let fifthStar: UIImageView = createDefaultStar()
+    private let firstStar: UIImageView = Constants.createDefaultStar()
+    private let secondStar: UIImageView = Constants.createDefaultStar()
+    private let thirdStar: UIImageView = Constants.createDefaultStar()
+    private let fourthStar: UIImageView = Constants.createDefaultStar()
+    private let fifthStar: UIImageView = Constants.createDefaultStar()
     private lazy var stackViewOfStars: UIStackView = {
         let stackViewOfStars = UIStackView(arrangedSubviews: [firstStar, secondStar, thirdStar, fourthStar, fifthStar])
         stackViewOfStars.axis = .horizontal
@@ -209,19 +209,5 @@ final class UserCollectionViewCell: UICollectionViewCell {
         for (index, star) in stars.enumerated() {
             star.tintColor = index < rating ? .yellowForStars : .segmentInactive
         }
-    }
-    
-    private static func createDefaultStar() -> UIImageView {
-        let exampleImage = UIImage(systemName: "star.fill")
-        let star = UIImageView(image: exampleImage)
-        star.translatesAutoresizingMaskIntoConstraints = false
-        star.tintColor = .segmentInactive
-        
-        NSLayoutConstraint.activate([
-            star.widthAnchor.constraint(equalToConstant: UserCollectionViewCellLayout.sizeOfStars),
-            star.heightAnchor.constraint(equalToConstant: UserCollectionViewCellLayout.sizeOfStars)
-        ])
-        
-        return star
     }
 }

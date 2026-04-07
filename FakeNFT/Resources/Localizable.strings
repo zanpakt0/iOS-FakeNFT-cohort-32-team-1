@@ -89,3 +89,6 @@
 "editProfile.exit.title" = "Уверены, что хотите выйти?";
 "editProfile.exit.quit" = "Выйти";
 "editProfile.exit.stay" = "Остаться";
+
+// MARK: - Profile - My nft
+"myNft.price" = "Цена";

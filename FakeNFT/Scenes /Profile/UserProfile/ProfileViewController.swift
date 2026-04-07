@@ -222,7 +222,9 @@ final class ProfileViewController: UIViewController, LoadingView {
     }
     
     @objc private func websiteButtonTapped() {
+        let webView = WebViewViewController(urlString: "https://practicum.yandex.kz")
         
+        universalOpenPage(viewController: webView)
     }
     
     @objc private func myNftButtonTapped() {

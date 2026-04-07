@@ -207,7 +207,7 @@ extension PaymentViewController: UICollectionViewDelegateFlowLayout, UICollectio
 extension PaymentViewController: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange) -> Bool {
         let webVC = WebViewViewController(urlString: URL.absoluteString)
-        navigationController?.pushViewController(webVC, animated: true)
+        universalOpenPage(viewController: webVC)
         return false
     }
 }
