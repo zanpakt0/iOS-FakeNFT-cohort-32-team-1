@@ -99,7 +99,7 @@ final class SuccessViewController: UIViewController {
             
             let allIds = cartVC.cartViewModel.items.map { $0.id }
             
-            let group = DispatchGroup()
+            let group = Constants.dispatchGroup
             
             for id in allIds {
                 group.enter()

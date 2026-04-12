@@ -7,6 +7,7 @@ struct NftData {
     let name: String
     let price: Decimal
     let id: String
+    let author: String
     
     init(nftData: NFT) {
         self.image = URL(string: nftData.images[0])
@@ -14,6 +15,7 @@ struct NftData {
         self.name = nftData.name
         self.price = nftData.price
         self.id = nftData.id
+        self.author = nftData.author
     }
 }
 

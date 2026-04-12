@@ -42,7 +42,7 @@ final class UserCollectionViewModel {
     func loadEverything(listOfNfts: [String]) {
         state = .loading
         
-        let group1 = DispatchGroup()
+        let group1 = Constants.dispatchGroup
         
         group1.enter()
         fetchFavouritesNftsList {
@@ -56,7 +56,7 @@ final class UserCollectionViewModel {
         
         group1.notify(queue: .main) {
             
-            let group2 = DispatchGroup()
+            let group2 = Constants.dispatchGroup
             
             group2.enter()
             self.fetchNftsCollectionOfUser(listOfNfts: listOfNfts) {
@@ -175,7 +175,7 @@ final class UserCollectionViewModel {
         isLoadingCollection = true
         nftIdsList = listOfNfts
         
-        let group = DispatchGroup()
+        let group = Constants.dispatchGroup
         
         for nftid in listOfNfts {
             group.enter()
@@ -186,13 +186,13 @@ final class UserCollectionViewModel {
                     
                     switch result {
                     case .success(let nft):
-                        print("Успех")
+                        print("Успех при загрузке одной nft")
                         let newNftData = NftData(nftData: nft)
                         let newNft = self.prepareNftCellData(nft: newNftData)
                         
                         self.addToListOfNftsExcludingDuplicates(newNft)
                     case .failure(let error):
-                        print("Ошибка")
+                        print("Ошибка при загрузке одной nft")
                         self.state = .error(error)
                     }
                     group.leave()

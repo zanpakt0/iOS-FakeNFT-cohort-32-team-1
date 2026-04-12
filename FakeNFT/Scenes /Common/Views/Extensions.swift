@@ -35,3 +35,24 @@ extension UIViewController {
     }
 }
 
+extension UIView {
+    func createDefaultStar() -> UIImageView {
+        let exampleImage = UIImage(systemName: "star.fill")
+        let star = UIImageView(image: exampleImage)
+        star.tintColor = .segmentInactive
+        star.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            star.widthAnchor.constraint(equalToConstant: UserCollectionViewCellLayout.sizeOfStars),
+            star.heightAnchor.constraint(equalToConstant: UserCollectionViewCellLayout.sizeOfStars)
+        ])
+        
+        return star
+    }
+    
+    func visualizeStars(rating: Int, stars: [UIImageView]) {
+        for (index, star) in stars.enumerated() {
+            star.tintColor = index <= rating ? .yellowForStars : .segmentInactive
+        }
+    }
+}

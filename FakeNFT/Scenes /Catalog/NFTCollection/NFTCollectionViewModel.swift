@@ -33,7 +33,7 @@ final class NFTCollectionViewModel {
         self.isLoading = true
         self.loadError = nil
         
-        let group = DispatchGroup()
+        let group = Constants.dispatchGroup
         var loadedNfts: [Nft] = []
         
         for id in nftIds {

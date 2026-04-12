@@ -1,4 +1,5 @@
 import CoreFoundation
+import Kingfisher
 import UIKit
 
 enum UIStateForLoader {
@@ -13,6 +14,13 @@ enum FilterType: String {
     case byRating = "ByRating"
 }
 
+enum BaseStateForQuery {
+    case idle
+    case loading
+    case loaded
+    case error(Error)
+}
+
 enum ConstantsForStatistics {
     static let pageSize: Int = 10
     static let keyForFilterTypeInStatistics: String = "filterTypeInStatistics"
@@ -22,17 +30,11 @@ enum ConstantsForStatistics {
 final class Constants {
     static let defaultImage = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(UIColor.forDefaultAvatarBackground, renderingMode: .alwaysOriginal)
     
-    static func createDefaultStar() -> UIImageView {
-        let exampleImage = UIImage(systemName: "star.fill")
-        let star = UIImageView(image: exampleImage)
-        star.tintColor = .segmentInactive
-        star.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            star.widthAnchor.constraint(equalToConstant: UserCollectionViewCellLayout.sizeOfStars),
-            star.heightAnchor.constraint(equalToConstant: UserCollectionViewCellLayout.sizeOfStars)
-        ])
-        
-        return star
+    static let dispatchGroup = DispatchGroup()
+    static let processorWithTwelveCornerRadius = RoundCornerImageProcessor(cornerRadius: 12)
+    
+    static func replaceDotsWithCommas(price: Decimal) -> String {
+        let string = "\(price)"
+        return "\(string.replacingOccurrences(of: ".", with: ",")) ETH"
     }
 }

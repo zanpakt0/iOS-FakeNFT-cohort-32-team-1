@@ -228,7 +228,12 @@ final class ProfileViewController: UIViewController, LoadingView {
     }
     
     @objc private func myNftButtonTapped() {
-        print("MyNft button tapped")
+        guard let profileData = viewModel.profileInfo else { return }
+        
+        let myNftViewModel = MyNftViewModel(servicesAssembly: viewModel.servicesAssembly, profileData: profileData)
+        let myNftViewController = MyNftViewController(viewModel: myNftViewModel)
+        
+        universalOpenPage(viewController: myNftViewController)
     }
     
     @objc private func favouriteNftButtonTapped() {

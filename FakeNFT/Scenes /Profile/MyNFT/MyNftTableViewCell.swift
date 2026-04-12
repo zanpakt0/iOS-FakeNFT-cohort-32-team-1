@@ -1,5 +1,5 @@
 import UIKit
-
+import Kingfisher
 
 final class MyNftTableViewCell: UITableViewCell {
     
@@ -46,14 +46,15 @@ final class MyNftTableViewCell: UITableViewCell {
         
         return nameOfNft
     }()
-    private let firstStar: UIImageView = Constants.createDefaultStar()
-    private let secondStar: UIImageView = Constants.createDefaultStar()
-    private let thirdStar: UIImageView = Constants.createDefaultStar()
-    private let fourthStar: UIImageView = Constants.createDefaultStar()
-    private let fifthStar: UIImageView = Constants.createDefaultStar()
+    private lazy var firstStar: UIImageView = createDefaultStar()
+    private lazy var secondStar: UIImageView = createDefaultStar()
+    private lazy var thirdStar: UIImageView = createDefaultStar()
+    private lazy var fourthStar: UIImageView = createDefaultStar()
+    private lazy var fifthStar: UIImageView = createDefaultStar()
     private lazy var stackViewOfStars: UIStackView = {
         let stackViewOfStars = UIStackView(arrangedSubviews: [firstStar, secondStar, thirdStar, fourthStar, fifthStar])
         
+        stackViewOfStars.translatesAutoresizingMaskIntoConstraints = false
         stackViewOfStars.axis = .horizontal
         stackViewOfStars.spacing = 2
         
@@ -95,7 +96,7 @@ final class MyNftTableViewCell: UITableViewCell {
         authorOfNft.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            authorOfNft.widthAnchor.constraint(equalToConstant: 86)
+            authorOfNft.widthAnchor.constraint(equalToConstant: 95)
         ])
         
         return authorOfNft
@@ -105,12 +106,30 @@ final class MyNftTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
+        contentView.backgroundColor = .forViewBackground
+        
         addSubviews()
         addTargetsForButtons()
     }
     
     required init?(coder: NSCoder) {
         nil
+    }
+    
+    // MARK: - Public Methods
+    func configure(nftData: NftCellViewData) {
+        guard let imageURL = nftData.nft.image else { return }
+        
+        imageOfNft.kf.setImage(with: imageURL, placeholder: nil, options: [.processor(Constants.processorWithTwelveCornerRadius)])
+        
+        heartButton.tintColor = nftData.isFavourite ? .redForFavouritesButton : .background
+        nameOfNft.text = nftData.nft.name
+        
+        let stars = [firstStar, secondStar, thirdStar, fourthStar, fifthStar]
+        visualizeStars(rating: nftData.nft.rating, stars: stars)
+        
+        authorOfNft.text = "от \(nftData.nft.author)"
+        priceOfNft.text = Constants.replaceDotsWithCommas(price: nftData.nft.price)
     }
     
     // MARK: - Private Methods

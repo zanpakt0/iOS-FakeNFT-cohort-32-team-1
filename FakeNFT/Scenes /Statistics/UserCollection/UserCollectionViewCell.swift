@@ -37,7 +37,6 @@ final class UserCollectionViewCell: UICollectionViewCell {
     // MARK: - Private Properties
     private var isFavourite = false
     private var isInCart = false
-    private let processor = RoundCornerImageProcessor(cornerRadius: UserCollectionViewCellLayout.nftImageCornerRadius)
     
     // MARK: - Views (elements)
     private let nftImageView: UIImageView = {
@@ -61,11 +60,11 @@ final class UserCollectionViewCell: UICollectionViewCell {
         
         return favouritesButton
     }()
-    private let firstStar: UIImageView = Constants.createDefaultStar()
-    private let secondStar: UIImageView = Constants.createDefaultStar()
-    private let thirdStar: UIImageView = Constants.createDefaultStar()
-    private let fourthStar: UIImageView = Constants.createDefaultStar()
-    private let fifthStar: UIImageView = Constants.createDefaultStar()
+    private lazy var firstStar: UIImageView = createDefaultStar()
+    private lazy var secondStar: UIImageView = createDefaultStar()
+    private lazy var thirdStar: UIImageView = createDefaultStar()
+    private lazy var fourthStar: UIImageView = createDefaultStar()
+    private lazy var fifthStar: UIImageView = createDefaultStar()
     private lazy var stackViewOfStars: UIStackView = {
         let stackViewOfStars = UIStackView(arrangedSubviews: [firstStar, secondStar, thirdStar, fourthStar, fifthStar])
         stackViewOfStars.axis = .horizontal
@@ -136,12 +135,15 @@ final class UserCollectionViewCell: UICollectionViewCell {
         }
         self.nftImageView.kf.setImage(with: url,
                                       placeholder: nil,
-                                      options: [.processor(self.processor)])
+                                      options: [.processor(Constants.processorWithTwelveCornerRadius)])
         
         visualizeFavouritesAndCartButtons(isFavourtie: nftData.isFavourite, isInCart: nftData.isInCart)
-        visualizeStars(rating: nftData.nft.rating)
+        
+        let stars = [firstStar, secondStar, thirdStar, fourthStar, fifthStar]
+        visualizeStars(rating: nftData.nft.rating, stars: stars)
+        
         self.nftNameLabel.text = nftData.nft.name
-        self.nftPriceLabel.text = replaceDotsWithCommas(price: nftData.nft.price)
+        self.nftPriceLabel.text = Constants.replaceDotsWithCommas(price: nftData.nft.price)
     }
     
     // MARK: - Private Methods
@@ -196,18 +198,5 @@ final class UserCollectionViewCell: UICollectionViewCell {
         let cartImage = isInCart ? UIImage(resource: .deleteCartIcon) : UIImage(resource: .addCartIcon)
         cartButton.setImage(cartImage, for: .normal)
         cartButton.tintColor = .segmentActive
-    }
-
-    
-    private func replaceDotsWithCommas(price: Decimal) -> String {
-        let string = "\(price)"
-        return "\(string.replacingOccurrences(of: ".", with: ",")) ETH"
-    }
-    
-    private func visualizeStars(rating: Int) {
-        let stars = [firstStar, secondStar, thirdStar, fourthStar, fifthStar]
-        for (index, star) in stars.enumerated() {
-            star.tintColor = index < rating ? .yellowForStars : .segmentInactive
-        }
     }
 }
