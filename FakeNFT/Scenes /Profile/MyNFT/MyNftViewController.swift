@@ -8,6 +8,19 @@ final class MyNftViewController: UIViewController {
     private var cancellables = Set<AnyCancellable>()
     
     // MARK: - Views (elements)
+    private let emptyPageLabel: UILabel = {
+        let emptyPageLabel = UILabel()
+        let textForEmptyPage = NSLocalizedString("myNft.emptyPage", comment: "")
+        
+        emptyPageLabel.textAlignment = .center
+        emptyPageLabel.text = textForEmptyPage
+        emptyPageLabel.font = .bodyBold
+        emptyPageLabel.textColor = .segmentActive
+        emptyPageLabel.isHidden = true
+        emptyPageLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        return emptyPageLabel
+    }()
     private let tableViewWithNfts: UITableView = {
         let tableViewWithNfts = UITableView()
         tableViewWithNfts.register(MyNftTableViewCell.self, forCellReuseIdentifier: MyNftTableViewCell.reusedIdentifier)
@@ -50,7 +63,6 @@ final class MyNftViewController: UIViewController {
         
         view.backgroundColor = .forViewBackground
         
-        setupNavBar()
         setupTableView()
         addSubviews()
         addTargetsForButtons()
@@ -90,6 +102,7 @@ final class MyNftViewController: UIViewController {
     }
     
     private func addSubviews() {
+        view.addSubview(emptyPageLabel)
         view.addSubview(tableViewWithNfts)
         
         setupConstraints()
@@ -97,6 +110,10 @@ final class MyNftViewController: UIViewController {
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
+            emptyPageLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            emptyPageLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            emptyPageLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            
             tableViewWithNfts.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             tableViewWithNfts.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableViewWithNfts.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -127,12 +144,22 @@ final class MyNftViewController: UIViewController {
                 case .loading:
                     break
                 case .loaded:
-                    self.tableViewWithNfts.reloadData()
+                    if self.viewModel.listOfNfts.isEmpty {
+                        makeEmptyPage()
+                    } else {
+                        setupNavBar()
+                        self.tableViewWithNfts.reloadData()
+                    }
                 case .error(_):
                     break
                 }
             }
             .store(in: &cancellables)
+    }
+    
+    private func makeEmptyPage() {
+        emptyPageLabel.isHidden = false
+        tableViewWithNfts.isHidden = true
     }
 }
 
