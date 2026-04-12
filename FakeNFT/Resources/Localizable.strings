@@ -92,3 +92,6 @@
 
 // MARK: - Profile - My nft
 "myNft.price" = "Цена";
+"myNft.filter.byPrice" = "По цене";
+"myNft.filter.byRating" = "По рейтингу";
+"myNft.filter.byName" = "По названию";

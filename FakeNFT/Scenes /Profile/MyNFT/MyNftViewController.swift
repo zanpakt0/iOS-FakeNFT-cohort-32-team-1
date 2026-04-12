@@ -56,15 +56,32 @@ final class MyNftViewController: UIViewController {
         addTargetsForButtons()
         bindViewModel()
         
-        viewModel.fetchNfts() {
-            print("Что то произошло")
-        }
+        viewModel.downloadData()
     }
     
     // MARK: - Private Methods
     
     @objc private func filterButtonClicked() {
+        let titleForByPrice = NSLocalizedString("myNft.filter.byPrice", comment: "")
+        let titleForByRating = NSLocalizedString("myNft.filter.byRating", comment: "")
+        let titleForByName = NSLocalizedString("myNft.filter.byName", comment: "")
         
+        let byPriceAction = UIAlertAction(title: titleForByPrice, style: .default) {_ in 
+            self.viewModel.setFilterTypeOfProfileToStorage(filterType: .byPrice)
+            self.tableViewWithNfts.reloadData()
+        }
+        
+        let byRatingAction = UIAlertAction(title: titleForByRating, style: .default) {_ in
+            self.viewModel.setFilterTypeOfProfileToStorage(filterType: .byRating)
+            self.tableViewWithNfts.reloadData()
+        }
+        
+        let byNameAction = UIAlertAction(title: titleForByName, style: .default) {_ in
+            self.viewModel.setFilterTypeOfProfileToStorage(filterType: .byName)
+            self.tableViewWithNfts.reloadData()
+        }
+        
+        showFilterActionSheet(firstAction: byPriceAction, secondAction: byRatingAction, thirdAction: byNameAction)
     }
     
     private func setupTableView() {

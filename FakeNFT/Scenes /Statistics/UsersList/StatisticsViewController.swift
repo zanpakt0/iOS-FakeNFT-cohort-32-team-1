@@ -98,13 +98,13 @@ final class StatisticsViewController: UIViewController, LoadingView {
         let textOfByRatingButton = NSLocalizedString("statistics.sort.byRating", comment: "")
         
         let byNameAction = UIAlertAction(title: textOfByNameButton, style: .default) { [weak self] _ in
-            self?.viewModel.setFilterTypeToStorage(FilterType.byName.rawValue)
+            self?.viewModel.setFilterTypeOfStatisticsToStorage(FilterTypeForStatistics.byName.rawValue)
             self?.viewModel.sortByNeedFilterType()
             self?.tableViewWithUsers.reloadData()
         }
         
         let byRatingAction = UIAlertAction(title: textOfByRatingButton, style: .default) { [weak self] _ in
-            self?.viewModel.setFilterTypeToStorage(FilterType.byRating.rawValue)
+            self?.viewModel.setFilterTypeOfStatisticsToStorage(FilterTypeForStatistics.byRating.rawValue)
             self?.viewModel.sortByNeedFilterType()
             self?.tableViewWithUsers.reloadData()
         }

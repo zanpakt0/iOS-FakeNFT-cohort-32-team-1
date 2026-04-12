@@ -79,16 +79,16 @@ final class StatisticsViewModel {
     }
     
     func sortByNeedFilterType() {
-        let filterType = getFilterTypeFromStorage()
+        let filterType = getFilterTypeOfStatisticsFromStorage()
         switch filterType {
-        case FilterType.byName.rawValue:
+        case FilterTypeForStatistics.byName.rawValue:
             sortCellViewModelByName()
         default:
             sortCellViewModelByRating()
         }
     }
     
-    func setFilterTypeToStorage(_ filterType: String) {
+    func setFilterTypeOfStatisticsToStorage(_ filterType: String) {
         UserDefaults.standard.set(filterType, forKey: ConstantsForStatistics.keyForFilterTypeInStatistics)
     }
     
@@ -101,9 +101,9 @@ final class StatisticsViewModel {
         usersList.sort { $0.nfts.count > $1.nfts.count }
     }
     
-    private func getFilterTypeFromStorage() -> String {
+    private func getFilterTypeOfStatisticsFromStorage() -> String {
         guard let rawValue = UserDefaults.standard.string(forKey: ConstantsForStatistics.keyForFilterTypeInStatistics) else {
-            return FilterType.byRating.rawValue
+            return FilterTypeForStatistics.byRating.rawValue
         }
         return rawValue
     }

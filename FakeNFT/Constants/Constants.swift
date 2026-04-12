@@ -9,16 +9,22 @@ enum UIStateForLoader {
     case hideBoth
 }
 
-enum FilterType: String {
-    case byName = "ByName"
-    case byRating = "ByRating"
-}
-
 enum BaseStateForQuery {
     case idle
     case loading
     case loaded
     case error(Error)
+}
+
+enum FilterType: String {
+    case byPrice = "byPrice"
+    case byRating = "byRating"
+    case byName = "byName"
+}
+
+enum FilterTypeForStatistics: String {
+    case byName = "byName"
+    case byRating = "byRating"
 }
 
 enum ConstantsForStatistics {
@@ -28,6 +34,8 @@ enum ConstantsForStatistics {
 }
 
 final class Constants {
+    static let keyForFilterTypeInProfile: String = "filterTypeInProfile"
+    
     static let defaultImage = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(UIColor.forDefaultAvatarBackground, renderingMode: .alwaysOriginal)
     
     static let dispatchGroup = DispatchGroup()

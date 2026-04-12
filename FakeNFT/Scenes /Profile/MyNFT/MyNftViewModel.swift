@@ -2,12 +2,9 @@ import Combine
 import Foundation
 
 final class MyNftViewModel {
-    
-    // MARK: - Public Properties
-    var listOfNfts: [NftCellViewData] = []
-    
     // MARK: - Private Properties
     @Published private(set) var state: BaseStateForQuery = .idle
+    private(set) var listOfNfts: [NftCellViewData] = []
     private var isLoading = false
     private var currentTask: NetworkTask?
     private let servicesAssembly: ServicesAssembly
@@ -21,7 +18,28 @@ final class MyNftViewModel {
     }
     
     // MARK: - Public Methods
-    func fetchNfts(completion: @escaping () -> Void) {
+    
+    func downloadData() {
+        fetchNfts {
+            print("Список Мои nft загружены (количество): \(self.listOfNfts.count)")
+        }
+    }
+    
+    func setFilterTypeOfProfileToStorage(filterType: FilterType) {
+        switch filterType {
+        case .byPrice:
+            UserDefaults.standard.set(FilterType.byPrice.rawValue, forKey: Constants.keyForFilterTypeInProfile)
+        case .byRating:
+            UserDefaults.standard.set(FilterType.byRating.rawValue, forKey: Constants.keyForFilterTypeInProfile)
+        case .byName:
+            UserDefaults.standard.set(FilterType.byName.rawValue, forKey: Constants.keyForFilterTypeInProfile)
+        }
+        sortByNeedFilterType()
+    }
+    
+    // MARK: - Private Methods
+    
+    private func fetchNfts(completion: @escaping () -> Void) {
         print("Дошло")
         
         guard !isLoading else { return }
@@ -56,16 +74,42 @@ final class MyNftViewModel {
         
         group.notify(queue: .main) { [weak self] in
             guard let self else { return }
+            sortByNeedFilterType()
             
             self.isLoading = false
             self.state = .loaded
-            print("Список Мои nft загружены (количество): \(self.listOfNfts.count)")
             
             completion()
         }
     }
     
-    // MARK: - Private Methods
+    private func sortByNeedFilterType() {
+        let filterType = getFilterTypeOfProfileFromStorage()
+        
+        switch filterType {
+        case FilterType.byPrice.rawValue:
+            sortByPrice()
+        case FilterType.byRating.rawValue:
+            sortByRating()
+        case FilterType.byName.rawValue:
+            sortByName()
+        default:
+            print("Такого фильтра нет")
+        }
+    }
+    
+    private func sortByPrice() {
+        listOfNfts.sort { $0.nft.price > $1.nft.price }
+    }
+    
+    private func sortByRating() {
+        listOfNfts.sort { $0.nft.rating > $1.nft.rating }
+    }
+    
+    private func sortByName() {
+        listOfNfts.sort { $0.nft.name < $1.nft.name }
+    }
+    
     private func addToListOfNftsExcludingDuplicates(nft: NftData) {
         if !listOfNfts.contains(where: { $0.nft.id == nft.id }) {
             listOfNfts.append(NftCellViewData(
@@ -79,4 +123,10 @@ final class MyNftViewModel {
         return idsOfFavouriteNfts.contains(nftId)
     }
     
+    private func getFilterTypeOfProfileFromStorage() -> String {
+        guard let filterType = UserDefaults.standard.string(forKey: Constants.keyForFilterTypeInProfile) else {
+            return FilterType.byRating.rawValue
+        }
+        return filterType
+    }
 }
