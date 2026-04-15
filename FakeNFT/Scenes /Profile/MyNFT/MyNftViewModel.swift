@@ -2,14 +2,21 @@ import Combine
 import Foundation
 
 final class MyNftViewModel {
+    
     // MARK: - Private Properties
-    @Published private(set) var state: BaseStateForQuery = .idle
+    @Published private(set) var state: BaseStateForNftList = .idle
     private(set) var listOfNfts: [NftCellViewData] = []
-    private var isLoading = false
-    private var currentTask: NetworkTask?
+    private var idsOfFavouriteNfts: [String]
+    
+    private var isLoadingNfts = false
+    private var isLikingNft = false
+    
+    private var currentTaskForLoadNfts: NetworkTask?
+    private var currentTaskForLikeOrDislikeNft: NetworkTask?
+    
     private let servicesAssembly: ServicesAssembly
     private let idsOfMyNft: [String]
-    private let idsOfFavouriteNfts: [String]
+
     
     init(servicesAssembly: ServicesAssembly, profileData: ProfileViewData) {
         self.servicesAssembly = servicesAssembly
@@ -37,14 +44,62 @@ final class MyNftViewModel {
         sortByNeedFilterType()
     }
     
+    func likeOrDislikeNft(isItLike: Bool, nftId: String) {
+        let likes = Constants.configureNeedRequestBodyToPutRequests(
+            nftId: nftId,
+            isFavourite: isItLike,
+            needNftList: idsOfFavouriteNfts)
+        
+        print("Дошло до лайка nft")
+        
+        guard !isLikingNft else { return }
+        
+        isLikingNft = true
+        state = .loading
+        
+        currentTaskForLikeOrDislikeNft = servicesAssembly.nftService.putToFavoritesNft(likes: likes) { [weak self] result in
+            DispatchQueue.main.async {
+                guard let self else { return }
+                
+                self.isLikingNft = false
+                
+                switch result {
+                case .success(let profile):
+                    print("Успех при лайке nft")
+                    let favouriteNfts = ListOfFavouriteNftsData(profile: profile)
+                    self.idsOfFavouriteNfts = favouriteNfts.likes
+                    
+                    print("(Лайк) Количество понравившихся nft: \(self.idsOfFavouriteNfts.count)")
+                    
+                    if let index = self.listOfNfts.firstIndex(where: { $0.nft.id == nftId }) {
+                        let old = self.listOfNfts[index]
+                        
+                        let updated = NftCellViewData(
+                            nft: old.nft,
+                            isFavourite: isItLike,
+                            isInCart: old.isInCart
+                        )
+                        
+                        self.listOfNfts[index] = updated
+                    }
+                    self.state = .loaded(self.listOfNfts)
+                case .failure(let error):
+                    print("Ошибка при лайке nft")
+                    self.state = .errorWhenTapOnButtonsInCell(error)
+                }
+            }
+            
+        }
+    }
+    
     // MARK: - Private Methods
     
     private func fetchNfts(completion: @escaping () -> Void) {
         print("Дошло")
         
-        guard !isLoading else { return }
+        guard !isLoadingNfts else { return }
         
-        isLoading = true
+        isLoadingNfts = true
         state = .loading
         
         let group = Constants.dispatchGroup
@@ -52,7 +107,7 @@ final class MyNftViewModel {
         for nftId in idsOfMyNft {
             group.enter()
             
-            currentTask = servicesAssembly.nftService.getNft(id: nftId) { [weak self] result in
+            currentTaskForLoadNfts = servicesAssembly.nftService.getNft(id: nftId) { [weak self] result in
                 DispatchQueue.main.async {
                     guard let self else { return }
                     
@@ -76,8 +131,8 @@ final class MyNftViewModel {
             guard let self else { return }
             sortByNeedFilterType()
             
-            self.isLoading = false
-            self.state = .loaded
+            self.isLoadingNfts = false
+            self.state = .loaded(self.listOfNfts)
             
             completion()
         }

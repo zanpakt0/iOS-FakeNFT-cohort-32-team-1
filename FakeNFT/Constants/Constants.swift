@@ -16,6 +16,14 @@ enum BaseStateForQuery {
     case error(Error)
 }
 
+enum BaseStateForNftList {
+    case idle
+    case loading
+    case loaded([NftCellViewData])
+    case error(Error)
+    case errorWhenTapOnButtonsInCell(Error)
+}
+
 enum FilterType: String {
     case byPrice = "byPrice"
     case byRating = "byRating"
@@ -44,5 +52,15 @@ final class Constants {
     static func replaceDotsWithCommas(price: Decimal) -> String {
         let string = "\(price)"
         return "\(string.replacingOccurrences(of: ".", with: ",")) ETH"
+    }
+    
+    static func configureNeedRequestBodyToPutRequests(nftId: String, isFavourite: Bool, needNftList: [String]) -> String {
+        var updatedList = needNftList
+        if isFavourite {
+            updatedList.append(nftId)
+        } else if let index = updatedList.firstIndex(of: nftId) {
+            updatedList.remove(at: index)
+        }
+        return updatedList.isEmpty ? "null" : updatedList.joined(separator: ", ")
     }
 }

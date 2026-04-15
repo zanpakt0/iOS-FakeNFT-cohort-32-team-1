@@ -6,6 +6,9 @@ final class MyNftTableViewCell: UITableViewCell {
     // MARK: - Identifier
     static let reusedIdentifier = "MyNftTableViewCell"
     
+    // MARK: Callbacks
+    var didHeartButtonTapped: (()-> Void)?
+    
     // MARK: - Views (elements)
     private let imageOfNft: UIImageView = {
         let imageOfNft = UIImageView()
@@ -21,9 +24,8 @@ final class MyNftTableViewCell: UITableViewCell {
         return imageOfNft
     }()
     private let heartButton: UIButton = {
-        let heartIcon = UIImage(resource: .likeButtonNoActive)
-        let heartButton = UIButton(type: .custom)
-        heartButton.setImage(heartIcon, for: .normal)
+        let heartButton = UIButton(type: .system)
+        heartButton.setImage(UIImage(resource: .likeButtonNoActive), for: .normal)
         heartButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
@@ -134,7 +136,7 @@ final class MyNftTableViewCell: UITableViewCell {
     
     // MARK: - Private Methods
     @objc private func heartButtonClicked() {
-        
+        didHeartButtonTapped?()
     }
     
     private func addTargetsForButtons() {

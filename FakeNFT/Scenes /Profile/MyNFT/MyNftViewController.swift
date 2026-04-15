@@ -152,6 +152,8 @@ final class MyNftViewController: UIViewController {
                     }
                 case .error(_):
                     break
+                case .errorWhenTapOnButtonsInCell(_):
+                    break
                 }
             }
             .store(in: &cancellables)
@@ -175,6 +177,16 @@ extension MyNftViewController: UITableViewDelegate, UITableViewDataSource {
         }
         
         cell.configure(nftData: viewModel.listOfNfts[indexPath.row])
+        
+        cell.didHeartButtonTapped = { [weak self] in
+            guard let self else { return }
+            
+            self.viewModel.likeOrDislikeNft(
+                isItLike: !self.viewModel.listOfNfts[indexPath.row].isFavourite,
+                nftId: self.viewModel.listOfNfts[indexPath.row].nft.id
+            )
+            
+        }
         
         return cell
     }

@@ -1,14 +1,5 @@
 import Foundation
 
-// MARK: - Need enums
-enum UserCollectionState {
-    case idle
-    case loading
-    case loaded([NftCellViewData])
-    case error(Error)
-    case errorWhenTapOnButtonsInCell(Error)
-}
-
 final class UserCollectionViewModel {
     
     // MARK: - Public Properties
@@ -18,7 +9,7 @@ final class UserCollectionViewModel {
     var listOfNftsInShoppingCart: [String] = []
     
     // MARK: - Private Properties
-    @Published private(set) var state: UserCollectionState = .idle
+    @Published private(set) var state: BaseStateForNftList = .idle
     private let servicesAssembly: ServicesAssembly
     
     private var taskForLikeOrDislike: NetworkTask?
@@ -71,7 +62,7 @@ final class UserCollectionViewModel {
     }
     
     func likeOrDislikeNft(isItLike: Bool, nftId: String) {
-        let likes = configureNeedRequestBodyToPutRequests(
+        let likes = Constants.configureNeedRequestBodyToPutRequests(
             nftId: nftId,
             isFavourite: isItLike,
             needNftList: listOfFavouriteNfts)
@@ -119,7 +110,7 @@ final class UserCollectionViewModel {
     }
     
     func orderOrUnorderNft(isInCart: Bool, nftId: String) {
-        let nfts = configureNeedRequestBodyToPutRequests(
+        let nfts = Constants.configureNeedRequestBodyToPutRequests(
             nftId: nftId,
             isFavourite: isInCart,
             needNftList: listOfNftsInShoppingCart)
@@ -286,15 +277,5 @@ final class UserCollectionViewModel {
         if !nftList.contains(where: {newNft.nft.id == $0.nft.id}) {
             nftList.append(newNft)
         }
-    }
-    
-    private func configureNeedRequestBodyToPutRequests(nftId: String, isFavourite: Bool, needNftList: [String]) -> String {
-        var updatedList = needNftList
-        if isFavourite {
-            updatedList.append(nftId)
-        } else if let index = updatedList.firstIndex(of: nftId) {
-            updatedList.remove(at: index)
-        }
-        return updatedList.isEmpty ? "null" : updatedList.joined(separator: ", ")
     }
 }
