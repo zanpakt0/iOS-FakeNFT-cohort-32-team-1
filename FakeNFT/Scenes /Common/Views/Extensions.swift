@@ -43,8 +43,8 @@ extension UIView {
         star.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            star.widthAnchor.constraint(equalToConstant: UserCollectionViewCellLayout.sizeOfStars),
-            star.heightAnchor.constraint(equalToConstant: UserCollectionViewCellLayout.sizeOfStars)
+            star.widthAnchor.constraint(equalToConstant: 12),
+            star.heightAnchor.constraint(equalToConstant: 12)
         ])
         
         return star

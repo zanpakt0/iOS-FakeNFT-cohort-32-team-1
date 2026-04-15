@@ -11,8 +11,6 @@ enum UserCollectionViewCellLayout {
     static let spacingInStackViewOfStars: CGFloat = 2
     static let stackViewOfStarsTop: CGFloat = 8
     
-    static let sizeOfStars: CGFloat = 12
-    
     static let numberOfLinesInLabels: Int = 1
     static let maximumWidthOfLabels: CGFloat = 68
     

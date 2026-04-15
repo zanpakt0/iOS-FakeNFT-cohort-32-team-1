@@ -171,9 +171,7 @@
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		000438D72ED61B1100B15E5B /* Cart */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Cart; sourceTree = "<group>"; };
-		921D2BF22EDC08CA00AE3E97 /* UserCollection */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = UserCollection; sourceTree = "<group>"; };
-		924AF0782ED6D1FA007E5F0A /* UsersList */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = UsersList; sourceTree = "<group>"; };
-		924AF08E2ED73029007E5F0A /* UserCard */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = UserCard; sourceTree = "<group>"; };
+		926D57762F8F4B2F00652BF9 /* Views */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Views; sourceTree = "<group>"; };
 		92E837712F20BC65006E6F28 /* Profile */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Profile; sourceTree = "<group>"; };
 		92E8377B2F20BDD3006E6F28 /* NeedStructures */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = NeedStructures; sourceTree = "<group>"; };
 		92F5CBEA2F45AB7700A26EC8 /* Constants */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Constants; sourceTree = "<group>"; };
@@ -524,9 +522,7 @@
 		927058CC2ED48BFC00AF2DB9 /* Statistics */ = {
 			isa = PBXGroup;
 			children = (
-				921D2BF22EDC08CA00AE3E97 /* UserCollection */,
-				924AF08E2ED73029007E5F0A /* UserCard */,
-				924AF0782ED6D1FA007E5F0A /* UsersList */,
+				926D57762F8F4B2F00652BF9 /* Views */,
 				927058CD2ED48C0700AF2DB9 /* NeedStructures */,
 			);
 			path = Statistics;
@@ -600,9 +596,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				000438D72ED61B1100B15E5B /* Cart */,
-				921D2BF22EDC08CA00AE3E97 /* UserCollection */,
-				924AF0782ED6D1FA007E5F0A /* UsersList */,
-				924AF08E2ED73029007E5F0A /* UserCard */,
+				926D57762F8F4B2F00652BF9 /* Views */,
 				92E837712F20BC65006E6F28 /* Profile */,
 				92E8377B2F20BDD3006E6F28 /* NeedStructures */,
 				92F5CBEA2F45AB7700A26EC8 /* Constants */,
