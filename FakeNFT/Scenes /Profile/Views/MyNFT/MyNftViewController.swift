@@ -1,13 +1,34 @@
 import UIKit
 import Combine
 
-final class MyNftViewController: UIViewController {
+final class MyNftViewController: UIViewController, LoadingView {
     
     // MARK: - Private Properties
     private let viewModel: MyNftViewModel
     private var cancellables = Set<AnyCancellable>()
     
     // MARK: - Views (elements)
+    let activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .large)
+        indicator.hidesWhenStopped = true
+        indicator.color = .black
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        
+        return indicator
+    }()
+    private let containerForActivityIndicator: UIView = {
+        let containerForActivityIndicator = UIView()
+        containerForActivityIndicator.backgroundColor = .forActivityIndicatorBackground
+        containerForActivityIndicator.layer.cornerRadius = 8
+        containerForActivityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            containerForActivityIndicator.widthAnchor.constraint(equalToConstant: 82),
+            containerForActivityIndicator.heightAnchor.constraint(equalToConstant: 82)
+        ])
+        
+        return containerForActivityIndicator
+    }()
     private let emptyPageLabel: UILabel = {
         let emptyPageLabel = UILabel()
         let textForEmptyPage = NSLocalizedString("myNft.emptyPage", comment: "")
@@ -104,12 +125,21 @@ final class MyNftViewController: UIViewController {
     private func addSubviews() {
         view.addSubview(emptyPageLabel)
         view.addSubview(tableViewWithNfts)
+        view.addSubview(containerForActivityIndicator)
+        
+        containerForActivityIndicator.addSubview(activityIndicator)
         
         setupConstraints()
     }
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
+            containerForActivityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            containerForActivityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            
+            activityIndicator.centerXAnchor.constraint(equalTo: containerForActivityIndicator.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: containerForActivityIndicator.centerYAnchor),
+            
             emptyPageLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             emptyPageLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             emptyPageLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
@@ -132,6 +162,31 @@ final class MyNftViewController: UIViewController {
         navigationItem.title = title
     }
     
+    private func showNeedViewsInScreen(whatShouldBeShown: UIStateForLoader) {
+        switch whatShouldBeShown {
+        case .showLoaderHideViews:
+            self.containerForActivityIndicator.isHidden = false
+            showLoading()
+            self.tableViewWithNfts.isHidden = true
+            self.emptyPageLabel.isHidden = true
+        case .showViewsHideLoader:
+            self.containerForActivityIndicator.isHidden = true
+            hideLoading()
+            self.tableViewWithNfts.isHidden = false
+            self.emptyPageLabel.isHidden = true
+        case .showBoth:
+            self.containerForActivityIndicator.isHidden = false
+            showLoading()
+            self.tableViewWithNfts.isHidden = false
+            self.emptyPageLabel.isHidden = true
+        case .hideBoth:
+            self.containerForActivityIndicator.isHidden = true
+            hideLoading()
+            self.tableViewWithNfts.isHidden = true
+            self.emptyPageLabel.isHidden = true
+        }
+    }
+    
     private func bindViewModel() {
         viewModel.$state
             .receive(on: RunLoop.main)
@@ -140,20 +195,21 @@ final class MyNftViewController: UIViewController {
                 
                 switch state {
                 case .idle:
-                    break
+                    showNeedViewsInScreen(whatShouldBeShown: .showBoth)
                 case .loading:
-                    break
+                    showNeedViewsInScreen(whatShouldBeShown: .showLoaderHideViews)
                 case .loaded:
                     if self.viewModel.listOfNfts.isEmpty {
                         makeEmptyPage()
                     } else {
                         setupNavBar()
+                        showNeedViewsInScreen(whatShouldBeShown: .showViewsHideLoader)
                         self.tableViewWithNfts.reloadData()
                     }
                 case .error(_):
-                    break
+                    showNeedViewsInScreen(whatShouldBeShown: .hideBoth)
                 case .errorWhenTapOnButtonsInCell(_):
-                    break
+                    showNeedViewsInScreen(whatShouldBeShown: .hideBoth)
                 }
             }
             .store(in: &cancellables)
@@ -162,6 +218,7 @@ final class MyNftViewController: UIViewController {
     private func makeEmptyPage() {
         emptyPageLabel.isHidden = false
         tableViewWithNfts.isHidden = true
+        containerForActivityIndicator.isHidden = true
     }
 }
 
