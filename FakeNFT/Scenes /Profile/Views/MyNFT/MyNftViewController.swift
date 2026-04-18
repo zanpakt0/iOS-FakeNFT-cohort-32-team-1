@@ -197,7 +197,11 @@ final class MyNftViewController: UIViewController, LoadingView {
                 case .idle:
                     showNeedViewsInScreen(whatShouldBeShown: .showBoth)
                 case .loading:
-                    showNeedViewsInScreen(whatShouldBeShown: .showLoaderHideViews)
+                    if self.viewModel.listOfNfts.isEmpty {
+                        showNeedViewsInScreen(whatShouldBeShown: .showLoaderHideViews)
+                    } else {
+                        showNeedViewsInScreen(whatShouldBeShown: .showBoth)
+                    }
                 case .loaded:
                     if self.viewModel.listOfNfts.isEmpty {
                         makeEmptyPage()
@@ -208,8 +212,10 @@ final class MyNftViewController: UIViewController, LoadingView {
                     }
                 case .error(_):
                     showNeedViewsInScreen(whatShouldBeShown: .hideBoth)
+                    showErrorAlertWhenLoadingEverything()
                 case .errorWhenTapOnButtonsInCell(_):
-                    showNeedViewsInScreen(whatShouldBeShown: .hideBoth)
+                    showNeedViewsInScreen(whatShouldBeShown: .showViewsHideLoader)
+                    showErrorAlertWhenTappingButtonsInCell()
                 }
             }
             .store(in: &cancellables)
@@ -219,6 +225,13 @@ final class MyNftViewController: UIViewController, LoadingView {
         emptyPageLabel.isHidden = false
         tableViewWithNfts.isHidden = true
         containerForActivityIndicator.isHidden = true
+    }
+    
+    private func showErrorAlertWhenLoadingEverything() {
+        universalErrorAlert { [weak self] in
+            guard let self else { return }
+            self.viewModel.downloadData()
+        }
     }
 }
 

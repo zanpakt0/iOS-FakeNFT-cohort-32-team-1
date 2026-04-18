@@ -19,6 +19,16 @@ extension UIViewController: ErrorView {
         
         showErrorAlertWithTwoButtons(titleOfAlert: title, firstAction: cancelAction, secondAction: retryAction)
     }
+    
+    func showErrorAlertWhenTappingButtonsInCell() {
+        let message = NSLocalizedString("userCollection.error.message", comment: "")
+        let actionText = NSLocalizedString("common.ok", comment: "")
+        
+        let errorModel = ErrorModel(message: message,
+                                    actionText: actionText) { return }
+        
+        showError(errorModel)
+    }
 }
 
 extension UIViewController {

@@ -176,16 +176,6 @@ final class UserCollectionViewController: UIViewController, LoadingView {
             self.viewModel.loadEverything(listOfNfts: nftIdsList)
         }
     }
-    
-    private func showErrorAlertWhenTappingButtonsInCell() {
-        let message = NSLocalizedString("userCollection.error.message", comment: "")
-        let actionText = NSLocalizedString("common.ok", comment: "")
-        
-        let errorModel = ErrorModel(message: message,
-                                    actionText: actionText) { return }
-        
-        showError(errorModel)
-    }
 }
 
 // MARK: - UICollectionViewDataSource, UICollectionViewDelegate
