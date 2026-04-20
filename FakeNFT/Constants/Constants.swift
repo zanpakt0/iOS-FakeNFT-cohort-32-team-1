@@ -63,4 +63,17 @@ final class Constants {
         }
         return updatedList.isEmpty ? "null" : updatedList.joined(separator: ", ")
     }
+    
+    static func addToListOfNftsExcludingDuplicates(listOfNfts: [NftCellViewData], nft: NftData, idsOfFavouriteNfts: [String]) -> [NftCellViewData] {
+        var newListOfNfts = listOfNfts
+        
+        if !newListOfNfts.contains(where: { $0.nft.id == nft.id }) {
+            newListOfNfts.append(NftCellViewData(
+                nft: nft,
+                isFavourite: idsOfFavouriteNfts.contains(nft.id),
+                isInCart: false))
+        }
+        
+        return newListOfNfts
+    }
 }

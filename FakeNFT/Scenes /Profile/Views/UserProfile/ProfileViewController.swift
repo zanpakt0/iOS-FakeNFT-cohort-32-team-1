@@ -228,16 +228,23 @@ final class ProfileViewController: UIViewController, LoadingView {
     }
     
     @objc private func myNftButtonTapped() {
-        guard let profileData = viewModel.profileInfo else { return }
+        guard let idsOfMyNft = viewModel.profileInfo?.nfts,
+              let idsOfFavouriteNfts = viewModel.profileInfo?.likes
+        else { return }
         
-        let myNftViewModel = MyNftViewModel(servicesAssembly: viewModel.servicesAssembly, profileData: profileData)
+        let myNftViewModel = MyNftViewModel(servicesAssembly: viewModel.servicesAssembly, idsOfMyNft: idsOfMyNft, idsOfFavouriteNfts: idsOfFavouriteNfts)
         let myNftViewController = MyNftViewController(viewModel: myNftViewModel)
         
         universalOpenPage(viewController: myNftViewController)
     }
     
     @objc private func favouriteNftButtonTapped() {
-        print("FavouriteNft button tapped")
+        guard let idsOfFavouriteNfts = viewModel.profileInfo?.likes else { return }
+        
+        let favouriteNftViewModel = FavouriteNftViewModel(servicesAssembly: viewModel.servicesAssembly, idsOfFavouriteNfts: idsOfFavouriteNfts)
+        let favouriteNftViewController = FavouriteNftViewController(viewModel: favouriteNftViewModel)
+        
+        universalOpenPage(viewController: favouriteNftViewController)
     }
     
     private func makeEditProfileButtonClickable() {

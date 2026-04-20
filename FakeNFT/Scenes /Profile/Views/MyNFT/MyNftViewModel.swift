@@ -17,15 +17,14 @@ final class MyNftViewModel {
     private let servicesAssembly: ServicesAssembly
     private let idsOfMyNft: [String]
 
-    
-    init(servicesAssembly: ServicesAssembly, profileData: ProfileViewData) {
+    // MARK: - Initializers
+    init(servicesAssembly: ServicesAssembly, idsOfMyNft: [String], idsOfFavouriteNfts: [String]) {
         self.servicesAssembly = servicesAssembly
-        self.idsOfMyNft = profileData.nfts
-        self.idsOfFavouriteNfts = profileData.likes
+        self.idsOfMyNft = idsOfMyNft
+        self.idsOfFavouriteNfts = idsOfFavouriteNfts
     }
     
     // MARK: - Public Methods
-    
     func downloadData() {
         fetchNfts {
             print("Список Мои nft загружены (количество): \(self.listOfNfts.count)")
@@ -93,7 +92,6 @@ final class MyNftViewModel {
     }
     
     // MARK: - Private Methods
-    
     private func fetchNfts(completion: @escaping () -> Void) {
         print("Дошло")
         
@@ -116,7 +114,12 @@ final class MyNftViewModel {
                         print("Успех при загрузке одной Nft")
                         let newNft = NftData(nftData: nft)
                         
-                        self.addToListOfNftsExcludingDuplicates(nft: newNft)
+                        self.listOfNfts = Constants.addToListOfNftsExcludingDuplicates(
+                            listOfNfts: self.listOfNfts,
+                            nft: newNft,
+                            idsOfFavouriteNfts: self.idsOfFavouriteNfts
+                        )
+                        
                     case .failure(let error):
                         print("Ошибка при загрузке одной Nft")
                         
@@ -163,19 +166,6 @@ final class MyNftViewModel {
     
     private func sortByName() {
         listOfNfts.sort { $0.nft.name < $1.nft.name }
-    }
-    
-    private func addToListOfNftsExcludingDuplicates(nft: NftData) {
-        if !listOfNfts.contains(where: { $0.nft.id == nft.id }) {
-            listOfNfts.append(NftCellViewData(
-                nft: nft,
-                isFavourite: checkIsNftFavourite(nftId: nft.id),
-                isInCart: false))
-        }
-    }
-    
-    private func checkIsNftFavourite(nftId: String) -> Bool {
-        return idsOfFavouriteNfts.contains(nftId)
     }
     
     private func getFilterTypeOfProfileFromStorage() -> String {

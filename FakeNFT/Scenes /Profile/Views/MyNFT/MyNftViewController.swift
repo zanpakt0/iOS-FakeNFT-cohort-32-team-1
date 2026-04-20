@@ -93,7 +93,6 @@ final class MyNftViewController: UIViewController, LoadingView {
     }
     
     // MARK: - Private Methods
-    
     @objc private func filterButtonClicked() {
         let titleForByPrice = NSLocalizedString("myNft.filter.byPrice", comment: "")
         let titleForByRating = NSLocalizedString("myNft.filter.byRating", comment: "")
