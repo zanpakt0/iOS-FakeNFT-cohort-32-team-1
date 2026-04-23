@@ -97,4 +97,5 @@
 "myNft.filter.byName" = "По названию";
 "myNft.emptyPage" = "У Вас ещё нет NFT";
 
-
+// MARK: - Profile - Favourite nft
+"favouriteNft.emptyPage" = "У Вас ещё нет избранных NFT";

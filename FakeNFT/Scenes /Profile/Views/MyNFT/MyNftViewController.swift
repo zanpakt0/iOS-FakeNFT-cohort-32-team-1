@@ -194,7 +194,7 @@ final class MyNftViewController: UIViewController, LoadingView {
                 
                 switch state {
                 case .idle:
-                    showNeedViewsInScreen(whatShouldBeShown: .showBoth)
+                    showNeedViewsInScreen(whatShouldBeShown: .hideBoth)
                 case .loading:
                     if self.viewModel.listOfNfts.isEmpty {
                         showNeedViewsInScreen(whatShouldBeShown: .showLoaderHideViews)

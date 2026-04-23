@@ -1,13 +1,47 @@
 import UIKit
 import Combine
 
-final class FavouriteNftViewController: UIViewController {
+final class FavouriteNftViewController: UIViewController, LoadingView {
 
     // MARK: - Private Properties
     private let viewModel: FavouriteNftViewModel
     private var cancellables = Set<AnyCancellable>()
     
     // MARK: - Views (elements)
+    let activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .large)
+        indicator.hidesWhenStopped = true
+        indicator.color = .black
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        
+        return indicator
+    }()
+    private let containerForActivityIndicator: UIView = {
+        let containerForActivityIndicator = UIView()
+        containerForActivityIndicator.backgroundColor = .forActivityIndicatorBackground
+        containerForActivityIndicator.layer.cornerRadius = 8
+        containerForActivityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            containerForActivityIndicator.widthAnchor.constraint(equalToConstant: 82),
+            containerForActivityIndicator.heightAnchor.constraint(equalToConstant: 82)
+        ])
+        
+        return containerForActivityIndicator
+    }()
+    private let emptyPageLabel: UILabel = {
+        let emptyPageLabel = UILabel()
+        let textForEmptyPage = NSLocalizedString("favouriteNft.emptyPage", comment: "")
+        
+        emptyPageLabel.textAlignment = .center
+        emptyPageLabel.text = textForEmptyPage
+        emptyPageLabel.font = .bodyBold
+        emptyPageLabel.textColor = .segmentActive
+        emptyPageLabel.isHidden = true
+        emptyPageLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        return emptyPageLabel
+    }()
     private let collectionWithNfts: UICollectionView = {
         let collectionWithNfts = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         
@@ -46,13 +80,27 @@ final class FavouriteNftViewController: UIViewController {
     
     // MARK: - Private Methods
     private func addSubviews() {
+        view.addSubview(emptyPageLabel)
         view.addSubview(collectionWithNfts)
+        view.addSubview(containerForActivityIndicator)
+        
+        containerForActivityIndicator.addSubview(activityIndicator)
         
         setupConstraints()
     }
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
+            containerForActivityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            containerForActivityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            
+            activityIndicator.centerXAnchor.constraint(equalTo: containerForActivityIndicator.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: containerForActivityIndicator.centerYAnchor),
+            
+            emptyPageLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            emptyPageLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            emptyPageLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            
             collectionWithNfts.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             collectionWithNfts.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             collectionWithNfts.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
@@ -71,6 +119,31 @@ final class FavouriteNftViewController: UIViewController {
         navigationItem.title = title
     }
     
+    private func showNeedViewsInScreen(whatShouldBeShown: UIStateForLoader) {
+        switch whatShouldBeShown {
+        case .showLoaderHideViews:
+            self.containerForActivityIndicator.isHidden = false
+            showLoading()
+            self.collectionWithNfts.isHidden = true
+            self.emptyPageLabel.isHidden = true
+        case .showViewsHideLoader:
+            self.containerForActivityIndicator.isHidden = true
+            hideLoading()
+            self.collectionWithNfts.isHidden = false
+            self.emptyPageLabel.isHidden = true
+        case .showBoth:
+            self.containerForActivityIndicator.isHidden = false
+            showLoading()
+            self.collectionWithNfts.isHidden = false
+            self.emptyPageLabel.isHidden = true
+        case .hideBoth:
+            self.containerForActivityIndicator.isHidden = true
+            hideLoading()
+            self.collectionWithNfts.isHidden = true
+            self.emptyPageLabel.isHidden = true
+        }
+    }
+    
     private func bindViewModel() {
         viewModel.$state
             .receive(on: RunLoop.main)
@@ -79,24 +152,45 @@ final class FavouriteNftViewController: UIViewController {
                 
                 switch state {
                 case .idle:
-                    break
+                    showNeedViewsInScreen(whatShouldBeShown: .hideBoth)
                 case .loading:
-                    break
+                    if self.viewModel.listOfNfts.isEmpty {
+                        showNeedViewsInScreen(whatShouldBeShown: .showLoaderHideViews)
+                    } else {
+                        showNeedViewsInScreen(whatShouldBeShown: .showBoth)
+                    }
                 case .loaded(_):
                     if self.viewModel.listOfNfts.isEmpty {
-                        print("Нет ничего в списке")
+                        makeEmptyPage()
                     } else {
                         setupNavBar()
+                        showNeedViewsInScreen(whatShouldBeShown: .showViewsHideLoader)
                         collectionWithNfts.reloadData()
                     }
                 case .error(_):
-                    break
+                    showNeedViewsInScreen(whatShouldBeShown: .hideBoth)
+                    showErrorAlertWhenLoadingEverything()
                 case .errorWhenTapOnButtonsInCell(_):
-                    break
+                    showNeedViewsInScreen(whatShouldBeShown: .showViewsHideLoader)
+                    showErrorAlertWhenTappingButtonsInCell()
                 }
             }
             .store(in: &cancellables)
+    }
+    
+    private func makeEmptyPage() {
+        emptyPageLabel.isHidden = false
+        collectionWithNfts.isHidden = true
+        containerForActivityIndicator.isHidden = true
         
+        navigationItem.title = nil
+    }
+    
+    private func showErrorAlertWhenLoadingEverything() {
+        universalErrorAlert { [weak self] in
+            guard let self else { return }
+            self.viewModel.loadData()
+        }
     }
 }
 
