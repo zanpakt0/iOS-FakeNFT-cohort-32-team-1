@@ -54,7 +54,7 @@ final class PaymentViewController: UIViewController {
         navigationItem.leftBarButtonItem = backButton
         
         let titleLabel = UILabel()
-        titleLabel.text = NSLocalizedString("Choose a payment method", comment: "")
+        titleLabel.text = NSLocalizedString("payment.chooseMethod", comment: "")
         titleLabel.font = .boldSystemFont(ofSize: 17)
         titleLabel.textColor = .segmentButtonBackground
         titleLabel.textAlignment = .center
@@ -70,6 +70,7 @@ final class PaymentViewController: UIViewController {
         collectionView.backgroundColor = .clear
         view.addSubview(collectionView)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
+        
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
@@ -91,8 +92,8 @@ final class PaymentViewController: UIViewController {
     }
     
     private func setupTerms() {
-        let fullText = NSLocalizedString("By making a purchase, you agree to the terms of the User Agreement", comment: "")
-        let highlightText = NSLocalizedString("User Agreement", comment: "")
+        let fullText = NSLocalizedString("payment.userAgreement.text", comment: "")
+        let highlightText = NSLocalizedString("payment.userAgreement.title", comment: "")
         
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.minimumLineHeight = 18
@@ -131,7 +132,7 @@ final class PaymentViewController: UIViewController {
     }
     
     private func setupPayButton() {
-        payButton.setTitle(NSLocalizedString("Pay", comment: ""), for: .normal)
+        payButton.setTitle(NSLocalizedString("common.pay", comment: ""), for: .normal)
         payButton.titleLabel?.font = .systemFont(ofSize: 17, weight: .bold)
         payButton.backgroundColor = .segmentButtonBackground
         payButton.tintColor = .segmentButtonText
@@ -206,7 +207,7 @@ extension PaymentViewController: UICollectionViewDelegateFlowLayout, UICollectio
 extension PaymentViewController: UITextViewDelegate {
     func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange) -> Bool {
         let webVC = WebViewViewController(urlString: URL.absoluteString)
-        navigationController?.pushViewController(webVC, animated: true)
+        universalOpenPage(viewController: webVC)
         return false
     }
 }

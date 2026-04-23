@@ -4,15 +4,14 @@ final class NftImageCollectionViewCell: UICollectionViewCell, ReuseIdentifying {
 
     // MARK: - Properties
 
-    private lazy var scrollView: UIScrollView = {
+    private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
-        scrollView.delegate = self
         scrollView.minimumZoomScale = 1.0
         scrollView.maximumZoomScale = 3.0
         return scrollView
     }()
 
-    private lazy var imageView: UIImageView = {
+    private let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         return imageView
@@ -36,10 +35,14 @@ final class NftImageCollectionViewCell: UICollectionViewCell, ReuseIdentifying {
         nil
     }
 
-    // MARK: - Functions
-
+    // MARK: - Public Functions
     func configure(with cellModel: NftDetailCellModel) {
         imageView.kf.setImage(with: cellModel.url)
+    }
+    
+    // MARK: - Private Functions
+    private func setupScrollView() {
+        scrollView.delegate = self
     }
 }
 

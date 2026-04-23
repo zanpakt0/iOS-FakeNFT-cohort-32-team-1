@@ -1,56 +1,101 @@
-"Tab.catalog" = "Каталог";
-"Tab.cart" = "Корзина";
-"Catalog.openNft" = "Открыть Nft";
-"Error.network" = "Произошла ошибка сети";
-"Error.unknown" = "Произошла неизвестная ошибка";
-"Error.repeat" = "Повторить";
-"Error.title" = "Ошибка";
-"price" = "Цена";
-"Choose a payment method" = "Выберите способ оплаты";
-"Pay" = "Оплатить";
-"By making a purchase, you agree to the terms of the User Agreement" = "Совершая покупку, вы соглашаетесь с условиями Пользовательского соглашения";
-"User Agreement" = "Пользовательского соглашения";
-"Payment Failed" = "Не удалось произвести оплату";
-"Retry" = "Повторить";
-"Cancel" = "Отмена";
-"Your cart is empty" = "Корзина пуста";
-"Success! Your payment has been completed. Congratulations on your purchase!" = "Успех! Оплата прошла, поздравляем с покупкой!";
-"Return to Cart" = "Вернуться в корзину";
+// MARK: - Common
 
-//Filter actionSheet
-"Filter.actionSheet.title" = "Сортировка";
-"Filter.actionSheet.closeButton.text" = "Закрыть";
-"Filter.actionSheet.title.toPay" = "К оплате";
-"Are you sure you want to\n remove the item from the cart?" = "Вы уверены, что хотите\n удалить объект из корзины?";
-"button.Delete" = "Удалить";
-"button.GoBack" = "Вернуться";
-//Catalog
-"catalog.sortByNameTitle" = "По названию";
-"catalog.sortByCountTitle" = "По количеству NFT";
-"catalog.alertTitle" = "Не удалось загрузить данные";
-"catalog.repeatAlertButton" = "Повторить";
-"catalog.cancelAlertButton" = "Отмена";
-//NftCollection
-"nftCollection.authorLabel.text" = "Автор коллекции:";
-"nftCollection.alertTitle" = "Не удалось загрузить данные";
-"nftCollection.repeatAlertButton" = "Повторить";
-"nftCollection.cancelAlertButton" = "Отмена";
+"common.price" = "Цена";
+"common.retry" = "Повторить";
+"common.cancel" = "Отмена";
+"common.delete" = "Удалить";
+"common.close" = "Закрыть";
+"common.ok" = "Ок";
+"common.pay" = "Оплатить";
+"common.back" = "Назад";
 
-// Statistics page
-"Tab.statistics" = "Статистика";
-"Statistics.errorAlert.title" = "Не удалось получить данные";
-"Statistics.errorAlert.retryAction.text" = "Повторить";
-"Statistics.errorAlert.cancelAction.text" = "Отмена";
-"Statistics.actionSheet.byNameAction.text" = "По имени";
-"Statistics.actionSheet.byRatingAction.text" = "По рейтингу";
+// MARK: - TabBar
 
-// User card page
-"UserCard.goToUserWebsiteButton.title" = "Перейти на сайт пользователя";
-"UserCard.nftCollectionButton.title" = "Коллекция NFT";
+"tab.catalog" = "Каталог";
+"tab.cart" = "Корзина";
+"tab.statistics" = "Статистика";
+"tab.profile" = "Профиль";
 
+// MARK: - Errors
 
-// User collection page
-"UserCollection.tite" = "Коллекция NFT";
-"UserCollection.errorAlert.message" = "Что-то пошло не так";
-"UserCollection.errorAlert.actionText" = "Ок";
+"error.network" = "Произошла ошибка сети";
+"error.unknown" = "Произошла неизвестная ошибка";
+"error.title" = "Ошибка";
 
+// MARK: - Cart
+
+"cart.empty" = "Корзина пуста";
+"cart.removeConfirmation" = "Вы уверены, что хотите\n удалить объект из корзины?";
+"cart.returnButton" = "Вернуться в корзину";
+"cart.successMessage" = "Успех! Оплата прошла, поздравляем с покупкой!";
+
+// MARK: - Payment
+
+"payment.chooseMethod" = "Выберите способ оплаты";
+"payment.userAgreement.text" = "Совершая покупку, вы соглашаетесь с условиями Пользовательского соглашения";
+"payment.userAgreement.title" = "Пользовательского соглашения";
+"payment.failed" = "Не удалось произвести оплату";
+
+// MARK: - Filter
+
+"filter.sort.title" = "Сортировка";
+"filter.sort.toPay" = "К оплате";
+
+// MARK: - Catalog
+
+"catalog.openNft" = "Открыть NFT";
+"catalog.sort.byName" = "По названию";
+"catalog.sort.byCount" = "По количеству NFT";
+"catalog.error.title" = "Не удалось загрузить данные";
+
+// MARK: - NFT Collection
+
+"nftCollection.authorTitle" = "Автор коллекции:";
+"nftCollection.error.title" = "Не удалось загрузить данные";
+
+// MARK: - Statistics
+
+"statistics.error.title" = "Не удалось получить данные";
+"statistics.sort.byName" = "По имени";
+"statistics.sort.byRating" = "По рейтингу";
+
+// MARK: - User Card
+
+"userCard.openWebsiteButton" = "Перейти на сайт пользователя";
+"userCard.collectionButton" = "Коллекция NFT";
+
+// MARK: - User Collection
+
+"userCollection.title" = "Коллекция NFT";
+"userCollection.error.message" = "Что-то пошло не так";
+
+// MARK: - Profile
+
+"profile.myNft" = "Мои NFT";
+"profile.favouriteNft" = "Избранные NFT";
+
+// MARK: - Edit Profile
+
+"editProfile.name" = "Имя";
+"editProfile.description" = "Описание";
+"editProfile.website" = "Сайт";
+
+"editProfile.photo.title" = "Фото профиля";
+"editProfile.photo.change" = "Изменить фото";
+"editProfile.photo.delete" = "Удалить фото";
+"editProfile.photo.save" = "Сохранить";
+"editProfile.photo.linkTitle" = "Ссылка на фото";
+
+"editProfile.exit.title" = "Уверены, что хотите выйти?";
+"editProfile.exit.quit" = "Выйти";
+"editProfile.exit.stay" = "Остаться";
+
+// MARK: - Profile - My nft
+"myNft.price" = "Цена";
+"myNft.filter.byPrice" = "По цене";
+"myNft.filter.byRating" = "По рейтингу";
+"myNft.filter.byName" = "По названию";
+"myNft.emptyPage" = "У Вас ещё нет NFT";
+
+// MARK: - Profile - Favourite nft
+"favouriteNft.emptyPage" = "У Вас ещё нет избранных NFT";

@@ -11,7 +11,7 @@ final class CatalogCell: UITableViewCell, ReuseIdentifying {
     }
 
     //MARK: - UI
-    private lazy var catalogImage: UIImageView = {
+    private let catalogImage: UIImageView = {
         let image = UIImageView()
         image.layer.cornerRadius = CatalogCellLayout.imageCornerRadius
         image.layer.masksToBounds = true
@@ -21,7 +21,7 @@ final class CatalogCell: UITableViewCell, ReuseIdentifying {
         return image
     }()
     
-    private lazy var catalogLabel: UILabel = {
+    private let catalogLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.bodyBold
         label.textColor = .textColor
