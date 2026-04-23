@@ -60,7 +60,7 @@ final class PaymentServiceImpl: PaymentService {
                     if payResponse.success {
                         completion(.success(()))
                     } else {
-                        completion(.failure(NSError(domain: "Payment failed", code: 0)))
+                        completion(.failure(NSError(domain: "payment.failed", code: 0)))
                     }
                 } catch {
                     completion(.failure(error))

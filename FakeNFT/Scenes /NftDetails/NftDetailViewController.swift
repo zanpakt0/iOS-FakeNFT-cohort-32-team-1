@@ -9,31 +9,28 @@ final class NftDetailViewController: UIViewController {
 
     private let presenter: NftDetailPresenter
 
-    private lazy var collectionView: UICollectionView = {
+    private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumInteritemSpacing = 0
         layout.minimumLineSpacing = 0
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.register(NftImageCollectionViewCell.self)
-        collectionView.dataSource = self
-        collectionView.delegate = self
 
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.isPagingEnabled = true
         return collectionView
     }()
 
-    private lazy var closeButton: UIButton = {
+    private let closeButton: UIButton = {
         let button = UIButton()
         button.tintColor = .closeButton
         button.setImage(UIImage(named: "close"), for: .normal)
-        button.addTarget(self, action: #selector(close), for: .touchUpInside)
         return button
     }()
 
-    private lazy var pageControl = LinePageControl()
-    internal lazy var activityIndicator = UIActivityIndicatorView()
+    private let pageControl = LinePageControl()
+    internal let activityIndicator = UIActivityIndicatorView()
 
     private var cellModels: [NftDetailCellModel] = []
 
@@ -54,12 +51,23 @@ final class NftDetailViewController: UIViewController {
         super.viewDidLoad()
 
         view.backgroundColor = .white
+        setupCollectionView()
+        addTargetsForButtons()
         setupLayout()
         presenter.viewDidLoad()
     }
 
     // MARK: - private functions
 
+    private func setupCollectionView() {
+        collectionView.dataSource = self
+        collectionView.delegate = self
+    }
+    
+    private func addTargetsForButtons() {
+        closeButton.addTarget(self, action: #selector(close), for: .touchUpInside)
+    }
+    
     private func setupLayout() {
         collectionView.addSubview(activityIndicator)
         activityIndicator.constraintCenters(to: collectionView)

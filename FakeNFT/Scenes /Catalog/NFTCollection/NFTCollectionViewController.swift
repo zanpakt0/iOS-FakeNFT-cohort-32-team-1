@@ -40,25 +40,25 @@ final class NFTCollectionViewController: UIViewController {
     private var collectionViewHeightConstraint: NSLayoutConstraint?
     private var subscribes = Set<AnyCancellable>()
     
-    private let alertTitle: String = NSLocalizedString("nftCollection.alertTitle", comment: "Не удалось загрузить данные")
-    private let repeatAlertButton: String = NSLocalizedString("nftCollection.repeatAlertButton", comment: "Повторить")
-    private let cancelAlertButton: String = NSLocalizedString("nftCollection.cancelAlertButton", comment: "Отмена")
+    private let alertTitle: String = NSLocalizedString("nftCollection.error.title", comment: "Не удалось загрузить данные")
+    private let repeatAlertButton: String = NSLocalizedString("common.retry", comment: "Повторить")
+    private let cancelAlertButton: String = NSLocalizedString("common.cancel", comment: "Отмена")
     
     //MARK: - UI Elements
-    private lazy var scrollView: UIScrollView = {
+    private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.alwaysBounceVertical = true
         return scrollView
     }()
     
-    private lazy var contentView: UIView = {
+    private let contentView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
-    private lazy var coverImage: UIImageView =  {
+    private let coverImage: UIImageView =  {
         let image = UIImageView()
         image.translatesAutoresizingMaskIntoConstraints = false
         image.image = UIImage(named: "Peach")
@@ -68,7 +68,7 @@ final class NFTCollectionViewController: UIViewController {
         return image
     }()
     
-    private lazy var titleLabel: UILabel = {
+    private let titleLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .headline3
@@ -90,12 +90,12 @@ final class NFTCollectionViewController: UIViewController {
         return label
     }()
     
-    private lazy var authorLabel: UILabel = {
+    private let authorLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .caption2
         label.textAlignment = .left
-        label.text = NSLocalizedString("nftCollection.authorLabel.text", comment: "Author of collection:")
+        label.text = NSLocalizedString("nftCollection.authorTitle", comment: "Author of collection:")
         return label
     }()
     
@@ -107,7 +107,7 @@ final class NFTCollectionViewController: UIViewController {
         return stack
     }()
     
-    private lazy var descriptionLabel: UILabel = {
+    private let descriptionLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .caption2
@@ -116,7 +116,7 @@ final class NFTCollectionViewController: UIViewController {
         return label
     }()
     
-    private lazy var collectionView: UICollectionView = {
+    private let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.minimumInteritemSpacing = 10
         layout.minimumLineSpacing = 8
@@ -124,13 +124,11 @@ final class NFTCollectionViewController: UIViewController {
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collection.translatesAutoresizingMaskIntoConstraints = false
         collection.backgroundColor = .clear
-        collection.delegate = self
-        collection.dataSource = self
         collection.isScrollEnabled = false
         return collection
     }()
     
-    private lazy var loadingIndicator: UIActivityIndicatorView = {
+    private let loadingIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView()
         indicator.translatesAutoresizingMaskIntoConstraints = false
         indicator.hidesWhenStopped = true
@@ -150,10 +148,11 @@ final class NFTCollectionViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    //MARK: - Lifecycle
+    //MARK: - View Life Cycles
     override func viewDidLoad() {
         super.viewDidLoad()
         updateCollectionViewHeight()
+        setupCollactionView()
         setupUI()
         applyCatalogData()
         bindViewModel()
@@ -161,6 +160,11 @@ final class NFTCollectionViewController: UIViewController {
     }
     
     //MARK: - Setup Methods
+    private func setupCollactionView() {
+        collectionView.delegate = self
+        collectionView.dataSource = self
+    }
+    
     private func setupUI() {
         view.backgroundColor = .forViewBackground
         setupScrollView()

@@ -14,14 +14,14 @@ final class CatalogViewController: UIViewController {
     private let viewModel: CatalogViewModel
     private var subscribes = Set<AnyCancellable>()
     
-    private let sortByNameTitle: String = NSLocalizedString("catalog.sortByNameTitle", comment: "Sort by name")
-    private let sortByCountTitle: String = NSLocalizedString("catalog.sortByCountTitle", comment: "Sort by count of nfts")
-    private let alertTitle: String = NSLocalizedString("catalog.alertTitle", comment: "Не удалось загрузить данные")
-    private let repeatAlertButton: String = NSLocalizedString("catalog.repeatAlertButton", comment: "Повторить")
-    private let cancelAlertButton: String = NSLocalizedString("catalog.cancelAlertButton", comment: "Отмена")
+    private let sortByNameTitle: String = NSLocalizedString("catalog.sort.byName", comment: "Sort by name")
+    private let sortByCountTitle: String = NSLocalizedString("catalog.sort.byCount", comment: "Sort by count of nfts")
+    private let alertTitle: String = NSLocalizedString("catalog.error.title", comment: "Не удалось загрузить данные")
+    private let repeatAlertButton: String = NSLocalizedString("common.retry", comment: "Повторить")
+    private let cancelAlertButton: String = NSLocalizedString("common.cancel", comment: "Отмена")
     
     //MARK: - UI Elements
-    private lazy var tableView: UITableView = {
+    private let tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.layer.cornerRadius = CatalogLayout.tableViewCornerRadius
@@ -32,18 +32,18 @@ final class CatalogViewController: UIViewController {
         return tableView
     }()
     
-    private lazy var sortButton: UIButton = {
+    private let sortButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(resource: .sortCatalogButton), for: .normal)
         button.tintColor = .segmentActive
         button.imageView?.contentMode = .scaleAspectFit
-        button.addTarget(self, action: #selector(sortButtonTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
-    private lazy var loadingIndicator: UIActivityIndicatorView = {
-        let indicator = UIActivityIndicatorView()
+    private let loadingIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .large)
+        indicator.color = .segmentActive
         indicator.translatesAutoresizingMaskIntoConstraints = false
         return indicator
     }()
@@ -63,11 +63,17 @@ final class CatalogViewController: UIViewController {
     //MARK: - Lyfecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        addTargetsForButtons()
         setupUI()
         bindViewModel()
     }
     
     //MARK: - Setup UI
+    private func addTargetsForButtons() {
+        sortButton.addTarget(self, action: #selector(sortButtonTapped), for: .touchUpInside)
+    }
+    
     private func setupUI() {
         view.backgroundColor = .forViewBackground
         setupSortButton()

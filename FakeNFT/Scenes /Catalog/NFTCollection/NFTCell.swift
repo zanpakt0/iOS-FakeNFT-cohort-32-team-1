@@ -43,7 +43,7 @@ final class NFTCell: UICollectionViewCell, ReuseIdentifying {
     private var nftId: String?
     
     //MARK: - UI
-    private lazy var nftImageView: UIImageView = {
+    private let nftImageView: UIImageView = {
         let image = UIImageView()
         image.layer.cornerRadius = NFTCellLayout.cornerRadius
         image.layer.masksToBounds = true
@@ -58,7 +58,7 @@ final class NFTCell: UICollectionViewCell, ReuseIdentifying {
         spacing: NFTCellLayout.starSpacing
     )
     
-    private lazy var nftLabel: UILabel = {
+    private let nftLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.bodyBold
         label.textColor = .textColor
@@ -67,7 +67,7 @@ final class NFTCell: UICollectionViewCell, ReuseIdentifying {
         return label
     }()
     
-    private lazy var nftPriceLabel: UILabel = {
+    private let nftPriceLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.caption4
         label.textColor = .textColor
@@ -76,22 +76,20 @@ final class NFTCell: UICollectionViewCell, ReuseIdentifying {
         return label
     }()
     
-    private lazy var nftCartButton: UIButton = {
+    private let nftCartButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(resource: .addToCart), for: .normal)
         button.tintColor = .segmentActive
         button.imageView?.contentMode = .scaleAspectFit
-        button.addTarget(self, action: #selector(nftCartButtonTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
-    private lazy var nftLikeButton: UIButton = {
+    private let nftLikeButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(resource: .likeButtonNoActive), for: .normal)
         button.tintColor = .segmentActive
         button.imageView?.contentMode = .scaleAspectFit
-        button.addTarget(self, action: #selector(nftLikeButtonTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -100,6 +98,7 @@ final class NFTCell: UICollectionViewCell, ReuseIdentifying {
     //MARK: - Init
     override init(frame: CGRect) {
         super.init(frame: frame)
+        addTargetsForButtons()
         setupUI()
     }
     
@@ -108,6 +107,11 @@ final class NFTCell: UICollectionViewCell, ReuseIdentifying {
     }
     
     //MARK: - Setup UI
+    private func addTargetsForButtons() {
+        nftCartButton.addTarget(self, action: #selector(nftCartButtonTapped), for: .touchUpInside)
+        nftLikeButton.addTarget(self, action: #selector(nftLikeButtonTapped), for: .touchUpInside)
+    }
+    
     private func setupUI() {
         contentView.backgroundColor = .forViewBackground
         contentView.addSubview(nftImageView)

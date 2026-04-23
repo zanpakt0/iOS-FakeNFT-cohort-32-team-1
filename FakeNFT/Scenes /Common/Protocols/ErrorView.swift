@@ -13,7 +13,7 @@ protocol ErrorView {
 extension ErrorView where Self: UIViewController {
 
     func showError(_ model: ErrorModel) {
-        let title = NSLocalizedString("Error.title", comment: "")
+        let title = NSLocalizedString("error.title", comment: "")
         let alert = UIAlertController(
             title: title,
             message: model.message,
@@ -27,7 +27,7 @@ extension ErrorView where Self: UIViewController {
     }
     
     func showFilterActionSheet(firstAction: UIAlertAction, secondAction: UIAlertAction, thirdAction: UIAlertAction?) {
-        let titleOfActionSheet = NSLocalizedString("Filter.actionSheet.title", comment: "")
+        let titleOfActionSheet = NSLocalizedString("filter.sort.title", comment: "")
         
         let alert = UIAlertController(
             title: titleOfActionSheet,
@@ -35,7 +35,7 @@ extension ErrorView where Self: UIViewController {
             preferredStyle: .actionSheet
         )
         
-        let textOfCancelButton = NSLocalizedString("Filter.actionSheet.closeButton.text", comment: "")
+        let textOfCancelButton = NSLocalizedString("common.close", comment: "")
         let cancelAction = UIAlertAction(title: textOfCancelButton, style: .cancel)
         
         if let thirdAction = thirdAction {

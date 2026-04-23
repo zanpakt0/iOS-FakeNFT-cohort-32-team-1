@@ -1,0 +1,79 @@
+import CoreFoundation
+import Kingfisher
+import UIKit
+
+enum UIStateForLoader {
+    case showLoaderHideViews
+    case showViewsHideLoader
+    case showBoth
+    case hideBoth
+}
+
+enum BaseStateForQuery {
+    case idle
+    case loading
+    case loaded
+    case error(Error)
+}
+
+enum BaseStateForNftList {
+    case idle
+    case loading
+    case loaded([NftCellViewData])
+    case error(Error)
+    case errorWhenTapOnButtonsInCell(Error)
+}
+
+enum FilterType: String {
+    case byPrice = "byPrice"
+    case byRating = "byRating"
+    case byName = "byName"
+}
+
+enum FilterTypeForStatistics: String {
+    case byName = "byName"
+    case byRating = "byRating"
+}
+
+enum ConstantsForStatistics {
+    static let pageSize: Int = 10
+    static let keyForFilterTypeInStatistics: String = "filterTypeInStatistics"
+    static let transitionDurationWhenOpenPage: CFTimeInterval = 0.01
+}
+
+final class Constants {
+    static let keyForFilterTypeInProfile: String = "filterTypeInProfile"
+    
+    static let defaultImage = UIImage(systemName: "person.crop.circle.fill")?.withTintColor(UIColor.forDefaultAvatarBackground, renderingMode: .alwaysOriginal)
+    
+    static let dispatchGroup = DispatchGroup()
+    static let processorWithTwelveCornerRadius = RoundCornerImageProcessor(cornerRadius: 12)
+    
+    static func replaceDotsWithCommas(price: Decimal) -> String {
+        let string = "\(price)"
+        return "\(string.replacingOccurrences(of: ".", with: ",")) ETH"
+    }
+    
+    static func configureNeedRequestBodyToPutRequests(nftId: String, isFavourite: Bool, needNftList: [String]) -> String {
+        var updatedList = needNftList
+        if isFavourite {
+            updatedList.append(nftId)
+        } else if let index = updatedList.firstIndex(of: nftId) {
+            updatedList.remove(at: index)
+        }
+        return updatedList.isEmpty ? "null" : updatedList.joined(separator: ", ")
+    }
+    
+    static func addToListOfNftsExcludingDuplicates(listOfNfts: [NftCellViewData], nft: NftData, idsOfFavouriteNfts: [String]) -> [NftCellViewData] {
+        var newListOfNfts = listOfNfts
+        
+        if !newListOfNfts.contains(where: { $0.nft.id == nft.id }) {
+            newListOfNfts.append(NftCellViewData(
+                nft: nft,
+                isFavourite: idsOfFavouriteNfts.contains(nft.id),
+                isInCart: false))
+        }
+        
+        return newListOfNfts
+    }
+}
