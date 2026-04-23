@@ -5,6 +5,9 @@ final class FavouriteNftViewCell: UICollectionViewCell {
     // MARK: - Identifier
     static let reusedIdentifier = "FavouriteNftViewCell"
     
+    // MARK: Callbacks
+    var didHeartButtonTapped: (()-> Void)?
+    
     // MARK: Views (elements)
     private let imageOfNft: UIImageView = {
         let imageOfNft = UIImageView()
@@ -86,9 +89,24 @@ final class FavouriteNftViewCell: UICollectionViewCell {
         nil
     }
     
+    // MARK: - Public Methods
+    func configure(nftData: NftCellViewData) {
+        guard let imageURL = nftData.nft.image else { return }
+        
+        imageOfNft.kf.setImage(with: imageURL, placeholder: nil, options: [.processor(Constants.processorWithTwelveCornerRadius)])
+        
+        heartButton.tintColor = nftData.isFavourite ? .redForFavouritesButton : .background
+        nameOfNft.text = nftData.nft.name
+        
+        let stars = [firstStar, secondStar, thirdStar, fourthStar, fifthStar]
+        visualizeStars(rating: nftData.nft.rating, stars: stars)
+        
+        priceOfNft.text = Constants.replaceDotsWithCommas(price: nftData.nft.price)
+    }
+    
     // MARK: - Private Methods
     @objc private func heartButtonClicked() {
-        
+        didHeartButtonTapped?()
     }
     
     private func addTargetsForButtons() {

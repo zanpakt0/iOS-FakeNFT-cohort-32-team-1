@@ -9,7 +9,10 @@ final class FavouriteNftViewModel {
     private var idsOfFavouriteNfts: [String]
     
     private var isLoadingNfts = false
-    private var currentTask: NetworkTask?
+    private var isDislikingNft = false
+    
+    private var currentTaskForLoadNfts: NetworkTask?
+    private var currentTaskForDislikeNft: NetworkTask?
     
     private let servicesAssembly: ServicesAssembly
     
@@ -23,6 +26,46 @@ final class FavouriteNftViewModel {
     func loadData() {
         fetchNfts {
              print("Список Избранных nft загружены (количество): \(self.listOfNfts.count)")
+        }
+    }
+    
+    func dislikeNft(nftId: String) {
+        let likes = Constants.configureNeedRequestBodyToPutRequests(
+            nftId: nftId,
+            isFavourite: false,
+            needNftList: idsOfFavouriteNfts)
+        
+        print("Дошло до лайка nft")
+        
+        guard !isDislikingNft else { return }
+        
+        isDislikingNft = true
+        state = .loading
+        
+        currentTaskForDislikeNft = servicesAssembly.nftService.putToFavoritesNft(likes: likes) { [weak self] result in
+            DispatchQueue.main.async {
+                guard let self else { return }
+                
+                self.isDislikingNft = false
+                
+                switch result {
+                case .success(let profile):
+                    print("Успех при дизлайке nft")
+                    let favouriteNfts = ListOfFavouriteNftsData(profile: profile)
+                    self.idsOfFavouriteNfts = favouriteNfts.likes
+                    
+                    print("(Лайк) Количество понравившихся nft: \(self.idsOfFavouriteNfts.count)")
+                    
+                    guard let idOfNftToDelete = self.listOfNfts.firstIndex(where: { $0.nft.id == nftId }) else { return }
+                    self.listOfNfts.remove(at: idOfNftToDelete)
+                    
+                    self.state = .loaded(self.listOfNfts)
+                case .failure(let error):
+                    print("Ошибка при лайке nft")
+                    self.state = .errorWhenTapOnButtonsInCell(error)
+                }
+            }
+            
         }
     }
     
@@ -40,7 +83,7 @@ final class FavouriteNftViewModel {
         for nftId in idsOfFavouriteNfts {
             group.enter()
             
-            currentTask = servicesAssembly.nftService.getNft(id: nftId) { [weak self] result in
+            currentTaskForLoadNfts = servicesAssembly.nftService.getNft(id: nftId) { [weak self] result in
                 DispatchQueue.main.async {
                     guard let self else { return }
                     

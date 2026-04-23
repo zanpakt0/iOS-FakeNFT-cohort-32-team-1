@@ -82,7 +82,7 @@ final class UserCollectionViewModel {
                 
                 switch result {
                 case .success(let profile):
-                    print("Успех при лайке nft")
+                    print("Успех при лайке/дизлайке nft")
                     let favouriteNfts = ListOfFavouriteNftsData(profile: profile)
                     self.listOfFavouriteNfts = favouriteNfts.likes
                     
